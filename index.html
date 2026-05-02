@@ -1,0 +1,1935 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ELLE &amp; LUI OPTIK</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--teal:#04747c;--teal2:#035960;--amber:#f59e0b;--red:#ef4444;--green:#10b981;--purple:#7c3aed;--blue:#3b82f6;--bg:#f0f4f8;--card:#fff;--border:#e2e8f0;--txt:#111827;--txt2:#6b7280;--txt3:#9ca3af;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'DM Sans',system-ui,sans-serif;font-size:13px;color:var(--txt);}
+::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-thumb{background:#04747c44;border-radius:4px;}
+input,select,textarea,button{font-family:inherit;outline:none;}
+/* LAYOUT */
+#app{display:flex;height:100vh;overflow:hidden;}
+/* SIDEBAR */
+#sb{width:196px;min-width:196px;background:linear-gradient(160deg,#1a2830,#04747c);display:flex;flex-direction:column;padding:14px 8px 10px;gap:1px;overflow-y:auto;}
+.brand{padding:2px 6px 12px;border-bottom:.5px solid rgba(255,255,255,.12);margin-bottom:6px;}
+.brand-icon{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:6px;}
+#brand-name{font-family:'Syne',sans-serif;font-size:11.5px;font-weight:800;color:#fff;line-height:1.3;word-break:break-word;}
+#brand-sub{font-size:9px;color:rgba(255,255,255,.4);margin-top:2px;}
+.nav-sec{font-size:8.5px;color:rgba(255,255,255,.28);letter-spacing:1px;text-transform:uppercase;padding:7px 8px 2px;margin-top:2px;}
+.nb{display:flex;align-items:center;gap:7px;padding:7px 8px;border-radius:6px;font-size:11px;font-weight:500;color:rgba(255,255,255,.5);background:none;border:none;border-left:2.5px solid transparent;width:100%;text-align:left;cursor:pointer;transition:all .15s;}
+.nb:hover,.nb.active{color:#fff;background:rgba(255,255,255,.1);border-left-color:#fff;}
+.ni{font-size:11px;min-width:13px;}
+.nbadge{margin-left:auto;background:var(--red);color:#fff;border-radius:50%;width:15px;height:15px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;}
+.sb-user{margin-top:auto;padding:8px 2px 0;border-top:.5px solid rgba(255,255,255,.1);}
+.uchip{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border-radius:6px;padding:6px 8px;cursor:pointer;}
+.uchip:hover{background:rgba(255,255,255,.14);}
+.uav{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;flex-shrink:0;}
+.uname{font-size:10.5px;color:#fff;font-weight:500;}
+.urole{font-size:8.5px;color:rgba(255,255,255,.35);}
+/* MAIN */
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.view{display:none;flex:1;flex-direction:column;overflow:hidden;}
+.view.on{display:flex;}
+/* TOPBAR */
+.tb{padding:10px 18px;border-bottom:.5px solid var(--border);background:var(--card);display:flex;align-items:center;gap:7px;flex-shrink:0;}
+.tb-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;flex:1;}
+/* CONTENT */
+.ct{flex:1;overflow-y:auto;padding:16px 18px;}
+/* CARD */
+.card{background:var(--card);border-radius:11px;border:.5px solid var(--border);overflow:hidden;}
+/* STAT GRID */
+.sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:14px;}
+.sc{background:var(--card);border-radius:9px;border:.5px solid var(--border);padding:12px 14px;}
+.si{font-size:18px;margin-bottom:3px;}
+.sv{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;}
+.sl{font-size:10px;color:var(--txt2);margin-top:1px;}
+/* TABLE */
+.th{display:grid;align-items:center;padding:7px 12px;background:#f8fafc;border-bottom:.5px solid var(--border);font-size:8.5px;font-weight:700;color:var(--txt3);letter-spacing:.5px;text-transform:uppercase;}
+.tr{display:grid;align-items:center;padding:8px 12px;border-bottom:.5px solid #f1f5f9;font-size:11.5px;transition:background .1s;}
+.tr:last-child{border-bottom:none;}
+.tr:hover{background:#f8fafc;}
+/* BADGE */
+.badge{display:inline-block;padding:2px 7px;border-radius:18px;font-size:9.5px;font-weight:600;}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:6px;font-size:11.5px;font-weight:500;border:none;cursor:pointer;transition:opacity .15s;}
+.btn:hover{opacity:.83;}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+.bt{background:var(--teal);color:#fff;}
+.ba{background:var(--amber);color:#fff;}
+.br{background:var(--red);color:#fff;}
+.bp{background:var(--purple);color:#fff;}
+.bg{background:rgba(0,0,0,.06);color:var(--txt);}
+.bxs{padding:2px 6px;font-size:9.5px;border-radius:4px;}
+.bsm{padding:4px 9px;font-size:11px;border-radius:5px;}
+/* FORMS */
+.fl{font-size:10.5px;font-weight:600;color:var(--txt2);margin-bottom:3px;display:block;}
+.fi{width:100%;padding:7px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:11.5px;background:#fff;transition:border .15s;}
+.fi:focus{border-color:var(--teal);}
+.fs{width:100%;padding:7px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:11.5px;background:#fff;}
+.fs:focus{border-color:var(--teal);}
+.fta{width:100%;padding:7px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:11.5px;background:#fff;font-family:inherit;resize:vertical;}
+.fta:focus{border-color:var(--teal);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;}
+.sh{background:var(--teal);color:#fff;padding:5px 10px;border-radius:6px;font-size:10.5px;font-weight:600;letter-spacing:.3px;margin:12px 0 8px;display:flex;align-items:center;gap:5px;}
+/* ALERTS */
+.ab{display:flex;align-items:center;gap:8px;padding:8px 11px;border-radius:7px;font-size:11px;font-weight:500;margin-bottom:5px;}
+.ar{background:#fef2f2;border:1px solid #fca5a5;color:#991b1b;}
+.ag{background:#f0fdf4;border:1px solid #86efac;color:#166534;}
+.abl{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;}
+/* MODAL */
+.mbg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;display:flex;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;}
+.mbox{background:#fff;border-radius:13px;width:100%;box-shadow:0 18px 55px rgba(0,0,0,.25);margin:auto;animation:popin .18s ease;}
+.mh{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;border-radius:13px 13px 0 0;}
+.mt{font-family:'Syne',sans-serif;font-size:13.5px;font-weight:700;color:#fff;}
+.mx{background:none;border:none;color:rgba(255,255,255,.75);font-size:21px;cursor:pointer;line-height:1;}
+.mb{padding:18px;}
+.mf{padding:11px 18px;background:#f8fafc;border-top:.5px solid var(--border);display:flex;justify-content:flex-end;gap:7px;border-radius:0 0 13px 13px;}
+/* PRESCRIPTION TABLE */
+.pt{width:100%;border-collapse:collapse;font-size:10px;margin-bottom:8px;}
+.pt th{background:#f0f9f9;color:var(--teal);font-weight:700;padding:5px;border:1px solid var(--border);text-align:center;}
+.pt td{padding:5px;border:1px solid var(--border);text-align:center;}
+.oeil{background:#f0f9f9;color:var(--teal);font-weight:700;}
+.ptw{text-align:left;font-size:9px;}
+/* LOGIN */
+#ls{position:fixed;inset:0;background:linear-gradient(135deg,#1a2830,#04747c);display:flex;align-items:center;justify-content:center;z-index:9000;}
+.lbox{background:#fff;border-radius:16px;padding:34px;width:100%;max-width:370px;box-shadow:0 18px 55px rgba(0,0,0,.3);}
+/* TOAST */
+#toast{position:fixed;top:12px;right:12px;z-index:9999;padding:9px 14px;border-radius:7px;font-size:11.5px;font-weight:500;box-shadow:0 5px 18px rgba(0,0,0,.15);display:flex;align-items:center;gap:6px;animation:slidein .22s ease;color:#fff;}
+/* KPI */
+.kbox{background:#f8fafc;border-radius:7px;padding:11px;text-align:center;}
+.kv{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;}
+.kl{font-size:9.5px;color:var(--txt3);margin-top:2px;}
+/* ROLES */
+.rsa{background:#ede9fe;color:#6d28d9;border-radius:9px;padding:2px 7px;font-size:9.5px;font-weight:600;}
+.rad{background:#dbeafe;color:#1e40af;border-radius:9px;padding:2px 7px;font-size:9.5px;font-weight:600;}
+.rus{background:#d1fae5;color:#065f46;border-radius:9px;padding:2px 7px;font-size:9.5px;font-weight:600;}
+@keyframes popin{from{opacity:0;transform:scale(.96);}to{opacity:1;transform:scale(1);}}
+@keyframes slidein{from{transform:translateX(110%);}to{transform:translateX(0);}}
+@media print{#ls,#sb,.tb,.no-print{display:none!important;}html,body{overflow:visible!important;height:auto!important;}#app,#main{display:block;height:auto;overflow:visible;}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="ls">
+  <div class="lbox">
+    <div style="text-align:center;margin-bottom:22px;">
+      <div style="width:50px;height:50px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 10px;">👁</div>
+      <div id="login-brand" style="font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:var(--txt);">ELLE &amp; LUI OPTIK</div>
+      <div id="login-sub" style="font-size:10.5px;color:var(--txt2);margin-top:2px;">Cocody Riviera Palmeraie · Abidjan</div>
+    </div>
+    <div id="lerr" style="display:none;" class="ab ar" style="margin-bottom:10px;"></div>
+    <div style="margin-bottom:10px;"><label class="fl">Identifiant</label><input class="fi" id="luser" onkeydown="if(event.key==='Enter')login()"></div>
+    <div style="margin-bottom:18px;"><label class="fl">Mot de passe</label><input class="fi" type="password" id="lpass" onkeydown="if(event.key==='Enter')login()"></div>
+    <button onclick="login()" style="width:100%;padding:11px;background:var(--teal);color:#fff;border:none;border-radius:7px;font-size:13.5px;font-weight:600;cursor:pointer;">Connexion</button>
+    <div style="margin-top:10px;font-size:9.5px;color:var(--txt3);text-align:center;">super.admin/admin123 · admin/admin456 · user/user789</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" style="display:none;">
+
+<!-- SIDEBAR -->
+<div id="sb">
+  <div class="brand">
+    <div class="brand-icon">👁</div>
+    <div id="brand-name">ELLE &amp; LUI OPTIK</div>
+    <div id="brand-sub">Cocody Riviera Palmeraie</div>
+  </div>
+  <button class="nb active" onclick="nav('dashboard',this)"><span class="ni">◉</span>Dashboard</button>
+  <button class="nb" onclick="nav('commandes',this)"><span class="ni">📦</span>Commandes</button>
+  <button class="nb" onclick="nav('clients',this)"><span class="ni">👤</span>Clients</button>
+  <div class="nav-sec">Catalogue</div>
+  <button class="nb" onclick="nav('verres',this)"><span class="ni">🔬</span>Catalogue verres</button>
+  <button class="nb" onclick="nav('fournisseurs',this)"><span class="ni">🚚</span>Fournisseurs</button>
+  <div class="nav-sec">Analyse</div>
+  <button class="nb" onclick="nav('rapports',this)"><span class="ni">📊</span>Rapports</button>
+  <button class="nb" onclick="nav('notifs',this)"><span class="ni">🔔</span>Notifications<span class="nbadge" id="nbadge" style="display:none">0</span></button>
+  <div id="nav-admin-sec" style="display:none;" class="nav-sec">Administration</div>
+  <button id="nav-admin-btn" class="nb" onclick="nav('admin',this)" style="display:none;"><span class="ni">⚙️</span>Utilisateurs</button>
+  <div class="sb-user">
+    <div class="uchip" onclick="logout()" title="Déconnexion">
+      <div class="uav" id="uav">EL</div>
+      <div><div class="uname" id="uname">ELO P</div><div class="urole" id="urole">Super Admin</div></div>
+      <div style="margin-left:auto;font-size:9px;color:rgba(255,255,255,.3);">⏻</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+<!-- DASHBOARD -->
+<div class="view on" id="v-dashboard">
+  <div class="tb"><div class="tb-title">Tableau de bord</div><span id="dash-date" style="font-size:10.5px;color:var(--txt2);"></span></div>
+  <div class="ct">
+    <div id="dash-alerts"></div>
+    <div class="sgrid" id="dash-stats"></div>
+    <div class="g2" style="gap:11px;margin-bottom:13px;">
+      <div class="card" style="padding:13px;"><div style="font-size:11.5px;font-weight:600;margin-bottom:7px;">📈 Commandes 8 semaines</div><div style="display:flex;align-items:flex-end;gap:2px;height:60px;" id="chart-cmds"></div></div>
+      <div class="card" style="padding:13px;"><div style="font-size:11.5px;font-weight:600;margin-bottom:7px;">🏆 Top fournisseurs</div><div id="chart-four"></div></div>
+    </div>
+    <div class="card">
+      <div style="padding:10px 13px;border-bottom:.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;"><div style="font-family:'Syne',sans-serif;font-size:12.5px;font-weight:700;">Commandes récentes</div><button class="btn bg bsm" onclick="nav('commandes',document.querySelector('[onclick*=commandes]'))">Voir tout →</button></div>
+      <div class="th" style="grid-template-columns:34px 1fr 105px 80px 90px;"><div>#</div><div>CLIENT</div><div>STATUT</div><div>DATE</div><div>LIVRAISON</div></div>
+      <div id="dash-recents"></div>
+    </div>
+  </div>
+</div>
+
+<!-- COMMANDES -->
+<div class="view" id="v-commandes">
+  <div class="tb">
+    <div class="tb-title">Commandes</div>
+    <input class="fi" style="max-width:185px;" placeholder="🔍 Rechercher..." oninput="cmdSearch=this.value;renderCmds()" id="cmd-search">
+    <select class="fs" style="width:125px;" id="cmd-fst" onchange="renderCmds()"><option value="">Tous statuts</option><option>En attente</option><option>Commandé</option><option>Reçu</option><option>Monté</option><option>Prêt</option><option>Livré</option></select>
+    <button class="btn bt" id="btn-new-cmd" onclick="openCmd()">+ Nouvelle</button>
+  </div>
+  <div id="cmd-alerts" style="padding:0 18px;background:#fff;"></div>
+  <div class="ct" style="padding-top:8px;">
+    <div class="card">
+      <div class="th" style="grid-template-columns:32px 1fr 105px 78px 85px 1fr;"><div>#</div><div>CLIENT / ARTICLE</div><div>STATUT</div><div>DATE</div><div>LIVRAISON</div><div>ACTIONS</div></div>
+      <div id="cmd-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CLIENTS -->
+<div class="view" id="v-clients">
+  <div class="tb">
+    <div class="tb-title" id="cl-title">Clients</div>
+    <input class="fi" style="max-width:185px;" placeholder="🔍 Rechercher..." oninput="clSearch=this.value;renderClients()">
+    <button class="btn bt" onclick="openNewClient()">+ Nouveau client</button>
+  </div>
+  <div class="ct">
+    <div class="card">
+      <div class="th" style="grid-template-columns:1fr 120px 160px 45px 70px;"><div>NOM</div><div>TÉLÉPHONE</div><div>EMAIL</div><div>CMDS</div><div>ACTIONS</div></div>
+      <div id="cl-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- VERRES -->
+<div class="view" id="v-verres">
+  <div class="tb">
+    <div class="tb-title">Catalogue verres</div>
+    <input class="fi" style="max-width:165px;" placeholder="🔍 Rechercher..." oninput="vSearch=this.value;renderVerres()">
+    <select class="fs" style="width:115px;" id="v-ff" onchange="renderVerres()"><option value="">Tous fourn.</option></select>
+    <select class="fs" style="width:100px;" id="v-ft" onchange="renderVerres()"><option value="">Tous types</option><option>Unifocal</option><option>Progressif</option><option>Bifocal</option></select>
+    <button class="btn bt" onclick="openNewVerre()">+ Ajouter</button>
+  </div>
+  <div class="ct">
+    <div class="card">
+      <div class="th" style="grid-template-columns:1fr 75px 75px 160px 60px 110px 50px;"><div>DÉSIGNATION</div><div>TYPE</div><div>INDICE</div><div>TRAITEMENT</div><div>DIAM.</div><div>FOURNISSEUR</div><div></div></div>
+      <div id="v-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FOURNISSEURS -->
+<div class="view" id="v-fournisseurs">
+  <div class="tb"><div class="tb-title">Fournisseurs</div><button class="btn bt" onclick="openNewFour()">+ Nouveau</button></div>
+  <div class="ct"><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px;" id="four-grid"></div></div>
+</div>
+
+<!-- RAPPORTS -->
+<div class="view" id="v-rapports">
+  <div class="tb">
+    <div class="tb-title">Rapports</div>
+    <select class="fs" style="width:135px;" id="rp-periode" onchange="renderRapports()"><option value="today">Aujourd'hui</option><option value="week" selected>Cette semaine</option><option value="month">Ce mois</option></select>
+    <button class="btn bg bsm" onclick="exportRapportPDF()">📥 PDF</button>
+    <button class="btn bt bsm" onclick="showRapportModal()">👁 Aperçu &amp; Envoyer</button>
+  </div>
+  <div class="ct" id="rp-content"></div>
+</div>
+
+<!-- NOTIFICATIONS -->
+<div class="view" id="v-notifs">
+  <div class="tb"><div class="tb-title" id="notif-title">Notifications</div><button class="btn bg bsm" onclick="clearNotifs()">Tout effacer</button></div>
+  <div class="ct">
+    <div class="card">
+      <div class="th" style="grid-template-columns:24px 65px 55px 1fr 85px 22px;"><div></div><div>TYPE</div><div>ÉTAT</div><div>CONTENU</div><div>DATE</div><div></div></div>
+      <div id="notif-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="view" id="v-admin">
+  <div class="tb">
+    <div class="tb-title">Administration</div>
+    <button class="btn bg bsm" onclick="openSettings()">⚙️ Paramètres cabinet</button>
+    <button class="btn bt" onclick="openNewUser()">+ Utilisateur</button>
+  </div>
+  <div class="ct">
+    <div class="card">
+      <div class="th" style="grid-template-columns:1fr 90px 100px 100px 65px 90px;"><div>NOM</div><div>IDENTIFIANT</div><div>RÔLE</div><div>DERNIÈRE CO.</div><div>STATUT</div><div></div></div>
+      <div id="admin-list"></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+</div><!-- /app -->
+
+<!-- MODALES -->
+<!-- Commande -->
+<div class="mbg" id="m-cmd" style="display:none;" onclick="if(event.target===this)closeM('cmd')">
+  <div class="mbox" style="max-width:800px;">
+    <div class="mh" id="cmd-mh" style="background:linear-gradient(135deg,var(--teal),#059669);">
+      <div class="mt" id="cmd-mt">Nouvelle commande</div><button class="mx" onclick="closeM('cmd')">×</button>
+    </div>
+    <div class="mb" id="cmd-body" style="max-height:70vh;overflow-y:auto;"></div>
+    <div class="mf"><button class="btn bg" onclick="closeM('cmd')">Annuler</button><button class="btn bt" id="cmd-save" onclick="saveCmd()">✓ Enregistrer</button></div>
+  </div>
+</div>
+
+<!-- Bon de commande -->
+<div class="mbg" id="m-bon" style="display:none;" onclick="if(event.target===this)closeM('bon')">
+  <div class="mbox" style="max-width:800px;">
+    <div class="mh" style="background:linear-gradient(135deg,var(--teal),#059669);">
+      <div class="mt" id="bon-title">Bon de commande</div><button class="mx" onclick="closeM('bon')">×</button>
+    </div>
+    <div class="mb" id="bon-body"></div>
+    <div class="mf no-print">
+      <button class="btn bg" onclick="closeM('bon')">Fermer</button>
+      <button class="btn bg" onclick="printBon()">🖨️ Imprimer</button>
+      <button class="btn bg" id="btn-pdf" onclick="dlPDF()">📥 PDF</button>
+      <button class="btn bsm" style="background:#25D366;color:#fff;" onclick="waBon()">💬 WhatsApp</button>
+      <button class="btn bt" id="btn-email-bon" onclick="emailBon()">✉ Email+PDF</button>
+    </div>
+    <div id="bon-res" style="display:none;padding:0 18px 12px;"></div>
+  </div>
+</div>
+
+<!-- Réception -->
+<div class="mbg" id="m-recu" style="display:none;" onclick="if(event.target===this)closeM('recu')">
+  <div class="mbox" style="max-width:420px;">
+    <div class="mh" style="background:linear-gradient(135deg,#06b6d4,#0284c7);">
+      <div class="mt">📦 Réception commande</div><button class="mx" onclick="closeM('recu')">×</button>
+    </div>
+    <div class="mb">
+      <div class="ab abl" id="recu-info" style="margin-bottom:12px;"></div>
+      <div style="margin-bottom:10px;"><label class="fl">N° Bon de livraison</label><input class="fi" id="recu-bl" placeholder="Ex: BL-0035100146"></div>
+      <div><label class="fl">Date de réception</label><input class="fi" type="date" id="recu-date"></div>
+    </div>
+    <div class="mf"><button class="btn bg" onclick="closeM('recu')">Annuler</button><button class="btn bt" onclick="confirmRecu()">✓ Confirmer</button></div>
+  </div>
+</div>
+
+<!-- Alerte fournisseur -->
+<div class="mbg" id="m-alerte" style="display:none;" onclick="if(event.target===this)closeM('alerte')">
+  <div class="mbox" style="max-width:460px;">
+    <div class="mh" style="background:linear-gradient(135deg,var(--purple),#4f46e5);">
+      <div class="mt">🔔 Alerte fournisseur</div><button class="mx" onclick="closeM('alerte')">×</button>
+    </div>
+    <div class="mb">
+      <div class="ab abl" id="al-info" style="margin-bottom:11px;font-size:11px;"></div>
+      <div style="margin-bottom:9px;"><label class="fl">Type d'alerte</label>
+        <select class="fs" id="al-type"><option value="relance">📦 Relance fournisseur</option><option value="retard">⚠️ Information retard</option><option value="urgence">🔴 Urgence</option></select>
+      </div>
+      <div style="margin-bottom:9px;"><label class="fl">Email fournisseur</label><input class="fi" type="email" id="al-email"></div>
+      <div style="margin-bottom:9px;"><label class="fl">Message complémentaire</label><textarea class="fta" id="al-msg" rows="7" style="font-size:11px;line-height:1.65;"></textarea></div>
+      <div id="al-ok" style="display:none;" class="ab ag">✓ Envoyée !</div>
+    </div>
+    <div class="mf"><button class="btn bg" onclick="closeM('alerte')">Annuler</button><button class="btn bp" onclick="sendAlerte()">🔔 Envoyer</button></div>
+  </div>
+</div>
+
+<!-- Notification client (statut) -->
+<div class="mbg" id="m-notif" style="display:none;" onclick="if(event.target===this)closeM('notif')">
+  <div class="mbox" style="max-width:480px;">
+    <div class="mh" style="background:linear-gradient(135deg,#16a34a,#059669);">
+      <div class="mt" id="notif-m-title">📨 Notification client</div><button class="mx" onclick="closeM('notif')">×</button>
+    </div>
+    <div class="mb">
+      <div style="background:#f0f9f9;border-radius:7px;padding:9px 12px;margin-bottom:11px;">
+        <div style="font-weight:600;font-size:12.5px;" id="nm-nom"></div>
+        <div style="font-size:10.5px;color:var(--txt2);margin-top:2px;">📞 <span id="nm-tel"></span> · ✉ <span id="nm-email-disp"></span></div>
+      </div>
+      <div style="margin-bottom:9px;"><label class="fl">Email</label><input class="fi" type="email" id="nm-email"></div>
+      <div style="margin-bottom:9px;"><label class="fl">WhatsApp (225XXXXXXXXXX)</label><input class="fi" id="nm-wa"></div>
+      <div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span class="fl" style="margin:0;">Message</span><button onclick="copyMsg()" style="background:none;border:none;font-size:10.5px;color:var(--teal);cursor:pointer;">📋 Copier</button></div>
+        <div id="nm-msg" style="background:#f0f9f9;border:1px solid var(--teal);border-radius:7px;padding:10px 12px;font-size:11.5px;line-height:1.7;white-space:pre-wrap;max-height:160px;overflow-y:auto;"></div>
+      </div>
+      <div id="nm-res" style="display:none;margin-top:9px;"></div>
+    </div>
+    <div class="mf">
+      <button class="btn bg" onclick="closeM('notif')">Fermer</button>
+      <button class="btn bsm" style="background:#25D366;color:#fff;" onclick="sendWaNotif()">💬 WhatsApp</button>
+      <button class="btn bt" id="btn-send-email" onclick="sendEmailNotif()">✉ Email</button>
+    </div>
+  </div>
+</div>
+
+<!-- Client -->
+<div class="mbg" id="m-client" style="display:none;" onclick="if(event.target===this)closeM('client')">
+  <div class="mbox" style="max-width:420px;">
+    <div class="mh" id="cl-mh" style="background:linear-gradient(135deg,var(--teal),#059669);">
+      <div class="mt" id="cl-mt">👤 Nouveau client</div><button class="mx" onclick="closeM('client')">×</button>
+    </div>
+    <div class="mb">
+      <div class="g2">
+        <div><label class="fl">Nom *</label><input class="fi" id="cl-nom" oninput="this.value=this.value.toUpperCase()"></div>
+        <div><label class="fl">Prénom *</label><input class="fi" id="cl-prenom"></div>
+        <div><label class="fl">Téléphone</label><input class="fi" id="cl-tel" type="tel"></div>
+        <div><label class="fl">Email</label><input class="fi" id="cl-email" type="email"></div>
+      </div>
+      <div style="margin-top:8px;"><label class="fl">Adresse</label><input class="fi" id="cl-adr"></div>
+    </div>
+    <div class="mf"><button class="btn bg" onclick="closeM('client')">Annuler</button><button class="btn bt" id="cl-save" onclick="saveClient()">✓ Ajouter</button></div>
+  </div>
+</div>
+
+<!-- Fournisseur -->
+<div class="mbg" id="m-four" style="display:none;" onclick="if(event.target===this)closeM('four')">
+  <div class="mbox" style="max-width:440px;">
+    <div class="mh" id="four-mh" style="background:linear-gradient(135deg,var(--teal),#059669);">
+      <div class="mt" id="four-mt">🚚 Nouveau fournisseur</div><button class="mx" onclick="closeM('four')">×</button>
+    </div>
+    <div class="mb">
+      <div class="g2">
+        <div style="grid-column:1/-1;"><label class="fl">Nom *</label><input class="fi" id="fn" oninput="this.value=this.value.toUpperCase()"></div>
+        <div><label class="fl">Contact</label><input class="fi" id="fc"></div>
+        <div><label class="fl">Téléphone</label><input class="fi" id="ft"></div>
+        <div style="grid-column:1/-1;"><label class="fl">Email *</label><input class="fi" id="fe" type="email"></div>
+        <div><label class="fl">Délai livraison (j)</label><input class="fi" id="fd" type="number" value="7"></div>
+        <div><label class="fl">Spécialité</label><input class="fi" id="fs2"></div>
+      </div>
+    </div>
+    <div class="mf"><button class="btn bg" onclick="closeM('four')">Annuler</button><button class="btn bt" id="four-save" onclick="saveFour()">✓ Ajouter</button></div>
+  </div>
+</div>
+
+<!-- Verre -->
+<div class="mbg" id="m-verre" style="display:none;" onclick="if(event.target===this)closeM('verre')">
+  <div class="mbox" style="max-width:500px;">
+    <div class="mh" id="verre-mh" style="background:linear-gradient(135deg,var(--teal),#059669);">
+      <div class="mt" id="verre-mt">🔬 Nouveau verre</div><button class="mx" onclick="closeM('verre')">×</button>
+    </div>
+    <div class="mb">
+      <div class="g2">
+        <div style="grid-column:1/-1;"><label class="fl">Désignation *</label><input class="fi" id="vn"></div>
+        <div><label class="fl">Type *</label><select class="fs" id="vty"><option value="">--</option><option>Unifocal</option><option>Progressif</option><option>Bifocal</option></select></div>
+        <div><label class="fl">Indice</label><select class="fs" id="vi"><option value="">--</option><option>1.50</option><option>1.56</option><option>1.60</option><option>1.67</option><option>1.70</option><option>1.74</option></select></div>
+        <div style="grid-column:1/-1;"><label class="fl">Traitement</label><select class="fs" id="vtr"><option value="">--</option><option>Sans traitement</option><option>AR Standard</option><option>AR Premium</option><option>AR Blue Light</option><option>AR + UV + Durcissant</option><option>AR Premium + UV + Durcissant</option><option>AR + Transitions</option><option>AR Premium + Transitions</option><option>Photochromique</option><option>Polarisé</option></select></div>
+        <div><label class="fl">Fournisseur</label><select class="fs" id="vf"></select></div>
+        <div><label class="fl">Diamètre</label><select class="fs" id="vd"><option value="">--</option><option>65 mm</option><option>70 mm</option><option>75 mm</option><option>65/60</option><option>70/65</option><option>75/70</option></select></div>
+        <div><label class="fl">Prix (FCFA)</label><input class="fi" id="vp" type="number"></div>
+        <div><label class="fl">Stock</label><input class="fi" id="vs" type="number" value="0"></div>
+        <div style="grid-column:1/-1;"><label class="fl">Notes</label><textarea class="fta" id="vno" rows="2"></textarea></div>
+      </div>
+    </div>
+    <div class="mf"><button class="btn bg" onclick="closeM('verre')">Annuler</button><button class="btn bt" id="verre-save" onclick="saveVerre()">✓ Ajouter</button></div>
+  </div>
+</div>
+
+<!-- Utilisateur -->
+<div class="mbg" id="m-user" style="display:none;" onclick="if(event.target===this)closeM('user')">
+  <div class="mbox" style="max-width:420px;">
+    <div class="mh" id="user-mh" style="background:linear-gradient(135deg,var(--purple),#4f46e5);">
+      <div class="mt" id="user-mt">⚙️ Nouvel utilisateur</div><button class="mx" onclick="closeM('user')">×</button>
+    </div>
+    <div class="mb">
+      <div class="g2">
+        <div style="grid-column:1/-1;"><label class="fl">Nom complet *</label><input class="fi" id="un"></div>
+        <div><label class="fl">Identifiant *</label><input class="fi" id="ul"></div>
+        <div><label class="fl">Mot de passe *</label><input class="fi" type="password" id="up"></div>
+        <div><label class="fl">Rôle *</label><select class="fs" id="ur"><option value="user">Utilisateur</option><option value="admin">Admin</option><option value="superadmin">Super Admin</option></select></div>
+        <div style="grid-column:1/-1;"><label class="fl">Email</label><input class="fi" id="ue" type="email"></div>
+      </div>
+    </div>
+    <div class="mf"><button class="btn bg" onclick="closeM('user')">Annuler</button><button class="btn bp" id="user-save" onclick="saveUser()">✓ Créer</button></div>
+  </div>
+</div>
+
+<!-- Paramètres cabinet -->
+<div class="mbg" id="m-settings" style="display:none;" onclick="if(event.target===this)closeM('settings')">
+  <div class="mbox" style="max-width:530px;">
+    <div class="mh" style="background:linear-gradient(135deg,var(--teal),#059669);">
+      <div class="mt">⚙️ Paramètres du cabinet</div><button class="mx" onclick="closeM('settings')">×</button>
+    </div>
+    <div class="mb">
+      <div class="sh">🏥 Identité</div>
+      <div class="g2">
+        <div style="grid-column:1/-1;"><label class="fl">Nom du cabinet *</label><input class="fi" id="set-nom"></div>
+        <div style="grid-column:1/-1;"><label class="fl">Adresse</label><input class="fi" id="set-adr"></div>
+        <div><label class="fl">Téléphone</label><input class="fi" id="set-tel"></div>
+        <div><label class="fl">Email cabinet</label><input class="fi" id="set-email" type="email"></div>
+        <div style="grid-column:1/-1;"><label class="fl">Lien Google Avis</label><input class="fi" id="set-avis"></div>
+      </div>
+      <div class="sh">📧 EmailJS</div>
+      <div class="g2">
+        <div><label class="fl">Public Key</label><input class="fi" id="set-ek"></div>
+        <div><label class="fl">Service ID</label><input class="fi" id="set-es"></div>
+        <div style="grid-column:1/-1;"><label class="fl">Template ID</label><input class="fi" id="set-et"></div>
+      </div>
+      <div class="sh">📧 Gmail API — Envoi PDF automatique</div>
+      <div style="background:#fef3c7;border:.5px solid #fcd34d;border-radius:7px;padding:8px 11px;margin-bottom:9px;font-size:10.5px;color:#92400e;line-height:1.7;">
+        💡 <strong>console.cloud.google.com</strong> → APIs & Services → Identifiants → Créer ID client OAuth 2.0 (App Web) → Copier le Client ID
+      </div>
+      <div><label class="fl">Gmail Client ID</label><input class="fi" id="set-gmail-cid" placeholder="XXXXXXXXXX-xxxxx.apps.googleusercontent.com"></div>
+      <div style="background:#f0fdf4;border:.5px solid #86efac;border-radius:7px;padding:7px 11px;margin-top:6px;font-size:10px;color:#166534;">
+        ✅ Gratuit · Illimité · PDF en vraie pièce jointe · Envoie depuis votre Gmail
+      </div>
+      <div class="sh">🔥 Firebase — Synchronisation multi-postes</div>
+      <div style="background:#fff7ed;border:.5px solid #fed7aa;border-radius:7px;padding:8px 11px;margin-bottom:9px;font-size:10.5px;color:#9a3412;line-height:1.7;">
+        💡 <strong>console.firebase.google.com</strong> → Créez un projet → Realtime Database → Ajoutez une app Web → Copiez la config
+      </div>
+      <div class="g2">
+        <div style="grid-column:1/-1;"><label class="fl">API Key</label><input class="fi" id="set-fb-apikey" placeholder="AIzaSyXXXXXXXXXX"></div>
+        <div><label class="fl">Project ID</label><input class="fi" id="set-fb-projectid" placeholder="elleluioptik-xxxxx"></div>
+        <div><label class="fl">Database URL</label><input class="fi" id="set-fb-dburl" placeholder="https://elleluioptik-xxxxx-default-rtdb.firebaseio.com"></div>
+      </div>
+      <div id="fb-status" style="display:none;margin-top:6px;" class="ab ag">✓ Firebase connecté !</div>
+      <div class="sh">💬 WhatsApp &amp; Notifications</div>
+      <div style="background:#f0fdf4;border:.5px solid #86efac;border-radius:7px;padding:8px 11px;margin-bottom:9px;font-size:10.5px;color:#166534;line-height:1.7;">
+        ✅ <strong>WhatsApp Web activé</strong> — À chaque changement de statut, WhatsApp s'ouvre automatiquement avec le message pré-rempli. Vous n'avez qu'à cliquer <strong>Envoyer</strong>.
+      </div>
+      <input type="hidden" id="set-cmb-key" value="">
+      <input type="hidden" id="set-cmb-num" value="">
+      <input type="hidden" id="set-meta-token" value="">
+      <input type="hidden" id="set-meta-phoneid" value="">
+      <div class="sh">🎨 Personnalisation</div>
+      <div class="g2">
+        <div><label class="fl">Couleur principale</label>
+          <div style="display:flex;gap:7px;align-items:center;">
+            <input type="color" id="set-col" value="#04747c" style="width:40px;height:32px;border:none;border-radius:5px;cursor:pointer;" oninput="document.getElementById('set-col-hex').value=this.value">
+            <input class="fi" id="set-col-hex" value="#04747c" style="flex:1;" oninput="document.getElementById('set-col').value=this.value">
+          </div>
+        </div>
+        <div><label class="fl">N° de départ bons</label><input class="fi" id="set-num" type="number" placeholder="1"></div>
+      </div>
+      <div id="set-ok" style="display:none;margin-top:10px;" class="ab ag">✓ Paramètres sauvegardés !</div>
+    </div>
+    <div class="mf"><button class="btn bg" onclick="closeM('settings')">Annuler</button><button class="btn bt" onclick="saveSettings()">✓ Sauvegarder</button></div>
+  </div>
+</div>
+
+<!-- Rapport aperçu -->
+<div class="mbg" id="m-rapport" style="display:none;" onclick="if(event.target===this)closeM('rapport')">
+  <div class="mbox" style="max-width:800px;">
+    <div class="mh" style="background:linear-gradient(135deg,var(--teal),#059669);">
+      <div class="mt">📊 Rapport — Aperçu</div><button class="mx" onclick="closeM('rapport')">×</button>
+    </div>
+    <div class="mb" id="rapport-body" style="max-height:68vh;overflow-y:auto;"></div>
+    <div class="mf"><button class="btn bg" onclick="closeM('rapport')">Fermer</button><button class="btn bg bsm" onclick="exportRapportPDF()">📥 PDF</button><button class="btn bt" onclick="sendRapport()">✉ Envoyer</button></div>
+  </div>
+</div>
+
+<div id="toast" style="display:none;"></div>
+
+<script>
+// ════════════════════════════════════════════════════
+// CONFIG & STATE
+// ════════════════════════════════════════════════════
+const CFG_KEY='elo_cfg',USR_KEY='elo_usr',ST_KEY='elo_st';
+
+function defCfg(){return{nom:'ELLE & LUI OPTIK',adr:'Abidjan, Cocody Riviera Palmeraie, Rue I-123 N\u00b0PADA 507',tel:'+2250749633030',email:'elleluioptik@gmail.com',avis:'https://g.page/r/Ccmgdp3zEzK7EAE/review',ek:'STxD60mD5cBu3JWxp',es:'service_fwcrkcg',et:'template_j8rpfh1',col:'#04747c',num:1,metaToken:'',metaPhoneId:'',cmbKey:'',cmbNum:'',gmailClientId:'310693495993-1u1eaq1uqc817905t28tcussruu16bqc.apps.googleusercontent.com',fbApiKey:'AIzaSyDPUbl0YD2C0bbHlPZw9UjccN8bq6o0sQM',fbProjectId:'elle-et-lui-optik',fbDbUrl:'https://elle-et-lui-optik-default-rtdb.firebaseio.com'};}
+function getCfg(){try{const s=localStorage.getItem(CFG_KEY);return s?JSON.parse(s):defCfg();}catch(e){return defCfg();}}
+function setCfg(c){localStorage.setItem(CFG_KEY,JSON.stringify(c));}
+
+const DEF_USR=[
+  {id:1,nom:'ELO P',login:'super.admin',pass:'admin123',role:'superadmin',email:'elop@elleluioptik.ci',last:'',on:true},
+  {id:2,nom:'Manager',login:'admin',pass:'admin456',role:'admin',email:'admin@elleluioptik.ci',last:'',on:true},
+  {id:3,nom:'Employe',login:'user',pass:'user789',role:'user',email:'user@elleluioptik.ci',last:'',on:true}
+];
+let USRS=(()=>{try{const s=localStorage.getItem(USR_KEY);return s?JSON.parse(s):null;}catch(e){return null;}})();
+if(!USRS)USRS=JSON.parse(JSON.stringify(DEF_USR));
+const saveU=()=>fbSaveU();
+
+function defState(){
+  return{
+    nid:20,
+    relances:{},
+    notifs:[],
+    clients:[
+      {id:1,nom:'KOUASSI',prenom:'Ama Adjoua',tel:'0709123456',email:'ama@gmail.com',adr:'Cocody'},
+      {id:2,nom:'KONAN',prenom:'Bi Emmanuel',tel:'0102345678',email:'bikonan@yahoo.fr',adr:'Cocody'},
+      {id:3,nom:'DIALLO',prenom:'Fatou',tel:'0507891234',email:'fatou@gmail.com',adr:'Adjame'},
+      {id:4,nom:'BAMBA',prenom:'Seydou',tel:'0778456123',email:'sbamba@orange.ci',adr:'Marcory'},
+      {id:5,nom:'KOFFI',prenom:'Adjoua Marie',tel:'0143217890',email:'',adr:'Treichville'}
+    ],
+    fournisseurs:[
+      {id:1,nom:'PALM OPTIQUE',contact:'Commercial',tel:'0700112233',email:'commandes@palmoptique.ci',delai:5,spec:'Unifocaux'},
+      {id:2,nom:'INDIVISION',contact:'Optique',tel:'0700223344',email:'orders@indivision.ci',delai:7,spec:'Toutes gammes'},
+      {id:3,nom:'ESSILOR CI',contact:'Rep CI',tel:'0700334455',email:'ci@essilor.com',delai:10,spec:'Varilux Crizal'},
+      {id:4,nom:'NIKON OPTICAL',contact:'Dist CI',tel:'0700445566',email:'nikon@optique.ci',delai:8,spec:'Progressifs premium'},
+      {id:5,nom:'HOYA CI',contact:'Agence CI',tel:'0700556677',email:'hoya@optique.ci',delai:7,spec:'Haute index'},
+      {id:6,nom:'ZEISS CI',contact:'Bureau CI',tel:'0700667788',email:'zeiss@optique.ci',delai:12,spec:'Premium sport'}
+    ],
+    commandes:[
+      {id:1,cid:4,fid:'PALM OPTIQUE',statut:'Commandé',dc:doff(-8),dlp:doff(-1),bl:'',dll:'',fac:'FAC-2026-041',opi:'ELO P',sd:'-2.50',cd:'-0.75',ad:'180',xd:'',sg:'-3.00',cg:'-0.50',ag:'175',xg:'',vd:'Unifocal Organique 1.60',trd:'AR Premium + UV + Durcissant',dd:'70 mm',fvd:'PALM OPTIQUE',vg:'Unifocal Organique 1.60',trg:'AR Premium + UV + Durcissant',dg:'70 mm',fvg:'PALM OPTIQUE',mm:'SILHOUETTE A3',tm:'METALIQUE',lm:'52',hm:'38',nm:'16',sz:'52.16.140',epd:'32',epg:'31',hmd:'22',hmg:'22',cs:'Verifier qualite AR'},
+      {id:2,cid:2,fid:'ESSILOR CI',statut:'Monté',dc:doff(-12),dlp:doff(2),bl:'BL-0234',dll:doff(-3),fac:'FAC-2026-038',opi:'ELO P',sd:'+1.75',cd:'',ad:'',xd:'+2.00',sg:'+2.00',cg:'-0.25',ag:'90',xg:'+2.00',vd:'Essilor Varilux Comfort Max 1.60',trd:'AR + UV + Durcissant',dd:'65/60',fvd:'ESSILOR CI',vg:'Essilor Varilux Comfort Max 1.60',trg:'AR + UV + Durcissant',dg:'65/60',fvg:'ESSILOR CI',mm:'LINDBERG SPIRIT',tm:'METALIQUE',lm:'54',hm:'40',nm:'17',sz:'54.17.145',epd:'33',epg:'32',hmd:'20',hmg:'20',cs:''},
+      {id:3,cid:3,fid:'INDIVISION',statut:'Prêt',dc:doff(-15),dlp:doff(0),bl:'BL-0198',dll:doff(-5),fac:'FAC-2026-031',opi:'ELO P',sd:'-1.25',cd:'',ad:'',xd:'',sg:'-1.50',cg:'-0.25',ag:'165',xg:'',vd:'Unifocal CR39 1.50',trd:'AR Standard',dd:'65 mm',fvd:'INDIVISION',vg:'Unifocal CR39 1.50',trg:'AR Standard',dg:'65 mm',fvg:'INDIVISION',mm:'RAY-BAN 5154',tm:'ACETATE',lm:'49',hm:'44',nm:'21',sz:'49.21.150',epd:'31',epg:'30',hmd:'21',hmg:'21',cs:''},
+      {id:4,cid:1,fid:'NIKON OPTICAL',statut:'En attente',dc:doff(-1),dlp:doff(7),bl:'',dll:'',fac:'FAC-2026-044',opi:'ELO P',sd:'+0.50',cd:'-1.00',ad:'15',xd:'+2.25',sg:'+0.75',cg:'',ag:'',xg:'+2.25',vd:'Nikon Presio Power 1.60',trd:'AR SeeCoat Plus',dd:'65/60',fvd:'NIKON OPTICAL',vg:'Nikon Presio Power 1.60',trg:'AR SeeCoat Plus',dg:'65/60',fvg:'NIKON OPTICAL',mm:'FERRARI F998',tm:'METALIQUE',lm:'56',hm:'42',nm:'18',sz:'56.18.145',epd:'34',epg:'33',hmd:'23',hmg:'23',cs:'Client VIP'},
+      {id:5,cid:5,fid:'PALM OPTIQUE',statut:'Livré',dc:doff(-20),dlp:doff(-8),bl:'BL-0156',dll:doff(-9),fac:'FAC-2026-025',opi:'ELO P',sd:'-4.00',cd:'-1.25',ad:'80',xd:'',sg:'-3.75',cg:'-1.00',ag:'100',xg:'',vd:'Unifocal Organique 1.67',trd:'AR Blue Light',dd:'70 mm',fvd:'PALM OPTIQUE',vg:'Unifocal Organique 1.67',trg:'AR Blue Light',dg:'70 mm',fvg:'PALM OPTIQUE',mm:'OAKLEY OX8046',tm:'ACETATE',lm:'50',hm:'45',nm:'18',sz:'50.18.140',epd:'30',epg:'30',hmd:'20',hmg:'20',cs:''},
+      {id:6,cid:1,fid:'ZEISS CI',statut:'Commandé',dc:doff(-5),dlp:doff(5),bl:'',dll:'',fac:'FAC-2026-048',opi:'ELO P',sd:'-1.75',cd:'-0.25',ad:'90',xd:'+2.00',sg:'-2.00',cg:'',ag:'',xg:'+2.00',vd:'ZEISS Individual 2 1.74',trd:'AR DuraVision Platinum',dd:'75/70',fvd:'ZEISS CI',vg:'ZEISS Individual 2 1.74',trg:'AR DuraVision Platinum',dg:'75/70',fvg:'ZEISS CI',mm:'SILHOUETTE 5515',tm:'METALIQUE',lm:'53',hm:'39',nm:'17',sz:'53.17.140',epd:'33',epg:'32',hmd:'21',hmg:'21',cs:'Anti-lumiere bleue renforcee'}
+    ],
+    verres:[
+      {id:1,nom:'Essilor Crizal Alize UV 1.50',type:'Unifocal',indice:'1.50',traitement:'AR Premium + UV + Durcissant',fournisseur:'ESSILOR CI',diam:'65 mm',prix:35000,stock:10,notes:'Crizal premium'},
+      {id:2,nom:'Essilor Crizal Forte UV 1.60',type:'Unifocal',indice:'1.60',traitement:'AR Premium + UV + Durcissant',fournisseur:'ESSILOR CI',diam:'70 mm',prix:55000,stock:8,notes:'Protection UV maximale'},
+      {id:3,nom:'Essilor Transitions Signature 1.60',type:'Unifocal',indice:'1.60',traitement:'Photochromique',fournisseur:'ESSILOR CI',diam:'70 mm',prix:75000,stock:6,notes:'Photochromique 8e gen'},
+      {id:4,nom:'Essilor Varilux Comfort Max 1.60',type:'Progressif',indice:'1.60',traitement:'AR + UV + Durcissant',fournisseur:'ESSILOR CI',diam:'65/60',prix:120000,stock:4,notes:'Vision naturelle'},
+      {id:5,nom:'Essilor Varilux Physio W3+ 1.67',type:'Progressif',indice:'1.67',traitement:'AR Premium + UV + Durcissant',fournisseur:'ESSILOR CI',diam:'70/65',prix:185000,stock:3,notes:'Progressif personnalise'},
+      {id:6,nom:'Essilor Varilux X 3D 1.74',type:'Progressif',indice:'1.74',traitement:'AR Premium + Transitions',fournisseur:'ESSILOR CI',diam:'75/70',prix:280000,stock:2,notes:'Ultra-mince X-track'},
+      {id:7,nom:'Essilor Stellest 1.60',type:'Unifocal',indice:'1.60',traitement:'AR + UV + Durcissant',fournisseur:'ESSILOR CI',diam:'65/60',prix:95000,stock:5,notes:'Controle myopie enfants'},
+      {id:8,nom:'ZEISS Single Vision 1.50 DuraVision',type:'Unifocal',indice:'1.50',traitement:'AR DuraVision Silver',fournisseur:'ZEISS CI',diam:'65 mm',prix:30000,stock:12,notes:'DuraVision resistant'},
+      {id:9,nom:'ZEISS Single Vision 1.60 BlueGuard',type:'Unifocal',indice:'1.60',traitement:'AR Blue Light',fournisseur:'ZEISS CI',diam:'70 mm',prix:65000,stock:7,notes:'Protection lumiere bleue'},
+      {id:10,nom:'ZEISS Single Vision 1.67 Platinum',type:'Unifocal',indice:'1.67',traitement:'AR DuraVision Platinum',fournisseur:'ZEISS CI',diam:'70 mm',prix:85000,stock:5,notes:'Protection maximale'},
+      {id:11,nom:'ZEISS Single Vision 1.74',type:'Unifocal',indice:'1.74',traitement:'AR DuraVision Platinum',fournisseur:'ZEISS CI',diam:'70 mm',prix:110000,stock:3,notes:'Indice maximum'},
+      {id:12,nom:'ZEISS Progressive Classic 1.60',type:'Progressif',indice:'1.60',traitement:'AR DuraVision Silver',fournisseur:'ZEISS CI',diam:'65/60',prix:130000,stock:4,notes:'Corridor large'},
+      {id:13,nom:'ZEISS Progressive EnergizeMe 1.67',type:'Progressif',indice:'1.67',traitement:'AR Blue Light',fournisseur:'ZEISS CI',diam:'70/65',prix:210000,stock:2,notes:'Anti-fatigue ecrans'},
+      {id:14,nom:'ZEISS Individual 2 1.74',type:'Progressif',indice:'1.74',traitement:'AR DuraVision Platinum',fournisseur:'ZEISS CI',diam:'75/70',prix:320000,stock:2,notes:'Vision 3D ZEISS'},
+      {id:15,nom:'ZEISS PhotoFusion X 1.60',type:'Unifocal',indice:'1.60',traitement:'Photochromique',fournisseur:'ZEISS CI',diam:'70 mm',prix:90000,stock:4,notes:'Photochromique rapide'},
+      {id:16,nom:'Nikon Lite AS 1.50',type:'Unifocal',indice:'1.50',traitement:'AR SeeCoat Plus',fournisseur:'NIKON OPTICAL',diam:'65 mm',prix:28000,stock:10,notes:'SeeCoat anti-pluie'},
+      {id:17,nom:'Nikon Lite AS 1.60',type:'Unifocal',indice:'1.60',traitement:'AR SeeCoat Plus',fournisseur:'NIKON OPTICAL',diam:'70 mm',prix:45000,stock:8,notes:'SeeCoat premium'},
+      {id:18,nom:'Nikon Lite AS 1.67 SeeCoat Blue',type:'Unifocal',indice:'1.67',traitement:'AR Blue Light',fournisseur:'NIKON OPTICAL',diam:'70 mm',prix:70000,stock:5,notes:'Protection lumiere bleue'},
+      {id:19,nom:'Nikon Presio Power 1.60',type:'Progressif',indice:'1.60',traitement:'AR SeeCoat Plus',fournisseur:'NIKON OPTICAL',diam:'65/60',prix:110000,stock:4,notes:'Digital corridor souple'},
+      {id:20,nom:'Nikon Presio W 1.67',type:'Progressif',indice:'1.67',traitement:'AR SeeCoat Plus',fournisseur:'NIKON OPTICAL',diam:'70/65',prix:175000,stock:3,notes:'Grande zone lecture'},
+      {id:21,nom:'Hoya Hilux 1.50',type:'Unifocal',indice:'1.50',traitement:'AR Super HiVision',fournisseur:'HOYA CI',diam:'65 mm',prix:25000,stock:14,notes:'Resistance chocs'},
+      {id:22,nom:'Hoya Hilux 1.60',type:'Unifocal',indice:'1.60',traitement:'AR Super HiVision',fournisseur:'HOYA CI',diam:'70 mm',prix:40000,stock:10,notes:'Legerete et resistance'},
+      {id:23,nom:'Hoya Hilux 1.67',type:'Unifocal',indice:'1.67',traitement:'AR Super HiVision',fournisseur:'HOYA CI',diam:'70 mm',prix:60000,stock:7,notes:'Ultra mince'},
+      {id:24,nom:'Hoya Hilux 1.74',type:'Unifocal',indice:'1.74',traitement:'AR Super HiVision',fournisseur:'HOYA CI',diam:'70 mm',prix:95000,stock:3,notes:'Indice maximum Hoya'},
+      {id:25,nom:'Hoya Summit Pro 1.60',type:'Progressif',indice:'1.60',traitement:'AR Super HiVision',fournisseur:'HOYA CI',diam:'65/60',prix:105000,stock:5,notes:'Vision elargie'},
+      {id:26,nom:'Hoya Lifestyle 3 1.67',type:'Progressif',indice:'1.67',traitement:'AR Super HiVision',fournisseur:'HOYA CI',diam:'70/65',prix:165000,stock:3,notes:'Style de vie'},
+      {id:27,nom:'Hoya iD MyStyle V+ 1.67',type:'Progressif',indice:'1.67',traitement:'AR Super HiVision',fournisseur:'HOYA CI',diam:'70/65',prix:220000,stock:2,notes:'Top gamme Hoya'},
+      {id:28,nom:'Unifocal Organique 1.50',type:'Unifocal',indice:'1.50',traitement:'Sans traitement',fournisseur:'PALM OPTIQUE',diam:'65 mm',prix:8000,stock:20,notes:'Economique standard'},
+      {id:29,nom:'Unifocal Organique 1.50 AR',type:'Unifocal',indice:'1.50',traitement:'AR Standard',fournisseur:'PALM OPTIQUE',diam:'65 mm',prix:12000,stock:18,notes:'Antireflet standard'},
+      {id:30,nom:'Unifocal Organique 1.60',type:'Unifocal',indice:'1.60',traitement:'AR Standard',fournisseur:'PALM OPTIQUE',diam:'70 mm',prix:16000,stock:15,notes:'Qualite-prix excellent'},
+      {id:31,nom:'Unifocal Organique 1.60 AR Premium',type:'Unifocal',indice:'1.60',traitement:'AR Premium + UV + Durcissant',fournisseur:'PALM OPTIQUE',diam:'70 mm',prix:22000,stock:10,notes:'AR premium'},
+      {id:32,nom:'Unifocal Organique 1.67',type:'Unifocal',indice:'1.67',traitement:'AR Blue Light',fournisseur:'PALM OPTIQUE',diam:'70 mm',prix:30000,stock:8,notes:'Protection bleue'},
+      {id:33,nom:'Progressif Standard 1.60',type:'Progressif',indice:'1.60',traitement:'AR + UV + Durcissant',fournisseur:'PALM OPTIQUE',diam:'65/60',prix:65000,stock:5,notes:'Entree de gamme'},
+      {id:34,nom:'Unifocal Mineral 1.50',type:'Unifocal',indice:'1.50',traitement:'Sans traitement',fournisseur:'PALM OPTIQUE',diam:'65 mm',prix:6000,stock:12,notes:'Mineral classique'},
+      {id:35,nom:'Unifocal CR39 1.50',type:'Unifocal',indice:'1.50',traitement:'AR Standard',fournisseur:'INDIVISION',diam:'65 mm',prix:10000,stock:20,notes:'CR39 standard'},
+      {id:36,nom:'Unifocal Polycarbonate 1.59',type:'Unifocal',indice:'1.59',traitement:'AR + Durcissant',fournisseur:'INDIVISION',diam:'70 mm',prix:18000,stock:10,notes:'Incassable enfants sport'},
+      {id:37,nom:'Unifocal Organique 1.67 AR',type:'Unifocal',indice:'1.67',traitement:'AR + UV + Durcissant',fournisseur:'INDIVISION',diam:'70 mm',prix:35000,stock:7,notes:'Mince et leger'},
+      {id:38,nom:'Progressif Entree 1.50',type:'Progressif',indice:'1.50',traitement:'AR Standard',fournisseur:'INDIVISION',diam:'65/60',prix:55000,stock:6,notes:'Progressif economique'},
+      {id:39,nom:'Bifocal Separateur 1.50',type:'Bifocal',indice:'1.50',traitement:'Sans traitement',fournisseur:'INDIVISION',diam:'65 mm',prix:18000,stock:8,notes:'Segment 28mm'}
+    ]
+  };
+}
+let S=(()=>{try{const s=localStorage.getItem(ST_KEY);return s?JSON.parse(s):null;}catch(e){return null;}})();
+if(!S)S=defState();
+const save=()=>fbSave();
+
+// ════════════════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════════════════
+function doff(n){const d=new Date();d.setDate(d.getDate()+n);return d.toISOString().split('T')[0];}
+function fmt(s){if(!s)return '—';return new Date(s+'T00:00:00').toLocaleDateString('fr-CI',{day:'2-digit',month:'2-digit',year:'numeric'});}
+function jrs(s){if(!s)return null;return Math.floor((new Date(s+'T00:00:00')-new Date(new Date().toDateString()))/86400000);}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function g(id){return document.getElementById(id);}
+function gv(id){const el=g(id);return el?el.value.trim():'';}
+function gc(id){return S.clients.find(c=>c.id===id)||null;}
+function gf(nom){return S.fournisseurs.find(f=>f.nom===nom)||null;}
+function numBon(id){const cfg=getCfg();const p=cfg.nom.split(' ').map(w=>w[0]).join('').slice(0,5).toUpperCase();return p+' '+new Date().getFullYear()+'/'+(String(id)).padStart(3,'0');}
+function badge(s){const c={'En attente':'#f59e0b','Commandé':'#3b82f6','Reçu':'#06b6d4','Monté':'#8b5cf6','Prêt':'#10b981','Livré':'#059669'}[s]||'#9ca3af';return '<span class="badge" style="background:'+c+'22;color:'+c+';border:1px solid '+c+'44;">'+esc(s)+'</span>';}
+const STATUTS=['En attente','Commandé','Reçu','Monté','Prêt','Livré'];
+const STCOL={'En attente':'#f59e0b','Commandé':'#3b82f6','Reçu':'#06b6d4','Monté':'#8b5cf6','Prêt':'#10b981','Livré':'#059669'};
+function nextSt(s){const i=STATUTS.indexOf(s);return i>=0&&i<STATUTS.length-1?STATUTS[i+1]:null;}
+function retards(){return S.commandes.filter(c=>{const j=jrs(c.dlp);return j!==null&&j<=-1&&c.statut!=='Livré';});}
+function showToast(msg,type='ok'){const t=g('toast');t.style.background=type==='ok'?'var(--teal)':type==='err'?'var(--red)':'var(--amber)';t.innerHTML=msg;t.style.display='flex';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',3200);}
+function addNotif(type,ev,etat,dest,txt){S.notifs.unshift({id:Date.now(),type,ev,etat,dest,txt,date:doff(0)});save();updateBadge();}
+function updateBadge(){const n=S.notifs.length;const b=g('nbadge');b.textContent=n;b.style.display=n>0?'flex':'none';}
+function closeM(id){const m=g('m-'+id);if(m)m.style.display='none';}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')['cmd','bon','recu','alerte','notif','client','four','verre','user','settings','rapport'].forEach(closeM);});
+function canEdit(){return CU!=null;}
+function canAdmin(){return CU&&CU.role!=='user';}
+
+// ════════════════════════════════════════════════════
+// AUTH
+// ════════════════════════════════════════════════════
+let CU=null;
+let ejsOk=false;
+
+function initEJS(){
+  // Géré par loadScript dans initApp — cette fonction reste pour compatibilité
+  if(typeof emailjs!=='undefined'){
+    try{const cfg=getCfg();emailjs.init({publicKey:cfg.ek});ejsOk=true;}catch(e){ejsOk=false;}
+  }
+}
+
+async function ejsSend(to,subj,nom,msg){
+  const cfg=getCfg();
+  return emailjs.send(cfg.es,cfg.et,{to_email:to,title:subj,name:cfg.nom,nom:nom,message:msg,email:to});
+}
+
+// Envoyer email avec PDF en pièce jointe (base64)
+async function ejsSendWithPDF(to,subj,nom,msg,pdfBase64,pdfName){
+  const cfg=getCfg();
+  return emailjs.send(cfg.es,cfg.et,{
+    to_email:to,
+    title:subj,
+    name:cfg.nom,
+    nom:nom,
+    message:msg,
+    email:to,
+    attachment:pdfBase64,
+    attachment_name:pdfName
+  });
+}
+
+// Convertir jsPDF doc en base64
+function pdfToBase64(doc){
+  return doc.output('datauristring').split(',')[1];
+}
+
+function login(){
+  const l=gv('luser'),p=g('lpass').value;
+  const err=g('lerr');
+  const u=USRS.find(x=>x.login===l&&x.pass===p&&x.on);
+  if(!u){err.textContent='Identifiant ou mot de passe incorrect.';err.style.display='flex';return;}
+  err.style.display='none';
+  CU=u;u.last=doff(0);saveU();
+  g('ls').style.display='none';
+  g('app').style.display='flex';
+  g('uav').textContent=u.nom.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();
+  g('uname').textContent=u.nom;
+  g('urole').textContent={superadmin:'Super Admin',admin:'Admin',user:'Utilisateur'}[u.role];
+  if(u.role==='superadmin'){g('nav-admin-sec').style.display='block';g('nav-admin-btn').style.display='flex';}
+  // Tous les rôles peuvent créer des commandes
+  initApp();
+}
+function logout(){if(!confirm('Se déconnecter ?'))return;location.reload();}
+
+// ════════════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════════════
+let CUR='dashboard';
+function nav(name,btn){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  const v=g('v-'+name);if(v)v.classList.add('on');
+  if(btn)btn.classList.add('active');
+  CUR=name;
+  const r={dashboard:renderDash,commandes:renderCmds,clients:renderClients,verres:renderVerres,fournisseurs:renderFours,rapports:renderRapports,notifs:renderNotifs,admin:renderAdmin};
+  if(r[name])r[name]();
+}
+
+// ════════════════════════════════════════════════════
+// DASHBOARD
+// ════════════════════════════════════════════════════
+function renderDash(){
+  const now=new Date();
+  g('dash-date').textContent=now.toLocaleDateString('fr-CI',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const rets=retards();
+  const ae=g('dash-alerts');
+  if(rets.length){
+    ae.innerHTML='<div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:9px 12px;margin-bottom:12px;"><div style="font-weight:600;color:#991b1b;font-size:11.5px;margin-bottom:4px;">'+rets.length+' commande(s) en retard</div>'+rets.map(c=>{const cl=gc(c.cid);return '<div style="font-size:11px;color:#7f1d1d;">&bull; #'+c.id+' &mdash; '+(cl?cl.nom+' '+cl.prenom:'—')+' &mdash; '+Math.abs(jrs(c.dlp))+'j &middot; '+esc(c.fid)+'</div>';}).join('')+'</div>';
+  } else ae.innerHTML='';
+  const active=S.commandes.filter(c=>c.statut!=='Livré').length;
+  const enRet=rets.length;
+  const urg=S.commandes.filter(c=>{const j=jrs(c.dlp);return j!==null&&j<=2&&j>=-1&&c.statut!=='Livré';}).length;
+  const livre=S.commandes.filter(c=>c.statut==='Livré').length;
+  const mois=now.getMonth(),an=now.getFullYear();
+  const cmM=S.commandes.filter(c=>{const d=new Date(c.dc);return d.getMonth()===mois&&d.getFullYear()===an;});
+  const tx=S.commandes.length?Math.round(livre/S.commandes.length*100):0;
+  g('dash-stats').innerHTML=[
+    {l:'Commandes actives',v:active,c:'var(--teal)',i:'📦'},
+    {l:'En retard',v:enRet,c:'var(--red)',i:'🔴'},
+    {l:'Livraison &le; 2j',v:urg,c:'var(--amber)',i:'🟠'},
+    {l:'Livrées ce mois',v:cmM.filter(c=>c.statut==='Livré').length,c:'var(--green)',i:'✅'},
+    {l:'Total clients',v:S.clients.length,c:'var(--blue)',i:'👤'},
+    {l:'Verres catalogue',v:S.verres.length,c:'var(--purple)',i:'🔬'},
+    {l:'Fournisseurs',v:S.fournisseurs.length,c:'#06b6d4',i:'🚚'},
+    {l:'Taux livraison',v:tx+'%',c:'var(--teal)',i:'📈'}
+  ].map(s=>'<div class="sc"><div class="si">'+s.i+'</div><div class="sv" style="color:'+s.c+';">'+s.v+'</div><div class="sl">'+s.l+'</div></div>').join('');
+  // Charts
+  const wc=[];for(let i=7;i>=0;i--){const s=doff(-i*7-6),e=doff(-i*7+1);wc.push(S.commandes.filter(c=>c.dc>=s&&c.dc<e).length);}
+  const mW=Math.max(...wc,1);
+  g('chart-cmds').innerHTML=wc.map(n=>'<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="font-size:8.5px;color:var(--txt3);">'+(n||'')+'</div><div style="height:'+Math.max(4,Math.round(n/mW*54))+'px;background:var(--teal);opacity:'+(0.35+0.65*(n/mW)).toFixed(2)+';width:100%;border-radius:2px 2px 0 0;"></div></div>').join('');
+  const fc={};S.commandes.forEach(c=>{fc[c.fid]=(fc[c.fid]||0)+1;});
+  const sf=Object.entries(fc).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const mF=Math.max(...sf.map(x=>x[1]),1);
+  g('chart-four').innerHTML=sf.map(([n,v])=>'<div style="display:flex;align-items:center;gap:7px;margin-bottom:6px;"><div style="font-size:10.5px;color:var(--txt2);width:85px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(n)+'</div><div style="flex:1;height:6px;background:#f0f4f8;border-radius:3px;overflow:hidden;"><div style="height:100%;width:'+Math.max(6,Math.round(v/mF*100))+'%;background:var(--teal);border-radius:3px;"></div></div><div style="font-size:10.5px;font-weight:600;color:var(--teal);">'+v+'</div></div>').join('');
+  const rec=[...S.commandes].sort((a,b)=>new Date(b.dc)-new Date(a.dc)).slice(0,5);
+  g('dash-recents').innerHTML=rec.map(c=>{const cl=gc(c.cid);const j=jrs(c.dlp);const ret=j!==null&&j<0&&c.statut!=='Livré';return '<div class="tr" style="grid-template-columns:34px 1fr 105px 80px 90px;'+(ret?'background:#fffbfb;':'')+'"><div style="font-weight:700;color:var(--teal);font-size:10.5px;">#'+c.id+'</div><div><div style="font-weight:500;font-size:11.5px;">'+(cl?esc(cl.nom+' '+cl.prenom):'—')+'</div><div style="font-size:9.5px;color:var(--txt3);">'+esc(c.fid)+'</div></div>'+badge(c.statut)+'<div style="font-size:10.5px;color:var(--txt2);">'+fmt(c.dc)+'</div><div style="font-size:10.5px;color:'+(ret?'var(--red)':'var(--txt2)')+';font-weight:'+(ret?600:400)+';">'+fmt(c.dlp)+(ret?'<br><span style="font-size:9px;">'+Math.abs(j)+'j retard</span>':'')+'</div></div>';}).join('');
+}
+
+// ════════════════════════════════════════════════════
+// COMMANDES
+// ════════════════════════════════════════════════════
+let cmdSearch='';
+function renderCmds(){
+  const rets=retards();
+  const ae=g('cmd-alerts');
+  if(rets.length){ae.innerHTML='<div style="padding:5px 0 1px;">'+rets.map(c=>{const cl=gc(c.cid);return '<div class="ab ar" style="margin-bottom:3px;"><span>🔴</span><strong>Retard '+Math.abs(jrs(c.dlp))+'j</strong><span>&mdash; #'+c.id+' &middot; '+(cl?esc(cl.nom+' '+cl.prenom):'—')+' &middot; '+esc(c.fid)+'</span><button class="btn br bxs no-print" style="margin-left:auto;" onclick="openAlerte('+c.id+')">Relancer</button></div>';}).join('')+'</div>';}else ae.innerHTML='';
+  const s=cmdSearch.toLowerCase();
+  const fs=g('cmd-fst').value;
+  const can=canEdit();
+  const list=S.commandes.filter(c=>{const cl=gc(c.cid);const m=!s||(cl?cl.nom+' '+cl.prenom:'').toLowerCase().includes(s)||c.fid.toLowerCase().includes(s)||c.statut.toLowerCase().includes(s)||String(c.id).includes(s);return m&&(!fs||c.statut===fs);});
+  if(!list.length){g('cmd-list').innerHTML='<div style="padding:26px;text-align:center;color:var(--txt3);">Aucune commande.</div>';return;}
+  g('cmd-list').innerHTML=list.map(cmd=>{
+    const cl=gc(cmd.cid);const j=jrs(cmd.dlp);const ret=j!==null&&j<=-1&&cmd.statut!=='Livré';const urg=j!==null&&j<=2&&j>=-1&&cmd.statut!=='Livré';const nx=nextSt(cmd.statut);
+    return '<div class="tr" style="grid-template-columns:32px 1fr 105px 78px 85px 1fr;'+(ret?'background:#fffbfb;':'')+'">'
+      +'<div style="font-weight:700;color:var(--teal);font-size:10.5px;">#'+cmd.id+'</div>'
+      +'<div><div style="font-weight:500;font-size:11.5px;">'+(cl?esc(cl.nom+' '+cl.prenom):'—')+'</div><div style="font-size:9.5px;color:var(--txt3);">'+esc(cmd.fid)+'</div></div>'
+      +badge(cmd.statut)
+      +'<div style="font-size:10.5px;color:var(--txt2);">'+fmt(cmd.dc)+'</div>'
+      +'<div style="font-size:10.5px;color:'+(ret?'var(--red)':urg?'var(--amber)':'var(--txt2)')+';font-weight:'+(ret||urg?600:400)+';">'+fmt(cmd.dlp)+(ret?'<br><span style="font-size:9px;">'+Math.abs(j)+'j retard</span>':(urg?'<br><span style="font-size:9px;">J-'+j+'</span>':''))+'</div>'
+      +'<div style="display:flex;gap:3px;flex-wrap:wrap;">'
+        +'<button class="btn bxs no-print" style="background:#e0f2fe;color:#0c4a6e;" onclick="openBon('+cmd.id+')">📄 Bon</button>'
+        +(can?'<button class="btn ba bxs no-print" onclick="editCmd('+cmd.id+')">✏️</button>':'')
+        +(can&&nx?'<button class="btn bt bxs no-print" onclick="nxtStatut('+cmd.id+')">→ '+nx+'</button>':'')
+        +'<button class="btn bxs no-print" style="background:#ede9fe;color:#6d28d9;" onclick="openAlerte('+cmd.id+')">🔔</button>'
+        +(canAdmin()?'<button class="btn br bxs no-print" onclick="delCmd('+cmd.id+')" title="Supprimer">🗑</button>':'')
+      +'</div></div>';
+  }).join('');
+}
+
+function delCmd(id){
+  if(!canAdmin())return;
+  const c=S.commandes.find(x=>x.id===id);const cl=gc(c?.cid);
+  if(!confirm('Supprimer commande #'+id+(cl?' de '+cl.nom+' '+cl.prenom:'')+' ?'))return;
+  S.commandes=S.commandes.filter(x=>x.id!==id);save();renderCmds();showToast('Commande #'+id+' supprimée','err');
+}
+
+// ════════════════════════════════════════════════════
+// CHANGEMENT DE STATUT + NOTIFICATIONS AUTO
+// ════════════════════════════════════════════════════
+let _recuId=null;
+function changerStatut(cmdId,newSt){
+  if(!canEdit()){showToast('Permission insuffisante','err');return;}
+  if(newSt==='Reçu'){openRecu(cmdId);return;}
+  const cmd=S.commandes.find(c=>c.id===cmdId);if(!cmd)return;
+  cmd.statut=newSt;save();renderCmds();
+  const cl=gc(cmd.cid);if(!cl)return;
+  const cfg=getCfg();const nom=cl.nom+' '+cl.prenom;
+  let msg='';
+  if(newSt==='Commandé')msg='Cher(e) '+nom+',\n\nNous vous confirmons que vos verres ont été commandés. Notre équipe suit votre dossier.\n\nAdresse : '+cfg.adr+'\nTél : '+cfg.tel+'\n'+cfg.nom+'.';
+  if(newSt==='Prêt')msg='Cher(e) '+nom+',\n\nVotre paire de lunettes est prête ! Nous vous invitons à passer à l\'officine pour le retrait et les ajustements.\n\nAdresse : '+cfg.adr+'\nTél : '+cfg.tel+'\n'+cfg.nom+'.';
+  if(newSt==='Livré')msg='Bonjour '+nom+',\n\nMerci de votre confiance. Votre avis nous est précieux : '+cfg.avis+'\n\nAdresse : '+cfg.adr+'\nTél : '+cfg.tel+'\n'+cfg.nom+'.';
+  if(msg)envoyerNotifComplete(cl,msg,'→ '+newSt);
+  else showToast('Statut → '+newSt);
+}
+
+function openRecu(cmdId){
+  _recuId=cmdId;const cmd=S.commandes.find(c=>c.id===cmdId);const cl=gc(cmd.cid);
+  g('recu-info').innerHTML='Client : <strong>'+(cl?esc(cl.nom+' '+cl.prenom):'—')+'</strong> &middot; Fournisseur : <strong>'+esc(cmd.fid)+'</strong>';
+  g('recu-bl').value='';g('recu-date').value=doff(0);
+  g('m-recu').style.display='flex';
+}
+function confirmRecu(){
+  const cmd=S.commandes.find(c=>c.id===_recuId);if(!cmd)return;
+  cmd.statut='Reçu';cmd.bl=gv('recu-bl');cmd.dll=gv('recu-date');
+  const cl=gc(cmd.cid);const cfg=getCfg();const nom=cl?cl.nom+' '+cl.prenom:'Client';
+  const msg='Cher(e) '+nom+',\n\nVos verres viennent d\'arriver à notre atelier. Notre opticien procède au montage.\n\nNous vous contactons dès que votre paire est prête.\n\nAdresse : '+cfg.adr+'\nTél : '+cfg.tel+'\n'+cfg.nom+'.';
+  save();closeM('recu');renderCmds();
+  if(cl)envoyerNotifComplete(cl,msg,'Réception — Notification');
+}
+
+// Envoi automatique email+WA
+function envoyerNotifComplete(cl,msg,title){
+  const email=cl.email||'';const wa=(cl.tel||'').replace(/\s/g,'').replace(/^(00225|\+225)/,'225').replace(/^0/,'2250');
+  const cfg=getCfg();const subj=cfg.nom+' — '+title;
+  // Email auto
+  if(email&&ejsOk){
+    ejsSend(email,subj,cl.nom+' '+cl.prenom,msg)
+      .then(()=>{addNotif('Email','statut','Envoyée',email,msg.slice(0,70));showToast('Email envoyé à '+cl.nom+' !');updateBadge();})
+      .catch(()=>{showToast('Email échoué — ouverture client mail','warn');window.open('mailto:'+email+'?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(msg));addNotif('Email','statut','Échec',email,'');});
+  } else if(email){
+    window.open('mailto:'+email+'?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(msg));
+    addNotif('Email','statut','Ouvert',email,msg.slice(0,70));
+  }
+  // WA auto (après délai si email envoyé)
+  if(wa.length>=10){
+    setTimeout(()=>{window.open('https://wa.me/'+wa+'?text='+encodeURIComponent(msg),'_blank');addNotif('WhatsApp','statut','Ouvert',wa,msg.slice(0,70));updateBadge();},email?1100:200);
+  }
+  if(!email&&wa.length<10)showToast('Statut mis à jour (client sans contact)');
+}
+
+function nxtStatut(cmdId){const cmd=S.commandes.find(c=>c.id===cmdId);if(!cmd)return;const nx=nextSt(cmd.statut);if(nx)changerStatut(cmdId,nx);}
+
+// ════════════════════════════════════════════════════
+// ALERTE FOURNISSEUR
+// ════════════════════════════════════════════════════
+let _alerteId=null;
+function buildAlerteMsg(cmdId, type){
+  const cmd=S.commandes.find(c=>c.id===cmdId);if(!cmd)return'';
+  const cl=gc(cmd.cid);const cfg=getCfg();
+  const num=numBon(cmd.id);const j=jrs(cmd.dlp);const nomCl=cl?cl.nom+' '+cl.prenom:'Client';
+  const delai=j!==null?(j<0?'a '+Math.abs(j)+' jour(s) de retard':'est attendue dans '+j+' jour(s)'):'';
+  const msgs={
+    relance:'Bonjour,\n\nNous revenons vers vous concernant la commande '+num+' passée le '+fmt(cmd.dc)+' pour notre client '+nomCl+'.\n\nLa livraison était prévue le '+fmt(cmd.dlp)+(delai?' et '+delai:'')+'.'
+      +'\n\nPouvez-vous nous confirmer la date de livraison prévue ?\n\nMerci pour votre retour rapide.\n\nCordialement,\n'+cfg.nom+'\n'+cfg.adr+'\nTél : '+cfg.tel,
+    retard:'Bonjour,\n\nNous constatons un retard sur la commande '+num+' (client : '+nomCl+').\n\nLa date de livraison prévue était le '+fmt(cmd.dlp)+(j!==null&&j<0?' — soit '+Math.abs(j)+' jour(s) de retard à ce jour':'')+'.'
+      +'\n\nCe retard impacte notre client qui attend sa paire de lunettes. Merci de nous indiquer une nouvelle date de livraison en urgence.\n\nCordialement,\n'+cfg.nom+'\n'+cfg.adr+'\nTél : '+cfg.tel,
+    urgence:'URGENT — Bonjour,\n\nLa commande '+num+' pour '+nomCl+' est en retard critique'+( j!==null&&j<0?' ('+Math.abs(j)+' jour(s))':'')+'.'
+      +'\n\nNous vous demandons de traiter ce dossier en PRIORITÉ ABSOLUE et de nous rappeler dès que possible au '+cfg.tel+'.\n\nSans réponse de votre part aujourd\'hui, nous serons contraints de prendre des mesures alternatives.\n\nCordialement,\n'+cfg.nom+'\n'+cfg.adr+'\nTél : '+cfg.tel
+  };
+  return msgs[type]||msgs.relance;
+}
+
+function openAlerte(cmdId){
+  _alerteId=cmdId;const cmd=S.commandes.find(c=>c.id===cmdId);const cl=gc(cmd.cid);const fo=gf(cmd.fid);const j=jrs(cmd.dlp);
+  g('al-info').innerHTML='<strong>'+(cl?esc(cl.nom+' '+cl.prenom):'—')+'</strong> &middot; '+esc(cmd.fid)+' &middot; '+(j!==null&&j<0?'<span style="color:var(--red);font-weight:600;">Retard '+Math.abs(j)+'j</span>':(j!==null?'J-'+j:'—'));
+  g('al-email').value=fo?.email||'';
+  g('al-ok').style.display='none';
+  // Pré-remplir message selon type sélectionné
+  const type=g('al-type').value||'relance';
+  g('al-msg').value=buildAlerteMsg(cmdId,type);
+  // Mettre à jour le message quand le type change
+  g('al-type').onchange=function(){g('al-msg').value=buildAlerteMsg(_alerteId,this.value);};
+  g('m-alerte').style.display='flex';
+}
+async function sendAlerte(){
+  const cmd=S.commandes.find(c=>c.id===_alerteId);if(!cmd)return;
+  const cl=gc(cmd.cid);const fo=gf(cmd.fid);
+  const email=gv('al-email');const type=g('al-type').value;const cfg=getCfg();
+  const num=numBon(cmd.id);
+  const lbl={relance:'Relance fournisseur',retard:'Information retard',urgence:'URGENCE'}[type]||'Relance';
+  // Utiliser le message saisi dans le textarea (déjà pré-rempli)
+  const body=gv('al-msg')||buildAlerteMsg(_alerteId,type);
+  const subj='['+lbl+'] '+num+' — '+cfg.nom;
+  if(!email){showToast('Email fournisseur manquant','err');return;}
+  const btnEl=document.querySelector('#m-alerte .btn.bp');if(btnEl){btnEl.disabled=true;btnEl.textContent='Envoi...';}
+  let sent=false;
+  // Tentative EmailJS
+  if(ejsOk){
+    try{
+      await ejsSend(email,subj,fo?.nom||cmd.fid,body);
+      sent=true;
+    }catch(e){console.warn('EmailJS alerte:',e);}
+  }
+  // Fallback mailto si EmailJS échoue
+  if(!sent){
+    window.open('mailto:'+email+'?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(body));
+    sent=true;
+  }
+  addNotif('Email','alerte_'+type,sent&&ejsOk?'Envoyée':'Ouvert (mailto)',email,num+' > '+cmd.fid);
+  save();updateBadge();
+  // Aussi envoyer WA à l'opticien si Meta configuré
+  if(metaWAOk){
+    try{const cfg2=getCfg();await metaWASend(cfg2.tel,body);addNotif('WhatsApp','alerte','Envoyé (Meta)',cmd.fid,'');}catch(e){}
+  }
+  g('al-ok').style.display='flex';
+  g('al-ok').innerHTML='✓ '+(ejsOk?'Email envoyé !':'Client mail ouvert.')+(metaWAOk?' + WhatsApp envoyé !':'');
+  showToast('Alerte envoyée !');
+  if(btnEl){btnEl.disabled=false;btnEl.textContent='🔔 Envoyer';}
+  setTimeout(()=>closeM('alerte'),2000);
+}
+
+// ════════════════════════════════════════════════════
+// BON DE COMMANDE
+// ════════════════════════════════════════════════════
+let _bonId=null;
+function openBon(cmdId){
+  const cmd=S.commandes.find(c=>c.id===cmdId);if(!cmd){showToast('Commande introuvable','err');return;}
+  _bonId=cmdId;const cl=gc(cmd.cid);const num=numBon(cmd.id);const cfg=getCfg();
+  const j=jrs(cmd.dlp);const ret=j!==null&&j<=-1&&cmd.statut!=='Livré';
+  g('bon-title').textContent='Bon de commande — '+num;
+  g('bon-res').style.display='none';
+  g('bon-body').innerHTML=
+    (ret?'<div class="ab ar" style="margin-bottom:11px;">Retard '+Math.abs(j)+' jour(s) — Livraison prévue le '+fmt(cmd.dlp)+'</div>':'')+
+    '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:13px;">'+
+    '<div><div style="font-family:Syne,sans-serif;font-size:15px;font-weight:800;color:var(--teal);">BON DE COMMANDE VERRES</div>'+
+    '<div style="font-size:11.5px;font-weight:500;margin-top:2px;">'+num+'</div>'+
+    '<div style="font-size:10.5px;color:var(--txt2);">Date : '+fmt(cmd.dc)+' &middot; Opticien : '+esc(cmd.opi||'—')+'</div>'+
+    (cmd.fac?'<div style="font-size:10.5px;color:var(--txt2);">Réf. : '+esc(cmd.fac)+'</div>':'')+
+    '</div><div style="text-align:right;">'+
+    '<div style="font-weight:600;font-size:12.5px;">'+(cl?esc(cl.nom+' '+cl.prenom):'—')+'</div>'+
+    '<div style="font-size:10.5px;color:var(--txt2);">Tél : '+(cl?esc(cl.tel||'—'):'—')+'</div>'+
+    '<div style="font-size:10.5px;color:var(--txt2);">Livraison : <strong style="color:'+(ret?'var(--red)':'inherit')+';">'+fmt(cmd.dlp)+'</strong></div>'+
+    '<div style="margin-top:4px;">'+badge(cmd.statut)+'</div>'+
+    '</div></div>'+
+    '<table class="pt"><thead><tr><th style="width:24px;"></th><th>SPH</th><th>CYL</th><th>AXE</th><th>ADD</th><th style="width:145px;">Verres</th><th style="width:135px;">Traitement</th><th>Diam.</th><th style="width:90px;">Fourn.</th></tr></thead><tbody>'+
+    '<tr><td class="oeil">D</td><td>'+esc(cmd.sd||'—')+'</td><td>'+esc(cmd.cd||'—')+'</td><td>'+esc(cmd.ad||'—')+'</td><td>'+esc(cmd.xd||'—')+'</td><td class="ptw">'+esc(cmd.vd||'—')+'</td><td class="ptw">'+esc(cmd.trd||'—')+'</td><td>'+esc(cmd.dd||'—')+'</td><td class="ptw">'+esc(cmd.fvd||'—')+'</td></tr>'+
+    '<tr><td class="oeil">G</td><td>'+esc(cmd.sg||'—')+'</td><td>'+esc(cmd.cg||'—')+'</td><td>'+esc(cmd.ag||'—')+'</td><td>'+esc(cmd.xg||'—')+'</td><td class="ptw">'+esc(cmd.vg||'—')+'</td><td class="ptw">'+esc(cmd.trg||'—')+'</td><td>'+esc(cmd.dg||'—')+'</td><td class="ptw">'+esc(cmd.fvg||'—')+'</td></tr>'+
+    '</tbody></table>'+
+    '<div style="background:#f8fafc;border-radius:7px;padding:10px 12px;font-size:11.5px;">'+
+    '<div class="g2" style="gap:6px;">'+
+    '<div><strong>Modèle :</strong> '+esc(cmd.mm||'—')+'</div><div><strong>Type :</strong> '+esc(cmd.tm||'—')+' &middot; Taille : '+esc(cmd.sz||'—')+'</div>'+
+    '<div><strong>1/2 EP D/G :</strong> '+esc(cmd.epd||'—')+' / '+esc(cmd.epg||'—')+'</div><div><strong>HM D/G :</strong> '+esc(cmd.hmd||'—')+' / '+esc(cmd.hmg||'—')+'</div>'+
+    '</div>'+(cmd.cs?'<div style="margin-top:7px;border-top:.5px solid var(--border);padding-top:7px;"><strong>Consignes :</strong> '+esc(cmd.cs)+'</div>':'')+
+    (cmd.bl?'<div style="margin-top:5px;"><strong>BL :</strong> '+esc(cmd.bl)+' &middot; Réception : '+fmt(cmd.dll)+'</div>':'')+
+    '</div>'+
+    '<div style="margin-top:8px;font-size:9.5px;color:var(--txt3);text-align:center;">Ce bon doit être imprimé et agrafé au dossier du client et au bon de livraison</div>';
+  g('m-bon').style.display='flex';
+}
+
+function bonTexte(cmd){
+  const cl=gc(cmd.cid);const num=numBon(cmd.id);const cfg=getCfg();
+  return 'BON DE COMMANDE VERRES\n'+'─'.repeat(35)+'\nN° : '+num+'\nDate : '+fmt(cmd.dc)+'\nClient : '+(cl?cl.nom+' '+cl.prenom:'—')+' | Tél : '+(cl?.tel||'—')+'\nOpticien : '+(cmd.opi||'—')+'\nRéf. : '+(cmd.fac||'—')+'\nLivraison : '+fmt(cmd.dlp)+'\n\nPRESCRIPTION\n'+'─'.repeat(35)+'\nOEIL D : SPH '+cmd.sd+' CYL '+cmd.cd+' AXE '+cmd.ad+' ADD '+(cmd.xd||'—')+'\nVerre : '+(cmd.vd||'—')+' | Trait. : '+(cmd.trd||'—')+'\nOEIL G : SPH '+cmd.sg+' CYL '+cmd.cg+' AXE '+cmd.ag+' ADD '+(cmd.xg||'—')+'\nVerre : '+(cmd.vg||'—')+' | Trait. : '+(cmd.trg||'—')+'\n\nMONTURE\n'+'─'.repeat(35)+'\nModèle : '+(cmd.mm||'—')+' | Type : '+(cmd.tm||'—')+' | Taille : '+(cmd.sz||'—')+'\n1/2 EP D/G : '+(cmd.epd||'—')+' / '+(cmd.epg||'—')+'\nHM D/G : '+(cmd.hmd||'—')+' / '+(cmd.hmg||'—')+(cmd.cs?'\nConsignes : '+cmd.cs:'')+'\n\n'+'─'.repeat(35)+'\n'+cfg.nom+'\n'+cfg.adr+'\nTél : '+cfg.tel;
+}
+
+function printBon(){
+  const cmd=S.commandes.find(c=>c.id===_bonId);if(!cmd)return;
+  const cl=gc(cmd.cid);const num=numBon(cmd.id);const cfg=getCfg();const j=jrs(cmd.dlp);const ret=j!==null&&j<=-1&&cmd.statut!=='Livré';
+  const pw=window.open('','_blank');
+  pw.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+num+'</title><style>@page{size:A4;margin:1.2cm;}*{box-sizing:border-box;margin:0;padding:0;}body{font-family:Arial,sans-serif;font-size:11px;color:#111;}.hd{background:#04747c;color:#fff;padding:12px 15px;display:flex;justify-content:space-between;-webkit-print-color-adjust:exact;print-color-adjust:exact;}.r2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0;}.bl{border:1px solid #e2e8f0;border-radius:4px;overflow:hidden;}.bh{background:#04747c;color:#fff;padding:4px 8px;font-size:8.5px;font-weight:700;text-transform:uppercase;-webkit-print-color-adjust:exact;print-color-adjust:exact;}.bb{padding:7px 8px;font-size:11px;line-height:1.7;}.sh{background:#04747c;color:#fff;padding:4px 8px;font-size:8.5px;font-weight:700;text-transform:uppercase;margin:8px 0 0;-webkit-print-color-adjust:exact;print-color-adjust:exact;}table.pt{width:100%;border-collapse:collapse;font-size:9.5px;}table.pt th{background:#f0f9f9;color:#04747c;padding:4px;border:1px solid #e2e8f0;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact;}table.pt td{padding:4px;border:1px solid #e2e8f0;text-align:center;}.oe{background:#f0f9f9;color:#04747c;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact;}.w{text-align:left;font-size:9px;}.mes{display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:7px 8px;font-size:10px;line-height:1.9;}.ft{margin-top:10px;border-top:1px solid #e2e8f0;padding-top:6px;font-size:8.5px;color:#6b7280;display:flex;justify-content:space-between;}</style></head><body>'
+    +'<div class="hd"><div><div style="font-size:14px;font-weight:700;">BON DE COMMANDE VERRES</div><div style="font-size:9px;opacity:.8;margin-top:1px;">'+esc(cfg.nom)+' — '+esc(cfg.adr)+' — '+esc(cfg.tel)+'</div></div><div style="text-align:right;"><div style="font-size:12px;font-weight:700;">'+num+'</div><div>Date : '+fmt(cmd.dc)+'</div><div>Opticien : '+esc(cmd.opi||'—')+'</div>'+(cmd.fac?'<div>Réf : '+esc(cmd.fac)+'</div>':'')+' </div></div>'
+    +(ret?'<div style="background:#fef2f2;color:#991b1b;padding:5px 8px;font-weight:600;font-size:10px;margin-top:5px;border-radius:4px;">RETARD '+Math.abs(j)+' JOUR(S) — Livraison prévue le '+fmt(cmd.dlp)+'</div>':'')
+    +'<div class="r2"><div class="bl"><div class="bh">Client</div><div class="bb"><b>'+(cl?esc(cl.nom+' '+cl.prenom):'—')+'</b><br>Tél : '+(cl?.tel||'—')+'<br>Livraison : <b style="color:'+(ret?'#dc2626':'#04747c')+';">'+fmt(cmd.dlp)+'</b></div></div>'
+    +'<div class="bl"><div class="bh">Fournisseur</div><div class="bb"><b>'+esc(cmd.fid||'—')+'</b><br>Statut : '+esc(cmd.statut)+(cmd.bl?'<br>BL : '+esc(cmd.bl):'')+'</div></div></div>'
+    +'<div class="sh">Prescription & Verres</div><table class="pt"><thead><tr><th style="width:22px;"></th><th>SPH</th><th>CYL</th><th>AXE</th><th>ADD</th><th style="width:135px;">Verres</th><th style="width:125px;">Traitement</th><th>Diam.</th><th style="width:80px;">Fourn.</th></tr></thead><tbody>'
+    +'<tr><td class="oe">D</td><td>'+esc(cmd.sd||'—')+'</td><td>'+esc(cmd.cd||'—')+'</td><td>'+esc(cmd.ad||'—')+'</td><td>'+esc(cmd.xd||'—')+'</td><td class="w">'+esc(cmd.vd||'—')+'</td><td class="w">'+esc(cmd.trd||'—')+'</td><td>'+esc(cmd.dd||'—')+'</td><td class="w">'+esc(cmd.fvd||'—')+'</td></tr>'
+    +'<tr><td class="oe">G</td><td>'+esc(cmd.sg||'—')+'</td><td>'+esc(cmd.cg||'—')+'</td><td>'+esc(cmd.ag||'—')+'</td><td>'+esc(cmd.xg||'—')+'</td><td class="w">'+esc(cmd.vg||'—')+'</td><td class="w">'+esc(cmd.trg||'—')+'</td><td>'+esc(cmd.dg||'—')+'</td><td class="w">'+esc(cmd.fvg||'—')+'</td></tr>'
+    +'</tbody></table><div class="sh">Monture & Mesures</div><div class="mes"><div><b>Modèle :</b> '+esc(cmd.mm||'—')+'</div><div><b>Type :</b> '+esc(cmd.tm||'—')+' &middot; Taille : '+esc(cmd.sz||'—')+'</div><div><b>A :</b> '+(cmd.lm||'—')+'mm</div><div><b>B :</b> '+(cmd.hm||'—')+'mm &middot; Nez : '+(cmd.nm||'—')+'mm</div><div><b>1/2 EP D :</b> '+(cmd.epd||'—')+'</div><div><b>1/2 EP G :</b> '+(cmd.epg||'—')+'</div><div><b>HM D :</b> '+(cmd.hmd||'—')+'</div><div><b>HM G :</b> '+(cmd.hmg||'—')+'</div></div>'
+    +(cmd.cs?'<div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:3px;padding:5px 8px;margin-top:5px;font-size:10px;"><b>Consignes :</b> '+esc(cmd.cs)+'</div>':'')
+    +'<div class="ft"><div>Ce bon doit être imprimé et agrafé au dossier du client et au bon de livraison</div><div>'+esc(cfg.nom)+'</div></div>'
+    +'<script>window.onload=function(){window.print();}<\/script></body></html>');
+  pw.document.close();
+}
+
+function buildPDF(cmd){
+  if(!window.jspdf)throw new Error('jsPDF pas chargé');
+  const{jsPDF}=window.jspdf;const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const cl=gc(cmd.cid);const num=numBon(cmd.id);const cfg=getCfg();
+  const W=doc.internal.pageSize.getWidth();const pL=13,cW=W-pL*2;
+  const T=[4,116,124],D=[17,24,39],G=[107,114,128],W2=[255,255,255];
+  let y=14;
+  doc.setFillColor(...T);doc.rect(0,0,W,21,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(12);doc.setTextColor(...W2);
+  doc.text('BON DE COMMANDE VERRES',pL,11);
+  doc.setFont('helvetica','normal');doc.setFontSize(8);
+  doc.text(cfg.nom+' — '+cfg.tel,pL,17);doc.text(num,W-pL,17,{align:'right'});
+  y=25;doc.setFontSize(8.5);doc.setTextColor(...G);doc.text('Date : '+fmt(cmd.dc)+'   Opticien : '+(cmd.opi||'—')+'   Réf : '+(cmd.fac||'—'),pL,y);y+=6;
+  const j=jrs(cmd.dlp);const ret=j!==null&&j<=-1&&cmd.statut!=='Livré';
+  if(ret){doc.setFillColor(254,226,226);doc.roundedRect(pL,y,cW,6,1.5,1.5,'F');doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(239,68,68);doc.text('RETARD '+Math.abs(j)+' JOUR(S) — Livraison prévue le '+fmt(cmd.dlp),pL+3,y+4.5);y+=9;}
+  const bW=(cW-3)/2;
+  doc.setFillColor(240,249,249);doc.roundedRect(pL,y,bW,15,1.5,1.5,'F');doc.roundedRect(pL+bW+3,y,bW,15,1.5,1.5,'F');
+  doc.setFontSize(6.5);doc.setFont('helvetica','bold');doc.setTextColor(...T);doc.text('CLIENT',pL+2,y+4.5);doc.text('FOURNISSEUR',pL+bW+5,y+4.5);
+  doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(...D);doc.text((cl?cl.nom+' '+cl.prenom:'—'),pL+2,y+9.5);doc.text(cmd.fid||'—',pL+bW+5,y+9.5);
+  doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(...G);doc.text('Tél : '+(cl?.tel||'—'),pL+2,y+13.5);doc.text('Livraison : '+fmt(cmd.dlp),pL+bW+5,y+13.5);y+=19;
+  doc.setFillColor(...T);doc.rect(pL,y,cW,5.5,'F');doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...W2);doc.text('PRESCRIPTION & VERRES',pL+2,y+4);y+=5.5;
+  const cols=[{l:'',w:7},{l:'SPH',w:12},{l:'CYL',w:12},{l:'AXE',w:12},{l:'ADD',w:12},{l:'Verres',w:43},{l:'Traitement',w:43},{l:'Diam.',w:12},{l:'Fourn.',w:cW-153}];
+  let x=pL;doc.setFillColor(240,249,249);
+  cols.forEach(c=>{doc.setFont('helvetica','bold');doc.setFontSize(6.5);doc.setTextColor(...T);doc.text(c.l,x+1,y+4);doc.setDrawColor(209,213,219);doc.rect(x,y,c.w,5.5,'S');x+=c.w;});y+=5.5;
+  [['D',cmd.sd,cmd.cd,cmd.ad,cmd.xd,cmd.vd,cmd.trd,cmd.dd,cmd.fvd],['G',cmd.sg,cmd.cg,cmd.ag,cmd.xg,cmd.vg,cmd.trg,cmd.dg,cmd.fvg]].forEach((row,ri)=>{
+    x=pL;ri%2===0?doc.setFillColor(255,255,255):doc.setFillColor(248,250,252);doc.rect(pL,y,cW,6.5,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(...T);doc.text(row[0],x+2,y+4.5);x+=cols[0].w;
+    cols.slice(1).forEach((c,ci)=>{doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(...D);const t=String(row[ci+1]||'—').substring(0,Math.floor(c.w/2));doc.text(t,x+1.5,y+4.5);doc.setDrawColor(209,213,219);doc.rect(x,y,c.w,6.5,'S');x+=c.w;});
+    doc.setDrawColor(209,213,219);doc.rect(pL,y,cols[0].w,6.5,'S');y+=6.5;
+  });y+=5;
+  doc.setFillColor(...T);doc.rect(pL,y,cW,5.5,'F');doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...W2);doc.text('MONTURE & MESURES',pL+2,y+4);y+=5.5;
+  doc.setFillColor(240,244,248);doc.rect(pL,y,cW,24,'F');doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...D);
+  const c2=cW/2;
+  [['Modèle : '+(cmd.mm||'—'),'Type : '+(cmd.tm||'—')+'   Taille : '+(cmd.sz||'—')],['A : '+(cmd.lm||'—')+'mm','B : '+(cmd.hm||'—')+'mm   Nez : '+(cmd.nm||'—')+'mm'],['1/2 EP D : '+(cmd.epd||'—'),'1/2 EP G : '+(cmd.epg||'—')],['HM D : '+(cmd.hmd||'—'),'HM G : '+(cmd.hmg||'—')]].forEach((r,i)=>{doc.text(r[0],pL+2,y+4.5+i*5.8);doc.text(r[1],pL+c2+2,y+4.5+i*5.8);});y+=27;
+  if(cmd.cs){doc.setFillColor(255,251,235);doc.roundedRect(pL,y,cW,9,1.5,1.5,'F');doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(146,64,14);doc.text('Consignes : ',pL+2,y+5.5);doc.setFont('helvetica','normal');doc.text(doc.splitTextToSize(cmd.cs,cW-28)[0],pL+22,y+5.5);y+=12;}
+  if(cmd.bl){doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...G);doc.text('BL : '+cmd.bl+'   Réception : '+fmt(cmd.dll),pL,y+4.5);y+=7;}
+  const yF=doc.internal.pageSize.getHeight()-10;
+  doc.setFillColor(...T);doc.rect(0,yF-3,W,13,'F');
+  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(...W2);
+  doc.text('Ce bon doit être imprimé et agrafé au dossier du client',pL,yF+2);
+  doc.text(cfg.nom+' — '+cfg.tel,W-pL,yF+2,{align:'right'});
+  return doc;
+}
+
+function dlPDF(){
+  const cmd=S.commandes.find(c=>c.id===_bonId);if(!cmd)return;
+  const btn=g('btn-pdf');btn.disabled=true;btn.textContent='...';
+  try{const doc=buildPDF(cmd);doc.save('Bon_'+numBon(cmd.id).replace(/ /g,'_')+'.pdf');showToast('PDF téléchargé !');}
+  catch(e){showToast('Erreur PDF — jsPDF pas encore chargé','err');}
+  finally{btn.disabled=false;btn.textContent='📥 PDF';}
+}
+
+async function emailBon(){
+  const cmd=S.commandes.find(c=>c.id===_bonId);if(!cmd)return;
+  const fo=gf(cmd.fid);const cfg=getCfg();
+  const btn=g('btn-email-bon');const res=g('bon-res');
+  let email=fo?.email||'';
+  if(!email){email=prompt('Email fournisseur '+cmd.fid+' :','');if(!email||!email.includes('@'))return;if(fo){fo.email=email;save();}}
+  const num=numBon(cmd.id);
+  const pdfName='Bon_'+num.replace(/ /g,'_')+'.pdf';
+  const subj='Bon de commande '+num+' - '+cfg.nom;
+  const cl=gc(cmd.cid);
+  const corps='Bonjour '+cmd.fid+','
+    +'\n\nVeuillez trouver en pièce jointe notre bon de commande '+num+'.'
+    +'\nClient : '+(cl?cl.nom+' '+cl.prenom:'—')
+    +'\nLivraison prévue : '+fmt(cmd.dlp)
+    +'\n\nMerci de traiter ce bon en priorité et de nous confirmer la date de livraison.'
+    +'\n\nBien cordialement,'
+    +'\n'+cfg.nom
+    +'\n'+cfg.adr
+    +'\nTél : '+cfg.tel;
+  btn.disabled=true;btn.textContent='Génération PDF...';
+  res.style.display='block';
+  res.innerHTML='<div class="ab abl" style="margin:0;">Génération du PDF...</div>';
+  // 1. Générer le PDF en base64
+  let pdfB64='';let doc=null;
+  try{
+    doc=buildPDF(cmd);
+    pdfB64=doc.output('datauristring').split(',')[1];
+  }catch(e){
+    res.innerHTML='<div class="ab ar" style="margin:0;">Erreur PDF: '+e.message+'</div>';
+    btn.disabled=false;btn.textContent='✉ Email+PDF';return;
+  }
+  // 2. Essayer Gmail API (envoi automatique avec pièce jointe)
+  if(gmailReady && cfg.gmailClientId){
+    try{
+      btn.textContent='Connexion Gmail...';
+      res.innerHTML='<div class="ab abl" style="margin:0;">Connexion à Gmail... (popup Google)</div>';
+      await gmailSendWithPDF(email,subj,corps,pdfB64,pdfName);
+      // Télécharger aussi localement
+      if(doc)doc.save(pdfName);
+      res.innerHTML='<div class="ab ag" style="margin:0;">✓ Email envoyé via Gmail avec PDF en pièce jointe à '+esc(email)+' !</div>';
+      addNotif('Email','bon_gmail','Envoyée (Gmail+PDF)',email,'Bon '+num+' > '+cmd.fid);
+      save();updateBadge();showToast('Email + PDF envoyés automatiquement !');
+      btn.disabled=false;btn.textContent='✉ Email+PDF';
+      return;
+    }catch(e){
+      console.warn('Gmail API:',e.message);
+      res.innerHTML='<div class="ab ar" style="margin:0;">Gmail: '+esc(e.message)+'<br>Tentative via EmailJS...</div>';
+    }
+  }
+  // 3. Fallback EmailJS (sans pièce jointe)
+  if(ejsOk){
+    try{
+      btn.textContent='Envoi EmailJS...';
+      await ejsSend(email,subj,cmd.fid,corps);
+      if(doc)doc.save(pdfName);
+      res.innerHTML='<div class="ab ag" style="margin:0;">✓ Email envoyé à '+esc(email)+'!<br><small>PDF téléchargé — joignez-le manuellement.</small></div>';
+      addNotif('Email','bon_email','Envoyée (EmailJS)',email,'Bon '+num+' > '+cmd.fid);
+      save();updateBadge();showToast('Email envoyé + PDF téléchargé !');
+      btn.disabled=false;btn.textContent='✉ Email+PDF';
+      return;
+    }catch(e){console.warn('EmailJS:',e);}
+  }
+  // 4. Fallback final : télécharger PDF + ouvrir client mail
+  if(doc)doc.save(pdfName);
+  window.open('mailto:'+email+'?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(corps));
+  res.innerHTML='<div class="ab ag" style="margin:0;">✓ PDF téléchargé + client mail ouvert.<br><small>Joignez <strong>'+pdfName+'</strong> avant d\'envoyer.</small></div>';
+  addNotif('Email','bon_mailto','Ouvert',email,'Bon '+num+' > '+cmd.fid);
+  save();updateBadge();showToast('PDF téléchargé + mail ouvert !');
+  btn.disabled=false;btn.textContent='✉ Email+PDF';
+}
+
+function waBon(){
+  const cmd=S.commandes.find(c=>c.id===_bonId);if(!cmd)return;
+  const fo=gf(cmd.fid);const cfg=getCfg();const cl=gc(cmd.cid);
+  let wa=(fo?.tel||'').replace(/\s/g,'').replace(/^(00225|\+225)/,'225').replace(/^0/,'2250');
+  if(!wa||wa==='225'){wa=prompt('WhatsApp fournisseur (225XXXXXXXXXX) :','225');if(!wa||wa==='225')return;if(fo){fo.tel=wa;save();}}
+  try{const doc=buildPDF(cmd);doc.save('Bon_'+numBon(cmd.id).replace(/ /g,'_')+'.pdf');}catch(e){}
+  const num=numBon(cmd.id);
+  const msg='Bonjour '+cmd.fid+',\n\nVoici le bon de commande '+num+' — Client : '+(cl?cl.nom+' '+cl.prenom:'—')+' — Livraison : '+fmt(cmd.dlp)+'.\n\nLe PDF a été téléchargé. Merci de le joindre à ce message.\n\n'+cfg.nom+' — '+cfg.tel;
+  window.open('https://wa.me/'+wa+'?text='+encodeURIComponent(msg),'_blank');
+  const res=g('bon-res');res.innerHTML='<div class="ab ag" style="margin:0;">PDF téléchargé + WhatsApp ouvert. Joignez le PDF.</div>';res.style.display='block';
+  addNotif('WhatsApp','bon_wa','Ouvert',wa,'Bon '+num+' > '+cmd.fid);save();updateBadge();
+}
+
+// ════════════════════════════════════════════════════
+// RELANCES AUTO FOURNISSEURS
+// ════════════════════════════════════════════════════
+async function relancesAuto(){
+  if(!ejsOk)return;
+  const today=doff(0);if(!S.relances)S.relances={};
+  let n=0;const cfg=getCfg();
+  for(const cmd of S.commandes){
+    if(cmd.statut==='Livré')continue;
+    const j=jrs(cmd.dlp);const fo=gf(cmd.fid);const cl=gc(cmd.cid);
+    if(!fo?.email)continue;
+    const num=numBon(cmd.id);const nomCl=cl?cl.nom+' '+cl.prenom:'—';
+    const tryR=async(type,subj,body)=>{
+      const key=cmd.id+'_'+type;if(S.relances[key]===today)return;
+      try{await ejsSend(fo.email,subj,fo.nom,body);S.relances[key]=today;addNotif('Relance auto',type,'Envoyée',fo.email,'['+type+'] '+num);n++;}
+      catch(e){console.warn('Relance:',type,e);}
+    };
+    if(j===5)await tryR('j5','Rappel J-5 — '+num,'Bonjour '+fo.nom+',\n\nRappel : commande '+num+' pour '+nomCl+' prévue le '+fmt(cmd.dlp)+' (5 jours).\nMerci de confirmer.\n'+cfg.nom+' — '+cfg.tel);
+    if(j===2)await tryR('j2','URGENT J-2 — '+num,'Bonjour '+fo.nom+',\n\nCommande '+num+' prévue dans 2 jours ('+fmt(cmd.dlp)+').\nClient : '+nomCl+'.\nConfirmation urgente.\n'+cfg.nom+' — '+cfg.tel);
+    if(j!==null&&j<=-1)await tryR('ret'+Math.abs(j),'RETARD '+Math.abs(j)+'j — '+num,'Bonjour '+fo.nom+',\n\nLa commande '+num+' a '+Math.abs(j)+' jour(s) de retard.\nClient : '+nomCl+'.\nNouvelle date requise.\n'+cfg.nom+' — '+cfg.tel);
+  }
+  save();if(n>0){showToast(n+' relance(s) auto envoyée(s)');updateBadge();if(CUR==='notifs')renderNotifs();}
+}
+
+// ════════════════════════════════════════════════════
+// CLIENTS
+// ════════════════════════════════════════════════════
+let clSearch='';
+let _clId=null;
+function renderClients(){
+  g('cl-title').textContent='Clients ('+S.clients.length+')';
+  const s=clSearch.toLowerCase();
+  const list=S.clients.filter(c=>!s||(c.nom+' '+c.prenom).toLowerCase().includes(s)||c.tel?.includes(s)||c.email?.toLowerCase().includes(s));
+  g('cl-list').innerHTML=list.length===0?'<div style="padding:24px;text-align:center;color:var(--txt3);">Aucun client.</div>':list.map(cl=>{
+    const n=S.commandes.filter(c=>c.cid===cl.id).length;
+    return '<div class="tr" style="grid-template-columns:1fr 120px 160px 45px 70px;">'
+      +'<div style="display:flex;align-items:center;gap:7px;">'
+        +'<div style="width:26px;height:26px;border-radius:50%;background:#e0f2fe;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:700;color:#0c4a6e;">'+cl.nom[0]+(cl.prenom[0]||'')+'</div>'
+        +'<div><div style="font-weight:500;font-size:11.5px;">'+esc(cl.nom+' '+cl.prenom)+'</div>'+(cl.adr?'<div style="font-size:9.5px;color:var(--txt3);">'+esc(cl.adr)+'</div>':'')+'</div>'
+      +'</div>'
+      +'<div>'+esc(cl.tel||'—')+'</div>'
+      +'<div style="font-size:10.5px;color:var(--txt2);">'+esc(cl.email||'—')+'</div>'
+      +'<div><span style="background:#e0f2fe;color:#0c4a6e;padding:2px 6px;border-radius:9px;font-size:9.5px;font-weight:600;">'+n+'</span></div>'
+      +'<div style="display:flex;gap:3px;">'
+        +(canEdit()?'<button onclick="editClient('+cl.id+')" style="background:var(--teal);color:#fff;border:none;border-radius:4px;padding:2px 6px;font-size:9.5px;cursor:pointer;" title="Modifier">✏️</button>':'')
+        +(canEdit()?'<button onclick="delClient('+cl.id+')" style="background:#fef2f2;color:#991b1b;border:.5px solid #fca5a5;border-radius:4px;padding:2px 6px;font-size:9.5px;cursor:pointer;" title="Supprimer">🗑</button>':'')
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+function openNewClient(){
+  _clId=null;
+  g('cl-mt').textContent='👤 Nouveau client';
+  g('cl-mh').style.background='linear-gradient(135deg,var(--teal),#059669)';
+  g('cl-save').textContent='✓ Ajouter';
+  ['cl-nom','cl-prenom','cl-tel','cl-email','cl-adr'].forEach(id=>g(id).value='');
+  g('m-client').style.display='flex';
+}
+function editClient(id){
+  _clId=id;const cl=S.clients.find(c=>c.id===id);
+  g('cl-mt').textContent='Modifier client';
+  g('cl-mh').style.background='linear-gradient(135deg,#f59e0b,#ef4444)';
+  g('cl-save').textContent='Enregistrer';
+  g('cl-nom').value=cl.nom||'';g('cl-prenom').value=cl.prenom||'';
+  g('cl-tel').value=cl.tel||'';g('cl-email').value=cl.email||'';g('cl-adr').value=cl.adr||'';
+  g('m-client').style.display='flex';
+}
+function saveClient(){
+  const nom=gv('cl-nom'),prenom=gv('cl-prenom');
+  if(!nom||!prenom){showToast('Nom et prénom obligatoires','err');return;}
+  if(_clId){
+    const cl=S.clients.find(c=>c.id===_clId);
+    if(cl){cl.nom=nom;cl.prenom=prenom;cl.tel=gv('cl-tel');cl.email=gv('cl-email');cl.adr=gv('cl-adr');}
+    showToast('Client mis à jour !');
+  }else{
+    S.clients.push({id:S.nid++,nom,prenom,tel:gv('cl-tel'),email:gv('cl-email'),adr:gv('cl-adr')});
+    showToast('Client ajouté !');
+  }
+  _clId=null;save();closeM('client');renderClients();
+}
+function delClient(id){if(!confirm('Supprimer ?'))return;S.clients=S.clients.filter(c=>c.id!==id);save();renderClients();showToast('Supprimé','err');}
+
+// ════════════════════════════════════════════════════
+// VERRES
+// ════════════════════════════════════════════════════
+let vSearch='';
+let _vId=null;
+function renderVerres(){
+  // Populate fournisseur filter
+  const ff=g('v-ff');
+  if(ff&&ff.options.length<=1){
+    S.fournisseurs.forEach(f=>{const o=document.createElement('option');o.value=f.nom;o.textContent=f.nom;ff.appendChild(o);});
+  }
+  const s=vSearch.toLowerCase();
+  const fourF=g('v-ff')?.value||'';
+  const typeF=g('v-ft')?.value||'';
+  const list=S.verres.filter(v=>
+    (!s||v.nom.toLowerCase().includes(s)||(v.fournisseur||'').toLowerCase().includes(s)||(v.type||'').toLowerCase().includes(s)||(v.traitement||'').toLowerCase().includes(s))
+    &&(!fourF||v.fournisseur===fourF)
+    &&(!typeF||v.type===typeF)
+  );
+  g('v-list').innerHTML=list.length===0?'<div style="padding:26px;text-align:center;color:var(--txt3);">Aucun verre.</div>':list.map(v=>'<div class="tr" style="grid-template-columns:1fr 75px 75px 160px 60px 110px 50px;"><div><div style="font-weight:500;font-size:11.5px;">'+esc(v.nom)+'</div>'+(v.notes?'<div style="font-size:9px;color:var(--txt3);">'+esc(v.notes)+'</div>':'')+'</div><div style="text-align:center;"><span class="badge" style="background:#e0f2fe;color:#0c4a6e;border:none;font-size:9px;">'+esc(v.type)+'</span></div><div style="text-align:center;font-size:10.5px;">'+esc(v.indice||'—')+'</div><div style="font-size:10px;color:var(--txt2);">'+esc(v.traitement||'—')+'</div><div style="text-align:center;font-size:10.5px;">'+esc(v.diam||'—')+'</div><div style="font-size:10.5px;color:var(--teal);font-weight:500;">'+esc(v.fournisseur||'—')+'</div><div style="display:flex;gap:2px;">'+(canAdmin()?'<button onclick="editVerre('+v.id+')" style="background:var(--teal);color:#fff;border:none;border-radius:3px;padding:2px 5px;font-size:9px;cursor:pointer;">✏️</button><button onclick="delVerre('+v.id+')" style="background:#fef2f2;color:#991b1b;border:.5px solid #fca5a5;border-radius:3px;padding:2px 5px;font-size:9px;cursor:pointer;">🗑</button>':'')+'</div></div>').join('');
+}
+function openNewVerre(){
+  if(!canAdmin()){showToast('Permission insuffisante','err');return;}
+  _vId=null;
+  g('verre-mt').textContent='🔬 Nouveau verre';
+  g('verre-mh').style.background='linear-gradient(135deg,var(--teal),#059669)';
+  g('verre-save').textContent='✓ Ajouter';
+  ['vn','vno'].forEach(id=>g(id).value='');
+  ['vty','vi','vtr','vd'].forEach(id=>g(id).value='');
+  g('vp').value='';g('vs').value='0';
+  g('vf').innerHTML='<option value="">--</option>'+S.fournisseurs.map(f=>'<option>'+f.nom+'</option>').join('');
+  g('m-verre').style.display='flex';
+}
+function editVerre(id){
+  if(!canAdmin())return;_vId=id;
+  const v=S.verres.find(x=>x.id===id);if(!v)return;
+  g('verre-mt').textContent='Modifier verre';
+  g('verre-mh').style.background='linear-gradient(135deg,#f59e0b,#ef4444)';
+  g('verre-save').textContent='Enregistrer';
+  g('vn').value=v.nom||'';g('vty').value=v.type||'';g('vi').value=v.indice||'';
+  g('vtr').value=v.traitement||'';g('vd').value=v.diam||'';
+  g('vp').value=v.prix||'';g('vs').value=v.stock||0;g('vno').value=v.notes||'';
+  g('vf').innerHTML='<option value="">--</option>'+S.fournisseurs.map(f=>'<option'+(v.fournisseur===f.nom?' selected':'')+'>'+f.nom+'</option>').join('');
+  g('m-verre').style.display='flex';
+}
+function saveVerre(){
+  const nom=gv('vn'),type=g('vty').value;
+  if(!nom||!type){showToast('Désignation et type obligatoires','err');return;}
+  const data={nom,type,indice:g('vi').value,traitement:g('vtr').value,fournisseur:g('vf').value,diam:g('vd').value,prix:parseInt(gv('vp'))||0,stock:parseInt(gv('vs'))||0,notes:gv('vno')};
+  if(_vId){S.verres=S.verres.map(v=>v.id===_vId?{...v,...data}:v);showToast('Verre mis à jour !');}
+  else{S.verres.push({id:S.nid++,...data});showToast('Verre ajouté !');}
+  _vId=null;save();closeM('verre');renderVerres();
+}
+function delVerre(id){if(!confirm('Supprimer ?'))return;S.verres=S.verres.filter(v=>v.id!==id);save();renderVerres();showToast('Supprimé','err');}
+
+// ════════════════════════════════════════════════════
+// FOURNISSEURS
+// ════════════════════════════════════════════════════
+let _fId=null;
+function renderFours(){
+  g('four-grid').innerHTML=S.fournisseurs.length===0?'<div style="grid-column:1/-1;padding:26px;text-align:center;color:var(--txt3);">Aucun fournisseur.</div>':S.fournisseurs.map(f=>{
+    const cmds=S.commandes.filter(c=>c.fid===f.nom);
+    const rets=cmds.filter(c=>{const j=jrs(c.dlp);return j!==null&&j<0&&c.statut!=='Livré';}).length;
+    const acts=cmds.filter(c=>c.statut!=='Livré').length;
+    return '<div class="card" style="padding:14px;"><div style="display:flex;justify-content:space-between;margin-bottom:7px;"><div style="font-size:18px;">🚚</div><div style="display:flex;gap:3px;">'+(canAdmin()?'<button onclick="editFour('+f.id+')" style="background:var(--teal);color:#fff;border:none;border-radius:4px;padding:3px 6px;font-size:10px;cursor:pointer;">✏️</button><button onclick="delFour('+f.id+')" style="background:#fef2f2;color:#991b1b;border:.5px solid #fca5a5;border-radius:4px;padding:3px 6px;font-size:10px;cursor:pointer;">🗑</button>':'')+'</div></div><div style="font-family:Syne,sans-serif;font-weight:700;font-size:11.5px;color:var(--txt);margin-bottom:5px;">'+esc(f.nom)+'</div>'+(f.contact?'<div style="font-size:10.5px;color:var(--txt2);">👤 '+esc(f.contact)+'</div>':'')+(f.tel?'<div style="font-size:10.5px;color:var(--txt2);">📞 '+esc(f.tel)+'</div>':'')+(f.email?'<div style="font-size:10.5px;color:var(--teal);">✉ '+esc(f.email)+'</div>':'<div style="font-size:10.5px;color:#fca5a5;">✉ Email non renseigné</div>')+(f.spec?'<div style="font-size:10.5px;color:var(--txt2);">🔬 '+esc(f.spec)+'</div>':'')+'<div style="font-size:10.5px;color:var(--txt2);margin:5px 0 3px;">Délai : <strong>'+(f.delai||'—')+'j</strong></div><div style="font-size:10.5px;margin-bottom:6px;">Actives : <strong style="color:var(--teal);">'+acts+'</strong> &middot; Total : <strong>'+cmds.length+'</strong></div>'+(rets>0?'<div style="background:#fef2f2;color:#991b1b;padding:3px 7px;border-radius:4px;font-size:9.5px;font-weight:600;">'+rets+' retard(s)</div>':'')+'</div>';
+  }).join('');
+}
+function openNewFour(){
+  if(!canAdmin()){showToast('Permission insuffisante','err');return;}
+  _fId=null;g('four-mt').textContent='🚚 Nouveau fournisseur';g('four-mh').style.background='linear-gradient(135deg,var(--teal),#059669)';
+  g('four-save').textContent='✓ Ajouter';
+  ['fn','fc','ft','fe','fs2'].forEach(id=>g(id).value='');g('fd').value='7';
+  g('m-four').style.display='flex';
+}
+function editFour(id){
+  if(!canAdmin())return;_fId=id;const f=S.fournisseurs.find(x=>x.id===id);if(!f)return;
+  g('four-mt').textContent='Modifier fournisseur';g('four-mh').style.background='linear-gradient(135deg,#f59e0b,#ef4444)';
+  g('four-save').textContent='Enregistrer';
+  g('fn').value=f.nom||'';g('fc').value=f.contact||'';g('ft').value=f.tel||'';g('fe').value=f.email||'';g('fd').value=f.delai||7;g('fs2').value=f.spec||'';
+  g('m-four').style.display='flex';
+}
+function saveFour(){
+  const nom=gv('fn');if(!nom){showToast('Nom obligatoire','err');return;}
+  const data={nom,contact:gv('fc'),tel:gv('ft'),email:gv('fe'),delai:parseInt(gv('fd'))||7,spec:gv('fs2')};
+  if(_fId){
+    const old=S.fournisseurs.find(f=>f.id===_fId)?.nom;
+    S.fournisseurs=S.fournisseurs.map(f=>f.id===_fId?{...f,...data}:f);
+    if(old&&old!==nom){S.commandes.forEach(c=>{if(c.fid===old)c.fid=nom;if(c.fvd===old)c.fvd=nom;if(c.fvg===old)c.fvg=nom;});}
+    showToast('Fournisseur mis à jour !');
+  }else{S.fournisseurs.push({id:S.nid++,...data});showToast('Fournisseur ajouté !');}
+  _fId=null;save();closeM('four');renderFours();
+}
+function delFour(id){
+  const f=S.fournisseurs.find(x=>x.id===id);const n=S.commandes.filter(c=>c.fid===f?.nom).length;
+  if(!confirm('Supprimer '+f?.nom+'?'+(n>0?' ('+n+' commandes liées)':'')))return;
+  S.fournisseurs=S.fournisseurs.filter(x=>x.id!==id);save();renderFours();showToast('Supprimé','err');
+}
+
+// ════════════════════════════════════════════════════
+// RAPPORTS
+// ════════════════════════════════════════════════════
+function getRpData(){
+  const periode=g('rp-periode')?.value||'week';
+  const now=new Date();let startISO,lbl;
+  if(periode==='today'){startISO=doff(0);lbl='Aujourd hui';}
+  else if(periode==='week'){startISO=doff(-7);lbl='7 derniers jours';}
+  else{const d=new Date();d.setDate(1);startISO=d.toISOString().split('T')[0];lbl='Ce mois';}
+  const cmds=S.commandes.filter(c=>c.dc>=startISO);
+  const livrees=cmds.filter(c=>c.statut==='Livré');
+  const rets=retards();
+  const byStatut={};S.commandes.forEach(c=>{byStatut[c.statut]=(byStatut[c.statut]||0)+1;});
+  const byFour={};cmds.forEach(c=>{if(!byFour[c.fid])byFour[c.fid]={t:0,l:0,r:0};byFour[c.fid].t++;if(c.statut==='Livré')byFour[c.fid].l++;});
+  rets.forEach(c=>{if(byFour[c.fid])byFour[c.fid].r++;});
+  const tx=cmds.length?Math.round(livrees.length/cmds.length*100):0;
+  const valStock=S.verres.reduce((s,v)=>s+(v.prix*v.stock||0),0);
+  return{cmds,livrees,rets,byStatut,byFour,tx,valStock,lbl,now};
+}
+
+function renderRapports(){
+  const{cmds,livrees,rets,byStatut,byFour,tx,valStock,lbl,now}=getRpData();
+  const cfg=getCfg();
+  g('rp-content').innerHTML=
+    '<div class="card" style="padding:16px;margin-bottom:12px;">'+
+    '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;"><div><div style="font-family:Syne,sans-serif;font-size:16px;font-weight:800;color:var(--teal);">Rapport de gestion</div><div style="font-size:10.5px;color:var(--txt2);margin-top:2px;">'+lbl+' &middot; '+now.toLocaleDateString('fr-CI',{day:'numeric',month:'long',year:'numeric'})+'</div></div><div style="font-size:10.5px;color:var(--txt3);">'+esc(cfg.nom)+'</div></div>'+
+    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;">'+
+    [{l:'Nouvelles commandes',v:cmds.length,c:'var(--teal)'},{l:'Livrées',v:livrees.length,c:'var(--green)'},{l:'Taux livraison',v:tx+'%',c:tx>=80?'var(--green)':'var(--amber)'},{l:'Retards actifs',v:rets.length,c:rets.length>0?'var(--red)':'var(--green)'},{l:'Total clients',v:S.clients.length,c:'var(--blue)'},{l:'Valeur stock FCFA',v:valStock.toLocaleString('fr-CI'),c:'var(--purple)'}].map(k=>'<div class="kbox"><div class="kv" style="color:'+k.c+';">'+k.v+'</div><div class="kl">'+k.l+'</div></div>').join('')+
+    '</div></div>'+
+    '<div class="g2" style="gap:11px;margin-bottom:11px;">'+
+    '<div class="card" style="padding:14px;"><div style="font-weight:600;font-size:11.5px;margin-bottom:8px;">Commandes par statut</div>'+
+    Object.entries(byStatut).map(([s,n])=>'<div style="display:flex;align-items:center;gap:7px;margin-bottom:6px;"><div style="font-size:10.5px;color:var(--txt2);width:78px;">'+s+'</div><div style="flex:1;height:6px;background:#f0f4f8;border-radius:3px;overflow:hidden;"><div style="height:100%;width:'+Math.max(5,Math.round(n/S.commandes.length*100))+'%;background:'+(STCOL[s]||'#9ca3af')+';border-radius:3px;"></div></div><div style="font-size:10.5px;font-weight:600;">'+n+'</div></div>').join('')+
+    '</div>'+
+    '<div class="card" style="padding:14px;"><div style="font-weight:600;font-size:11.5px;margin-bottom:8px;">Performance fournisseurs</div>'+
+    (Object.entries(byFour).length===0?'<div style="color:var(--txt3);font-size:11px;">Aucune commande.</div>':Object.entries(byFour).map(([n,d])=>'<div style="margin-bottom:7px;padding-bottom:7px;border-bottom:.5px solid var(--border);"><div style="font-weight:500;font-size:11.5px;color:var(--teal);">'+esc(n)+'</div><div style="font-size:10.5px;color:var(--txt2);">'+d.t+' cmds &middot; '+d.l+' livrées'+(d.r>0?' &middot; <span style="color:var(--red);">'+d.r+' retard(s)</span>':'')+'</div></div>').join(''))+
+    '</div></div>'+
+    '<div class="card" style="padding:14px;"><div style="font-weight:600;font-size:11.5px;margin-bottom:10px;">Top verres par prix</div>'+
+    '<table style="width:100%;border-collapse:collapse;font-size:10.5px;"><thead><tr style="background:#f8fafc;"><th style="padding:5px 8px;text-align:left;border-bottom:.5px solid var(--border);font-size:9px;color:var(--txt3);">DÉSIGNATION</th><th style="padding:5px 8px;text-align:center;border-bottom:.5px solid var(--border);font-size:9px;color:var(--txt3);">TYPE</th><th style="padding:5px 8px;border-bottom:.5px solid var(--border);font-size:9px;color:var(--txt3);">FOURNISSEUR</th><th style="padding:5px 8px;text-align:right;border-bottom:.5px solid var(--border);font-size:9px;color:var(--txt3);">PRIX</th><th style="padding:5px 8px;text-align:center;border-bottom:.5px solid var(--border);font-size:9px;color:var(--txt3);">STOCK</th></tr></thead><tbody>'+
+    [...S.verres].sort((a,b)=>b.prix-a.prix).slice(0,10).map((v,i)=>'<tr style="background:'+(i%2===0?'#fff':'#f8fafc')+'"><td style="padding:5px 8px;">'+esc(v.nom)+'</td><td style="padding:5px 8px;text-align:center;"><span class="badge" style="background:#e0f2fe;color:#0c4a6e;border:none;font-size:8.5px;">'+esc(v.type)+'</span></td><td style="padding:5px 8px;color:var(--teal);">'+esc(v.fournisseur||'—')+'</td><td style="padding:5px 8px;text-align:right;font-weight:500;">'+(v.prix?v.prix.toLocaleString('fr-CI'):' —')+'</td><td style="padding:5px 8px;text-align:center;color:'+(v.stock<=2?'var(--red)':v.stock<=5?'var(--amber)':'var(--green)')+';">'+v.stock+'</td></tr>').join('')+
+    '</tbody></table></div>';
+}
+
+function showRapportModal(){
+  const{cmds,livrees,rets,byStatut,byFour,tx,valStock,lbl,now}=getRpData();const cfg=getCfg();
+  g('rapport-body').innerHTML=
+    '<div style="background:linear-gradient(135deg,'+cfg.col+',#059669);color:#fff;padding:14px 16px;border-radius:8px;margin-bottom:14px;"><div style="font-family:Syne,sans-serif;font-size:16px;font-weight:800;">Rapport — '+esc(cfg.nom)+'</div><div style="font-size:10.5px;opacity:.85;margin-top:3px;">'+lbl+' &middot; '+now.toLocaleDateString('fr-CI',{day:'numeric',month:'long',year:'numeric'})+'</div></div>'+
+    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:13px;">'+
+    [{l:'Nouvelles cmds',v:cmds.length,c:cfg.col},{l:'Livrées',v:livrees.length,c:'#10b981'},{l:'Taux livraison',v:tx+'%',c:tx>=80?'#10b981':'#f59e0b'},{l:'Retards',v:rets.length,c:rets.length>0?'#ef4444':'#10b981'},{l:'Clients',v:S.clients.length,c:'#3b82f6'},{l:'Valeur stock',v:valStock.toLocaleString('fr-CI')+' F',c:'#7c3aed'}].map(k=>'<div style="background:#f8fafc;border-radius:7px;padding:10px;text-align:center;"><div style="font-family:Syne,sans-serif;font-size:19px;font-weight:700;color:'+k.c+';">'+k.v+'</div><div style="font-size:9.5px;color:#6b7280;margin-top:2px;">'+k.l+'</div></div>').join('')+
+    '</div>'+
+    '<div class="g2" style="gap:10px;">'+
+    '<div style="background:#f8fafc;border-radius:8px;padding:12px;"><div style="font-weight:600;font-size:11.5px;margin-bottom:7px;">Statuts</div>'+Object.entries(byStatut).map(([s,n])=>'<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;"><div style="font-size:10px;color:#6b7280;width:74px;">'+s+'</div><div style="flex:1;height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden;"><div style="height:100%;width:'+Math.max(5,Math.round(n/S.commandes.length*100))+'%;background:'+(STCOL[s]||'#9ca3af')+';border-radius:3px;"></div></div><div style="font-size:10px;font-weight:600;">'+n+'</div></div>').join('')+'</div>'+
+    '<div style="background:#f8fafc;border-radius:8px;padding:12px;"><div style="font-weight:600;font-size:11.5px;margin-bottom:7px;">Fournisseurs</div>'+
+    (Object.entries(byFour).length===0?'<div style="color:#9ca3af;font-size:11px;">Aucune commande.</div>':Object.entries(byFour).map(([n,d])=>'<div style="margin-bottom:6px;padding-bottom:6px;border-bottom:.5px solid #e2e8f0;"><div style="font-weight:500;font-size:11.5px;color:'+cfg.col+';">'+esc(n)+'</div><div style="font-size:10.5px;color:#6b7280;">'+d.t+' &middot; '+d.l+' livrées'+(d.r>0?' &middot; <span style="color:#ef4444;">'+d.r+' retard(s)</span>':'')+'</div></div>').join(''))+'</div></div>';
+  g('m-rapport').style.display='flex';
+}
+
+async function sendRapport(){
+  const email=prompt('Email de réception :','');if(!email||!email.includes('@')){closeM('rapport');return;}
+  const{cmds,livrees,rets,lbl,now}=getRpData();const cfg=getCfg();
+  const msg='RAPPORT DE GESTION — '+cfg.nom+'\n'+'='.repeat(40)+'\nDate : '+now.toLocaleDateString('fr-CI')+'\nPériode : '+lbl+'\n\nTOTAL COMMANDES : '+cmds.length+'\nLIVRÉES : '+livrees.length+'\nRETARDS : '+rets.length+'\nCLIENTS : '+S.clients.length+'\n\nCOMMANDES EN RETARD :\n'+(rets.length?rets.map(c=>'- '+numBon(c.id)+' | '+(gc(c.cid)?.nom||'')+' | '+c.fid+' | '+Math.abs(jrs(c.dlp))+'j').join('\n'):'Aucun retard')+'\n\n'+'='.repeat(40)+'\n'+cfg.nom+'\n'+cfg.adr+'\nTél : '+cfg.tel;
+  try{await ejsSend(email,'Rapport '+cfg.nom+' — '+now.toLocaleDateString('fr-CI'),'Direction',msg);addNotif('Email','rapport','Envoyée',email,'Rapport '+lbl);save();updateBadge();closeM('rapport');showToast('Rapport envoyé !');}
+  catch(e){showToast('Échec envoi rapport','err');}
+}
+
+function exportRapportPDF(){
+  if(!window.jspdf){showToast('jsPDF en cours de chargement, réessayez','warn');return;}
+  const{cmds,livrees,rets,lbl,now}=getRpData();const cfg=getCfg();
+  const{jsPDF}=window.jspdf;const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const W=doc.internal.pageSize.getWidth();const pL=13,cW=W-pL*2;
+  const T=[4,116,124],D=[17,24,39],G=[107,114,128],W2=[255,255,255];
+  doc.setFillColor(...T);doc.rect(0,0,W,20,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(12);doc.setTextColor(...W2);
+  doc.text('RAPPORT DE GESTION — '+cfg.nom.toUpperCase(),pL,12);
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.text(now.toLocaleDateString('fr-CI'),W-pL,12,{align:'right'});
+  doc.text(lbl,W-pL,17,{align:'right'});
+  let y=27;
+  const kpis=[[cmds.length,'Commandes'],[livrees.length,'Livrées'],[rets.length,'Retards'],[S.clients.length,'Clients']];
+  const kW=(cW-9)/4;
+  kpis.forEach(([v,l],i)=>{const kx=pL+i*(kW+3);doc.setFillColor(240,249,249);doc.roundedRect(kx,y,kW,14,1.5,1.5,'F');doc.setFont('helvetica','bold');doc.setFontSize(12);doc.setTextColor(...T);doc.text(String(v),kx+kW/2,y+8,{align:'center'});doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(...G);doc.text(l,kx+kW/2,y+12,{align:'center'});});y+=19;
+  doc.setFillColor(...T);doc.rect(pL,y,cW,5.5,'F');doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...W2);doc.text('DÉTAIL COMMANDES',pL+2,y+4);y+=7;
+  const hs=['N°','Client','Fournisseur','Statut','Date','Livraison'];const ws=[18,40,32,21,21,21];let x=pL;
+  doc.setFillColor(240,249,249);hs.forEach((h,i)=>{doc.setFont('helvetica','bold');doc.setFontSize(6.5);doc.setTextColor(...T);doc.text(h,x+1,y+3.5);doc.setDrawColor(209,213,219);doc.rect(x,y,ws[i],5.5,'S');x+=ws[i];});y+=5.5;
+  S.commandes.slice(0,20).forEach((c,ri)=>{const cl=gc(c.cid);x=pL;ri%2===0?doc.setFillColor(255,255,255):doc.setFillColor(248,250,252);doc.rect(pL,y,cW,5.5,'F');[numBon(c.id),(cl?.nom||'')+' '+(cl?.prenom||''),c.fid||'—',c.statut,fmt(c.dc),fmt(c.dlp)].forEach((v,i)=>{doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(...D);doc.text(String(v||'—').substring(0,Math.floor(ws[i]/2.4)),x+1,y+3.5);doc.setDrawColor(209,213,219);doc.rect(x,y,ws[i],5.5,'S');x+=ws[i];});y+=5.5;});
+  doc.setFillColor(...T);doc.rect(0,doc.internal.pageSize.getHeight()-10,W,10,'F');
+  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(...W2);
+  doc.text(cfg.nom+' — '+cfg.adr+' — '+cfg.tel,W/2,doc.internal.pageSize.getHeight()-4,{align:'center'});
+  doc.save('Rapport_'+cfg.nom.replace(/\s/g,'_')+'_'+doff(0)+'.pdf');showToast('PDF téléchargé !');
+}
+
+// ════════════════════════════════════════════════════
+// NOTIFICATIONS
+// ════════════════════════════════════════════════════
+function renderNotifs(){
+  g('notif-title').textContent='Notifications ('+S.notifs.length+')';
+  g('notif-list').innerHTML=S.notifs.length===0?'<div style="padding:34px;text-align:center;color:var(--txt3);">Aucune notification.</div>':S.notifs.map(n=>{
+    const ico={SMS:'📱',Email:'📧',WhatsApp:'💬','Relance auto':'🤖',Alerte:'🔔',Système:'⚙️'}[n.type]||'📨';
+    const ok=['Envoyée','Ouvert'].includes(n.etat);
+    return '<div class="tr" style="grid-template-columns:24px 65px 55px 1fr 85px 22px;"><div style="font-size:12px;">'+ico+'</div><div><span style="font-size:9px;font-weight:600;background:#e0f2fe;color:#0c4a6e;padding:2px 6px;border-radius:4px;">'+esc(n.type)+'</span></div><div><span style="font-size:9px;font-weight:600;background:'+(ok?'#d1fae5':'#fee2e2')+';color:'+(ok?'#065f46':'#991b1b')+';padding:2px 6px;border-radius:4px;">'+esc(n.etat)+'</span></div><div style="font-size:10.5px;">'+esc((n.txt||'').slice(0,85))+'</div><div style="font-size:9.5px;color:var(--txt3);">'+esc(n.date)+'</div><button onclick="delNotif('+n.id+')" style="background:none;border:none;color:var(--txt3);cursor:pointer;font-size:11px;">✕</button></div>';
+  }).join('');
+}
+function delNotif(id){S.notifs=S.notifs.filter(n=>n.id!==id);save();renderNotifs();updateBadge();}
+function clearNotifs(){if(!confirm('Effacer toutes les notifications ?'))return;S.notifs=[];save();renderNotifs();updateBadge();}
+
+// ════════════════════════════════════════════════════
+// ADMIN UTILISATEURS
+// ════════════════════════════════════════════════════
+let _uId=null;
+function renderAdmin(){
+  g('admin-list').innerHTML=USRS.map(u=>{
+    const rc={superadmin:'rsa',admin:'rad',user:'rus'}[u.role];
+    const rl={superadmin:'Super Admin',admin:'Admin',user:'Utilisateur'}[u.role];
+    return '<div class="tr" style="grid-template-columns:1fr 90px 100px 100px 65px 90px;"><div style="display:flex;align-items:center;gap:8px;"><div style="width:26px;height:26px;border-radius:50%;background:'+(u.role==='superadmin'?'#ede9fe':u.role==='admin'?'#dbeafe':'#d1fae5')+';display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:700;color:'+(u.role==='superadmin'?'#6d28d9':u.role==='admin'?'#1e40af':'#065f46')+';">'+u.nom.split(' ').map(x=>x[0]).join('').slice(0,2)+'</div><div><div style="font-weight:500;font-size:11.5px;">'+esc(u.nom)+'</div><div style="font-size:9.5px;color:var(--txt3);">'+esc(u.email||'—')+'</div></div></div><div style="font-size:10.5px;font-family:monospace;">'+esc(u.login)+'</div><div><span class="'+rc+'">'+rl+'</span></div><div style="font-size:10.5px;color:var(--txt2);">'+(u.last?fmt(u.last):'Jamais')+'</div><div><span style="font-size:9.5px;font-weight:600;padding:2px 6px;border-radius:8px;background:'+(u.on?'#d1fae5':'#fee2e2')+';color:'+(u.on?'#065f46':'#991b1b')+'">'+(u.on?'Actif':'Inactif')+'</span></div>'+(u.id!==CU?.id?'<div style="display:flex;gap:3px;"><button onclick="editUser('+u.id+')" style="background:var(--teal);color:#fff;border:none;border-radius:4px;padding:2px 6px;font-size:9.5px;cursor:pointer;">✏️</button><button onclick="toggleUser('+u.id+')" style="background:'+(u.on?'#fee2e2':'#d1fae5')+';color:'+(u.on?'#991b1b':'#065f46')+';border:none;border-radius:4px;padding:2px 6px;font-size:9.5px;cursor:pointer;">'+(u.on?'Désact.':'Activer')+'</button><button onclick="delUser('+u.id+')" style="background:none;border:none;color:var(--txt3);cursor:pointer;font-size:11px;">🗑</button></div>':'<div></div>')+'</div>';
+  }).join('');
+}
+function openNewUser(){
+  _uId=null;g('user-mt').textContent='⚙️ Nouvel utilisateur';
+  g('user-mh').style.background='linear-gradient(135deg,var(--purple),#4f46e5)';
+  g('user-save').textContent='✓ Créer';
+  ['un','ul','up','ue'].forEach(id=>g(id).value='');g('ur').value='user';
+  g('m-user').style.display='flex';
+}
+function editUser(id){
+  _uId=id;const u=USRS.find(x=>x.id===id);if(!u)return;
+  g('user-mt').textContent='Modifier utilisateur';
+  g('user-mh').style.background='linear-gradient(135deg,#f59e0b,#ef4444)';
+  g('user-save').textContent='Enregistrer';
+  g('un').value=u.nom||'';g('ul').value=u.login||'';g('up').value='';g('ue').value=u.email||'';g('ur').value=u.role||'user';
+  g('m-user').style.display='flex';
+}
+function saveUser(){
+  const nom=gv('un'),login=gv('ul'),pass=gv('up'),role=g('ur').value,email=gv('ue');
+  if(!nom||!login){showToast('Nom et identifiant obligatoires','err');return;}
+  if(!_uId&&!pass){showToast('Mot de passe obligatoire','err');return;}
+  if(USRS.find(u=>u.login===login&&u.id!==_uId)){showToast('Identifiant déjà utilisé','err');return;}
+  if(_uId){const data={nom,login,role,email};if(pass)data.pass=pass;USRS=USRS.map(u=>u.id===_uId?{...u,...data}:u);showToast('Mis à jour !');}
+  else{USRS.push({id:S.nid++,nom,login,pass,role,email,last:'',on:true});showToast('Créé !');}
+  _uId=null;saveU();closeM('user');renderAdmin();
+}
+function toggleUser(id){USRS=USRS.map(u=>u.id===id?{...u,on:!u.on}:u);saveU();renderAdmin();showToast('Statut mis à jour !');}
+function delUser(id){if(id===CU?.id){showToast('Impossible de se supprimer','err');return;}if(!confirm('Supprimer ?'))return;USRS=USRS.filter(u=>u.id!==id);saveU();renderAdmin();showToast('Supprimé','err');}
+
+// ════════════════════════════════════════════════════
+// PARAMÈTRES CABINET
+// ════════════════════════════════════════════════════
+function openSettings(){
+  const cfg=getCfg();
+  g('set-nom').value=cfg.nom;g('set-adr').value=cfg.adr;g('set-tel').value=cfg.tel;
+  g('set-email').value=cfg.email;g('set-avis').value=cfg.avis;
+  g('set-ek').value=cfg.ek;g('set-es').value=cfg.es;g('set-et').value=cfg.et;
+  g('set-col').value=cfg.col;g('set-col-hex').value=cfg.col;
+  g('set-num').value=cfg.num||1;
+  g('set-meta-token').value=cfg.metaToken||'';
+  g('set-meta-phoneid').value=cfg.metaPhoneId||'';
+  g('set-cmb-key').value=cfg.cmbKey||'';
+  g('set-cmb-num').value=cfg.cmbNum||'';
+  g('set-gmail-cid').value=cfg.gmailClientId||'';
+  g('set-fb-apikey').value=cfg.fbApiKey||'';
+  g('set-fb-projectid').value=cfg.fbProjectId||'';
+  g('set-fb-dburl').value=cfg.fbDbUrl||'';
+  g('set-ok').style.display='none';
+  g('m-settings').style.display='flex';
+}
+function saveSettings(){
+  const cfg={nom:gv('set-nom')||'Mon Cabinet',adr:gv('set-adr'),tel:gv('set-tel'),email:gv('set-email'),avis:gv('set-avis'),ek:gv('set-ek'),es:gv('set-es'),et:gv('set-et'),col:g('set-col').value,num:parseInt(gv('set-num'))||1,metaToken:gv('set-meta-token'),metaPhoneId:gv('set-meta-phoneid'),cmbKey:gv('set-cmb-key'),cmbNum:gv('set-cmb-num'),gmailClientId:gv('set-gmail-cid'),fbApiKey:gv('set-fb-apikey'),fbProjectId:gv('set-fb-projectid'),fbDbUrl:gv('set-fb-dburl'),twSid:'',twToken:'',twFrom:'',twWaFrom:''};
+  setCfg(cfg);applyTheme(cfg);initMetaWA();if(cfg.fbApiKey)connectFirebase(cfg);if(cfg.gmailClientId){gmailClientId=cfg.gmailClientId;gmailToken=null;}
+  g('set-ok').style.display='flex';showToast('Paramètres sauvegardés !');
+  setTimeout(()=>{g('set-ok').style.display='none';closeM('settings');},1800);
+}
+function applyTheme(cfg){
+  document.documentElement.style.setProperty('--teal',cfg.col);
+  g('brand-name').textContent=cfg.nom;
+  g('brand-sub').textContent=(cfg.adr||'').split(',').slice(0,2).join(',').trim();
+  g('login-brand').textContent=cfg.nom;
+  g('login-sub').textContent=(cfg.adr||'').split(',').slice(0,2).join(', ').trim();
+  document.title=cfg.nom+' — Gestion';
+  if(cfg.ek&&typeof emailjs!=='undefined'){try{emailjs.init({publicKey:cfg.ek});ejsOk=true;}catch(e){}}
+}
+
+// ════════════════════════════════════════════════════
+// FORMULAIRE COMMANDE
+// ════════════════════════════════════════════════════
+let _cmdId=null;
+function openCmd(){
+  if(!canEdit()){showToast('Permission insuffisante','err');return;}
+  _cmdId=null;
+  g('cmd-mt').textContent='Nouvelle commande';
+  g('cmd-mh').style.background='linear-gradient(135deg,var(--teal),#059669)';
+  g('cmd-save').textContent='✓ Créer';
+  g('cmd-body').innerHTML=buildCmdForm(null);
+  g('m-cmd').style.display='flex';
+}
+function editCmd(id){
+  if(!canEdit()){showToast('Permission insuffisante','err');return;}
+  _cmdId=id;const cmd=S.commandes.find(c=>c.id===id);
+  g('cmd-mt').textContent='Modifier commande #'+id;
+  g('cmd-mh').style.background='linear-gradient(135deg,#f59e0b,#ef4444)';
+  g('cmd-save').textContent='Enregistrer';
+  g('cmd-body').innerHTML=buildCmdForm(cmd);
+  g('m-cmd').style.display='flex';
+}
+
+const TRAITEMENTS=['Sans traitement','AR Standard','AR Premium','AR Blue Light','AR + UV + Durcissant','AR Premium + UV + Durcissant','AR + Transitions','AR Premium + Transitions','Photochromique','Polarisé'];
+const DIAMS=['65 mm','70 mm','75 mm','65/60','70/65','75/70'];
+
+function buildCmdForm(cmd){
+  const f=cmd||{};const isEdit=!!cmd;
+  const cOpts=S.clients.map(c=>'<option value="'+c.id+'"'+(isEdit&&f.cid===c.id?' selected':'')+'>'+c.nom+' '+c.prenom+'</option>').join('');
+  const foOpts=S.fournisseurs.map(fo=>'<option'+(isEdit&&f.fid===fo.nom?' selected':'')+'>'+fo.nom+'</option>').join('');
+  const stOpts=STATUTS.map(s=>'<option'+(isEdit&&f.statut===s?' selected':'')+'>'+s+'</option>').join('');
+  const TRTS=['Sans traitement','AR Standard','AR Premium','AR Blue Light','AR + UV + Durcissant','AR Premium + UV + Durcissant','AR + Transitions','AR Premium + Transitions','Photochromique','Polarisé'];
+  const DMS=['65 mm','70 mm','75 mm','65/60','70/65','75/70'];
+  const trOpts=function(sel){return '<option value="">--</option>'+TRTS.map(function(t){return '<option'+(sel===t?' selected':'')+'>'+t+'</option>';}).join('');};
+  const dOpts=function(sel){return '<option value="">--</option>'+DMS.map(function(d){return '<option'+(sel===d?' selected':'')+'>'+d+'</option>';}).join('');};
+  const vOpts=function(sel){return '<option value="">--</option>'+S.verres.map(function(v){return '<option'+(sel===v.nom?' selected':'')+'>'+v.nom+'</option>';}).join('');};
+  const fvOpts=function(sel){return '<option value="">--</option>'+S.fournisseurs.map(function(fo){return '<option'+(sel===fo.nom?' selected':'')+'>'+fo.nom+'</option>';}).join('');};
+  const rowD='<tr><td class="oeil">D</td><td><input class="fi" id="f-sd" style="width:62px;padding:3px 5px;text-align:center;font-size:10.5px;" value="'+(f.sd||'')+'"></td><td><input class="fi" id="f-cd" style="width:62px;padding:3px 5px;text-align:center;font-size:10.5px;" value="'+(f.cd||'')+'"></td><td><input class="fi" id="f-ad" style="width:62px;padding:3px 5px;text-align:center;font-size:10.5px;" value="'+(f.ad||'')+'"></td><td><input class="fi" id="f-xd" style="width:62px;padding:3px 5px;text-align:center;font-size:10.5px;" value="'+(f.xd||'')+'"></td><td><select class="fs" id="f-vd" style="padding:3px 5px;font-size:9.5px;" onchange="syncVerre(1)">'+vOpts(f.vd||'')+'</select></td><td><select class="fs" id="f-trd" style="padding:3px 5px;font-size:9.5px;" onchange="syncTr(1)">'+trOpts(f.trd||'')+'</select></td><td><select class="fs" id="f-dd" style="padding:3px 5px;font-size:9.5px;" onchange="syncD(1)">'+dOpts(f.dd||'')+'</select></td></tr>';
+  const rowG='<tr><td class="oeil">G</td><td><input class="fi" id="f-sg" style="width:62px;padding:3px 5px;text-align:center;font-size:10.5px;" value="'+(f.sg||'')+'"></td><td><input class="fi" id="f-cg" style="width:62px;padding:3px 5px;text-align:center;font-size:10.5px;" value="'+(f.cg||'')+'"></td><td><input class="fi" id="f-ag" style="width:62px;padding:3px 5px;text-align:center;font-size:10.5px;" value="'+(f.ag||'')+'"></td><td><input class="fi" id="f-xg" style="width:62px;padding:3px 5px;text-align:center;font-size:10.5px;" value="'+(f.xg||'')+'"></td><td><select class="fs" id="f-vg" style="padding:3px 5px;font-size:9.5px;">'+vOpts(f.vg||'')+'</select></td><td><select class="fs" id="f-trg" style="padding:3px 5px;font-size:9.5px;">'+trOpts(f.trg||'')+'</select></td><td><select class="fs" id="f-dg" style="padding:3px 5px;font-size:9.5px;">'+dOpts(f.dg||'')+'</select></td></tr>';
+  return '<div class="sh" style="margin-top:0;">Informations générales</div><div class="g2">'
+    +'<div><label class="fl">Client *</label><select class="fs" id="f-cid"><option value="">Sélectionner...</option>'+cOpts+'</select></div>'
+    +'<div><label class="fl">Fournisseur</label><select class="fs" id="f-fid"><option value="">Sélectionner...</option>'+foOpts+'</select></div>'
+    +'<div><label class="fl">Date livraison *</label><input class="fi" type="date" id="f-dlp" value="'+(f.dlp||'')+'"></div>'
+    +'<div><label class="fl">Réf. facture</label><input class="fi" id="f-fac" value="'+(f.fac||'')+'"></div>'
+    +'<div><label class="fl">Opticien</label><input class="fi" id="f-opi" value="'+(f.opi||'ELO P')+'"></div>'
+    +(isEdit?'<div><label class="fl">Statut</label><select class="fs" id="f-stat">'+stOpts+'</select></div>':'<div></div>')
+    +'</div>'
+    +'<div class="sh">Prescription & Verres</div>'
+    +'<table class="pt"><thead><tr><th style="width:22px;"></th><th>SPH</th><th>CYL</th><th>AXE</th><th>ADD</th><th style="width:140px;">Verres</th><th style="width:130px;">Traitement</th><th style="width:75px;">Diamètre</th></tr></thead><tbody>'
+    +rowD+rowG
+    +'</tbody></table>'
+    +'<div class="g2" style="margin-bottom:8px;">'
+    +'<div><label class="fl">Fourn. verres D</label><select class="fs" id="f-fvd" style="font-size:10.5px;padding:4px 6px;">'+fvOpts(f.fvd||'')+'</select></div>'
+    +'<div><label class="fl">Fourn. verres G</label><select class="fs" id="f-fvg" style="font-size:10.5px;padding:4px 6px;">'+fvOpts(f.fvg||'')+'</select></div>'
+    +'</div>'
+    +'<div class="sh">Monture & Mesures</div>'
+    +'<div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:7px;margin-bottom:7px;">'
+    +'<div><label class="fl">Modèle</label><input class="fi" id="f-mm" value="'+(f.mm||'')+'"></div>'
+    +'<div><label class="fl">Type</label><select class="fs" id="f-tm"><option value="">--</option>'+['METALIQUE','ACETATE','MIXTE','PERCEE','NYLOR'].map(function(t){return '<option'+(f.tm===t?' selected':'')+'>'+t+'</option>';}).join('')+'</select></div>'
+    +'<div><label class="fl">Taille</label><input class="fi" id="f-sz" value="'+(f.sz||'')+'"></div></div>'
+    +'<div class="g4" style="margin-bottom:7px;"><div><label class="fl">A mm</label><input class="fi" id="f-lm" value="'+(f.lm||'')+'"></div><div><label class="fl">B mm</label><input class="fi" id="f-hm" value="'+(f.hm||'')+'"></div><div><label class="fl">Nez mm</label><input class="fi" id="f-nm" value="'+(f.nm||'')+'"></div><div></div></div>'
+    +'<div class="g4" style="margin-bottom:9px;"><div><label class="fl">1/2 EP D</label><input class="fi" id="f-epd" value="'+(f.epd||'')+'"></div><div><label class="fl">1/2 EP G</label><input class="fi" id="f-epg" value="'+(f.epg||'')+'"></div><div><label class="fl">HM D</label><input class="fi" id="f-hmd" value="'+(f.hmd||'')+'"></div><div><label class="fl">HM G</label><input class="fi" id="f-hmg" value="'+(f.hmg||'')+'"></div></div>'
+    +'<div><label class="fl">Consignes</label><textarea class="fta" id="f-cs" rows="2">'+(f.cs||'')+'</textarea></div>';
+}
+function syncVerre(d){if(!d)return;const a=document.getElementById('f-vd'),b=document.getElementById('f-vg');if(b&&!b.value&&a)b.value=a.value;}
+function syncTr(d){if(!d)return;const a=document.getElementById('f-trd'),b=document.getElementById('f-trg');if(b&&!b.value&&a)b.value=a.value;}
+function syncD(d){if(!d)return;const a=document.getElementById('f-dd'),b=document.getElementById('f-dg');if(b&&!b.value&&a)b.value=a.value;}
+
+function fv(id){const el=document.getElementById(id);return el?el.value.trim():'';}
+function saveCmd(){
+  const isEdit=!!_cmdId;
+  const cidV=fv('f-cid'),dlpV=fv('f-dlp');
+  if(!isEdit&&(!cidV||!dlpV)){showToast('Client et date de livraison obligatoires','err');return;}
+  const data={fid:fv('f-fid'),dlp:dlpV,fac:fv('f-fac'),opi:fv('f-opi'),sd:fv('f-sd'),cd:fv('f-cd'),ad:fv('f-ad'),xd:fv('f-xd'),sg:fv('f-sg'),cg:fv('f-cg'),ag:fv('f-ag'),xg:fv('f-xg'),vd:fv('f-vd'),trd:fv('f-trd'),dd:fv('f-dd'),fvd:fv('f-fvd'),vg:fv('f-vg'),trg:fv('f-trg'),dg:fv('f-dg'),fvg:fv('f-fvg'),mm:fv('f-mm'),tm:fv('f-tm'),lm:fv('f-lm'),hm:fv('f-hm'),nm:fv('f-nm'),sz:fv('f-sz'),epd:fv('f-epd'),epg:fv('f-epg'),hmd:fv('f-hmd'),hmg:fv('f-hmg'),cs:fv('f-cs')};
+  if(isEdit){
+    const cmd=S.commandes.find(c=>c.id===_cmdId);Object.assign(cmd,data);const stat=document.getElementById('f-stat');if(stat)cmd.statut=stat.value;
+    showToast('Commande mise à jour !');
+  }else{
+    const nc={id:S.nid++,cid:Number(cidV),statut:'En attente',dc:doff(0),bl:'',dll:'',...data};
+    S.commandes.unshift(nc);addNotif('Système','nouvelle_cmd','OK','—','Commande #'+nc.id+' créée');
+    showToast('Commande créée !');
+  }
+  save();closeM('cmd');renderCmds();if(CUR==='dashboard')renderDash();
+}
+
+
+
+// ════════════════════════════════════════════════════
+// FIREBASE — SYNCHRONISATION TEMPS RÉEL MULTI-POSTES
+// ════════════════════════════════════════════════════
+let fbDb = null;
+let fbOk = false;
+let fbListening = false;
+
+function initFirebase(){
+  const cfg = getCfg();
+  if(!cfg.fbApiKey || !cfg.fbProjectId || !cfg.fbDbUrl){
+    console.log('Firebase non configuré');
+    return;
+  }
+  // Charger Firebase SDK dynamiquement
+  const scripts = [
+    'https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js',
+    'https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js',
+    'https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js'
+  ];
+  let loaded = 0;
+  scripts.forEach(src => {
+    const s = document.createElement('script');
+    s.src = src; s.async = false;
+    s.onload = () => { loaded++; if(loaded === scripts.length) connectFirebase(cfg); };
+    s.onerror = () => console.warn('Firebase SDK non chargé:', src);
+    document.head.appendChild(s);
+  });
+}
+
+function connectFirebase(cfg){
+  try{
+    if(!firebase.apps.length){
+      firebase.initializeApp({
+        apiKey: cfg.fbApiKey,
+        authDomain: cfg.fbProjectId+'.firebaseapp.com',
+        databaseURL: cfg.fbDbUrl,
+        projectId: cfg.fbProjectId,
+        storageBucket: cfg.fbProjectId+'.appspot.com'
+      });
+    }
+    fbDb = firebase.database();
+    fbOk = true;
+    console.log('✓ Firebase connecté');
+    showToast('🔥 Synchronisation activée !');
+    // Charger les données depuis Firebase
+    fbLoad();
+    // Écouter les changements en temps réel
+    if(!fbListening){ fbListen(); fbListening=true; }
+    // Mettre à jour l'indicateur dans les paramètres
+    const el = g('fb-status');
+    if(el){ el.style.display='flex'; el.textContent='✓ Firebase connecté — Synchronisation active !'; }
+  }catch(e){
+    console.error('Firebase erreur:', e);
+    showToast('Firebase: '+e.message.slice(0,40),'err');
+  }
+}
+
+// Charger toutes les données depuis Firebase au démarrage
+function fbLoad(){
+  if(!fbOk || !fbDb) return;
+  fbDb.ref('elo').once('value').then(snap => {
+    const data = snap.val();
+    if(!data) { fbSaveAll(); return; } // Première connexion → upload données locales
+    // Fusionner avec les données locales (Firebase prioritaire)
+    if(data.state){
+      try{
+        const fbState = JSON.parse(data.state);
+        // Prendre le state avec le nid le plus élevé (plus récent)
+        if(fbState.nid >= (S.nid||0)){
+          S = fbState;
+          localStorage.setItem(ST_KEY, data.state);
+        }
+      }catch(e){}
+    }
+    if(data.users){
+      try{
+        const fbUsers = JSON.parse(data.users);
+        USRS = fbUsers;
+        localStorage.setItem(USR_KEY, data.users);
+      }catch(e){}
+    }
+    // Rafraîchir la vue actuelle
+    const r={dashboard:renderDash,commandes:renderCmds,clients:renderClients,verres:renderVerres,fournisseurs:renderFours,rapports:renderRapports,notifs:renderNotifs,admin:renderAdmin};
+    if(r[CUR])r[CUR]();
+    updateBadge();
+    showToast('✓ Données synchronisées !');
+  }).catch(e => console.warn('fbLoad:', e));
+}
+
+// Écouter les changements en temps réel
+function fbListen(){
+  if(!fbOk || !fbDb) return;
+  fbDb.ref('elo/state').on('value', snap => {
+    const raw = snap.val();
+    if(!raw) return;
+    try{
+      const fbState = JSON.parse(raw);
+      // Ne pas écraser si c'est nous qui venons de sauvegarder
+      if(fbState.nid > S.nid){
+        S = fbState;
+        localStorage.setItem(ST_KEY, raw);
+        const r={dashboard:renderDash,commandes:renderCmds,clients:renderClients,verres:renderVerres,fournisseurs:renderFours,rapports:renderRapports,notifs:renderNotifs,admin:renderAdmin};
+        if(r[CUR])r[CUR]();
+        updateBadge();
+      }
+    }catch(e){}
+  });
+  fbDb.ref('elo/users').on('value', snap => {
+    const raw = snap.val();
+    if(!raw) return;
+    try{ USRS=JSON.parse(raw); localStorage.setItem(USR_KEY,raw); if(CUR==='admin')renderAdmin(); }catch(e){}
+  });
+}
+
+// Sauvegarder dans Firebase + localStorage
+function fbSave(){
+  const raw = JSON.stringify(S);
+  localStorage.setItem(ST_KEY, raw);
+  if(fbOk && fbDb){
+    fbDb.ref('elo/state').set(raw).catch(e=>console.warn('fbSave state:',e));
+  }
+}
+
+function fbSaveU(){
+  const raw = JSON.stringify(USRS);
+  localStorage.setItem(USR_KEY, raw);
+  if(fbOk && fbDb){
+    fbDb.ref('elo/users').set(raw).catch(e=>console.warn('fbSave users:',e));
+  }
+}
+
+function fbSaveAll(){
+  fbSave(); fbSaveU();
+}
+
+// Indicateur de connexion dans la sidebar
+function updateFbIndicator(){
+  const brand = g('brand-sub');
+  if(brand && fbOk){
+    if(!brand.innerHTML.includes('🔥'))
+      brand.innerHTML += ' <span style="color:#fb923c;font-size:8px;">🔥</span>';
+  }
+}
+
+
+// ════════════════════════════════════════════════════
+// GMAIL API — ENVOI EMAIL + PDF PIÈCE JOINTE AUTO
+// ════════════════════════════════════════════════════
+let gmailReady = false;
+let gmailToken = null;
+let gmailClientId = '';
+
+function initGmailAPI(){
+  const cfg = getCfg();
+  if(!cfg.gmailClientId) return;
+  gmailClientId = cfg.gmailClientId;
+  // Charger Google Identity Services
+  const s = document.createElement('script');
+  s.src = 'https://accounts.google.com/gsi/client';
+  s.async = true;
+  s.onload = () => { gmailReady = true; console.log('Gmail API prête'); };
+  document.head.appendChild(s);
+}
+
+// Demander l'accès Gmail (popup Google une seule fois par session)
+function gmailAuth(){
+  return new Promise((resolve, reject) => {
+    if(gmailToken){ resolve(gmailToken); return; }
+    if(!gmailReady || !gmailClientId){ reject(new Error('Gmail non configuré')); return; }
+    const client = google.accounts.oauth2.initTokenClient({
+      client_id: gmailClientId,
+      scope: 'https://www.googleapis.com/auth/gmail.send',
+      callback: (resp) => {
+        if(resp.error){ reject(new Error(resp.error)); return; }
+        gmailToken = resp.access_token;
+        resolve(gmailToken);
+      }
+    });
+    client.requestAccessToken();
+  });
+}
+
+// Construire le message MIME avec pièce jointe PDF
+function buildMimeMessage(to, subject, body, pdfBase64, pdfName, fromEmail){
+  const boundary = 'ELO_OPTIK_' + Date.now();
+  const mime = [
+    'MIME-Version: 1.0',
+    'From: ' + (fromEmail || 'elleluioptik@gmail.com'),
+    'To: ' + to,
+    'Subject: =?UTF-8?B?' + btoa(unescape(encodeURIComponent(subject))) + '?=',
+    'Content-Type: multipart/mixed; boundary="' + boundary + '"',
+    '',
+    '--' + boundary,
+    'Content-Type: text/plain; charset=UTF-8',
+    'Content-Transfer-Encoding: quoted-printable',
+    '',
+    body,
+    '',
+    '--' + boundary,
+    'Content-Type: application/pdf; name="' + pdfName + '"',
+    'Content-Transfer-Encoding: base64',
+    'Content-Disposition: attachment; filename="' + pdfName + '"',
+    '',
+    pdfBase64.match(/.{1,76}/g).join('\n'),
+    '',
+    '--' + boundary + '--'
+  ].join('\r\n');
+  // Encoder en base64 URL-safe pour l'API Gmail
+  return btoa(unescape(encodeURIComponent(mime)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+// Envoyer via Gmail API
+async function gmailSendWithPDF(to, subject, body, pdfBase64, pdfName){
+  const token = await gmailAuth();
+  const raw = buildMimeMessage(to, subject, body, pdfBase64, pdfName);
+  const resp = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer ' + token,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ raw })
+  });
+  const data = await resp.json();
+  if(!resp.ok) throw new Error(data.error?.message || 'Erreur Gmail API');
+  return data;
+}
+
+// ════════════════════════════════════════════════════
+// WHATSAPP WEB + EMAIL — NOTIFICATIONS AUTOMATIQUES
+// ════════════════════════════════════════════════════
+
+function normaliserNum(tel){
+  let n=(tel||'').replace(/\s/g,'').replace(/^\+/,'').replace(/^00/,'');
+  if(n.startsWith('225'))return n;
+  if(n.startsWith('0'))return '225'+n;
+  if(n.length===8)return '225'+n;
+  return '225'+n;
+}
+
+// Envoi : Email (EmailJS) + WhatsApp Web (1 clic)
+async function envoyerNotifComplete(cl, msg, title){
+  const cfg=getCfg();
+  const email=cl.email||'';
+  const tel=cl.tel||'';
+  const subj=cfg.nom+' — '+title;
+  let sent=[];
+
+  // 1. EMAIL via EmailJS
+  if(email&&ejsOk){
+    try{
+      await ejsSend(email,subj,cl.nom+' '+cl.prenom,msg);
+      sent.push('Email');
+      addNotif('Email','auto','Envoyée',email,msg.slice(0,70));
+    }catch(e){
+      window.open('mailto:'+email+'?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(msg));
+      addNotif('Email','auto','mailto',email,'');
+    }
+  } else if(email){
+    window.open('mailto:'+email+'?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(msg));
+    addNotif('Email','auto','mailto',email,'');
+  }
+
+  // 2. WHATSAPP WEB — ouvre automatiquement avec message pré-rempli
+  if(tel){
+    const wa=normaliserNum(tel);
+    setTimeout(()=>{
+      window.open('https://wa.me/'+wa+'?text='+encodeURIComponent(msg),'_blank');
+      addNotif('WhatsApp','auto','WA Web',tel,msg.slice(0,70));
+      updateBadge();
+    },email?1200:200);
+    sent.push('WhatsApp');
+  }
+
+  save();updateBadge();
+  if(sent.length)showToast(sent.join(' + ')+' envoyé(s) !');
+}
+
+function initMetaWA(){}
+
+// ════════════════════════════════════════════════════
+// NOTIFICATION MANUELLE CLIENT (modale m-notif)
+// ════════════════════════════════════════════════════
+let _notifCl=null;
+function openNotifClient(cl, msg, title){
+  _notifCl=cl;
+  g('notif-m-title').textContent='📨 '+title;
+  g('nm-nom').textContent=esc(cl.nom+' '+cl.prenom);
+  g('nm-tel').textContent=cl.tel||'—';
+  g('nm-email-disp').textContent=cl.email||'—';
+  g('nm-email').value=cl.email||'';
+  // Numéro WA : garder le format saisi, normaliser seulement à l'envoi
+  g('nm-wa').value=cl.tel||'';
+  g('nm-msg').textContent=msg;
+  g('nm-res').style.display='none';
+  g('m-notif').style.display='flex';
+}
+function copyMsg(){
+  const msg=g('nm-msg').textContent;
+  navigator.clipboard.writeText(msg).then(()=>showToast('Message copié !')).catch(()=>showToast('Copier manuellement','warn'));
+}
+function sendWaNotif(){
+  const rawNum=g('nm-wa').value.trim();
+  // Normalisation : gérer tous les formats ivoiriens
+  let wa=rawNum.replace(/\s/g,'').replace(/^\+/,'').replace(/^00/,'');
+  if(wa.startsWith('225')){/* déjà bon */}
+  else if(wa.startsWith('0')){wa='225'+wa;}  // 0709... → 2250709...
+  else if(wa.length===8){wa='225'+wa;}        // 12345678 → 22512345678 (vieux format)
+  else if(wa.length===10){wa='225'+wa;}       // 0709123456 → 2250709123456
+  const msg=g('nm-msg').textContent;
+  if(!wa||wa.length<11){showToast('Numéro WhatsApp invalide','err');return;}
+  window.open('https://wa.me/'+wa+'?text='+encodeURIComponent(msg),'_blank');
+  g('nm-res').innerHTML='<div class="ab ag" style="margin:0;">✓ WhatsApp ouvert !</div>';
+  g('nm-res').style.display='block';
+  if(_notifCl)addNotif('WhatsApp','manuel','Ouvert',wa,msg.slice(0,70));
+  save();updateBadge();
+}
+async function sendEmailNotif(){
+  const email=g('nm-email').value.trim();
+  if(!email||!email.includes('@')){showToast('Email invalide','err');return;}
+  const msg=g('nm-msg').textContent;
+  const cfg=getCfg();
+  const btn=g('btn-send-email');btn.disabled=true;btn.textContent='Envoi...';
+  let sent=false;
+  if(ejsOk&&_notifCl){
+    try{
+      await ejsSend(email,cfg.nom+' — Notification',_notifCl.nom+' '+_notifCl.prenom,msg);
+      sent=true;
+    }catch(e){console.warn('Email notif:',e);}
+  }
+  if(!sent){
+    window.open('mailto:'+email+'?body='+encodeURIComponent(msg));
+    sent=true;
+  }
+  g('nm-res').innerHTML='<div class="ab ag" style="margin:0;">✓ '+(ejsOk?'Email envoyé !':'Client mail ouvert !')+'</div>';
+  g('nm-res').style.display='block';
+  if(_notifCl)addNotif('Email','manuel',ejsOk?'Envoyée':'Ouvert',email,msg.slice(0,70));
+  save();updateBadge();
+  btn.disabled=false;btn.textContent='✉ Email';
+}
+
+// ════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════
+function initApp(){
+  applyTheme(getCfg());
+  initMetaWA();
+  initFirebase();
+  initGmailAPI();
+  if(!S.relances)S.relances={};
+  updateBadge();renderDash();
+  // Chargement dynamique non-bloquant des libs externes
+  function loadScript(url, cb){
+    const s=document.createElement('script');s.src=url;s.async=true;
+    s.onload=cb||function(){};s.onerror=function(){console.warn('Lib non chargée:',url);};
+    document.head.appendChild(s);
+  }
+  loadScript('https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js', function(){
+    try{const cfg=getCfg();emailjs.init({publicKey:cfg.ek});ejsOk=true;console.log('EmailJS OK');}catch(e){}
+    setTimeout(function(){if(ejsOk)relancesAuto();},2000);
+    setInterval(function(){if(ejsOk)relancesAuto();},3600000);
+  });
+  loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', function(){
+    console.log('jsPDF OK');
+  });
+}
+
+document.addEventListener('DOMContentLoaded',()=>{setTimeout(()=>g('luser')?.focus(),80);});
+</script>
+</body>
+</html>
