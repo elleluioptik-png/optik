@@ -147,6 +147,7 @@ input,select,textarea,button{font-family:inherit;outline:none;}
   <button class="nb" onclick="nav('clients',this)"><span class="ni">👤</span>Clients</button>
   <div class="nav-sec">Catalogue</div>
   <button class="nb" onclick="nav('verres',this)"><span class="ni">🔬</span>Catalogue verres</button>
+  <button class="nb" onclick="nav('traitements',this)"><span class="ni">✨</span>Traitements</button>
   <button class="nb" onclick="nav('fournisseurs',this)"><span class="ni">🚚</span>Fournisseurs</button>
   <div class="nav-sec">Analyse</div>
   <button class="nb" onclick="nav('rapports',this)"><span class="ni">📊</span>Rapports</button>
@@ -228,6 +229,22 @@ input,select,textarea,button{font-family:inherit;outline:none;}
     <div class="card">
       <div class="th" style="grid-template-columns:1fr 75px 75px 160px 60px 110px 50px;"><div>DÉSIGNATION</div><div>TYPE</div><div>INDICE</div><div>TRAITEMENT</div><div>DIAM.</div><div>FOURNISSEUR</div><div></div></div>
       <div id="v-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TRAITEMENTS -->
+<div class="view" id="v-traitements">
+  <div class="tb">
+    <div class="tb-title">Traitements verres</div>
+    <input class="fi" style="max-width:185px;" placeholder="🔍 Rechercher..." oninput="tSearch=this.value;renderTraitements()">
+    <select class="fs" style="width:120px;" id="t-cat" onchange="renderTraitements()"><option value="">Toutes catégories</option><option>Anti-reflet</option><option>Photochromique</option><option>Polarisé</option><option>Durcissant</option><option>UV</option><option>Blue Light</option><option>Transitions</option></select>
+    <button class="btn bt" onclick="openNewTraitement()">+ Ajouter</button>
+  </div>
+  <div class="ct">
+    <div class="card">
+      <div class="th" style="grid-template-columns:1fr 100px 110px 1fr 70px 55px;"><div>DÉSIGNATION</div><div>CATÉGORIE</div><div>FOURNISSEUR</div><div>DESCRIPTION</div><div>PRIX FCFA</div><div></div></div>
+      <div id="t-list"></div>
     </div>
   </div>
 </div>
@@ -366,6 +383,33 @@ input,select,textarea,button{font-family:inherit;outline:none;}
       <button class="btn bsm" style="background:#25D366;color:#fff;" onclick="sendWaNotif()">💬 WhatsApp</button>
       <button class="btn bt" id="btn-send-email" onclick="sendEmailNotif()">✉ Email</button>
     </div>
+  </div>
+</div>
+
+<!-- Traitement -->
+<div class="mbg" id="m-traitement" style="display:none;" onclick="if(event.target===this)closeM('traitement')">
+  <div class="mbox" style="max-width:480px;">
+    <div class="mh" id="trait-mh" style="background:linear-gradient(135deg,var(--teal),#059669);">
+      <div class="mt" id="trait-mt">✨ Nouveau traitement</div><button class="mx" onclick="closeM('traitement')">×</button>
+    </div>
+    <div class="mb">
+      <div class="g2">
+        <div style="grid-column:1/-1;"><label class="fl">Désignation *</label><input class="fi" id="tn"></div>
+        <div><label class="fl">Catégorie *</label>
+          <select class="fs" id="tcat">
+            <option value="">--</option>
+            <option>Anti-reflet</option><option>Photochromique</option><option>Polarisé</option>
+            <option>Durcissant</option><option>UV</option><option>Blue Light</option><option>Transitions</option><option>Autre</option>
+          </select>
+        </div>
+        <div><label class="fl">Fournisseur</label><select class="fs" id="tf"></select></div>
+        <div><label class="fl">Prix (FCFA)</label><input class="fi" id="tp" type="number" placeholder="0"></div>
+        <div><label class="fl">Durée garantie</label><input class="fi" id="tg" placeholder="Ex: 2 ans"></div>
+        <div style="grid-column:1/-1;"><label class="fl">Description / Caractéristiques</label><textarea class="fta" id="td" rows="3" placeholder="Ex: Antireflet premium résistant aux rayures, traitement UV 400..."></textarea></div>
+        <div style="grid-column:1/-1;"><label class="fl">Compatible avec (types de verres)</label><input class="fi" id="tc" placeholder="Ex: Unifocal, Progressif, Bifocal"></div>
+      </div>
+    </div>
+    <div class="mf"><button class="btn bg" onclick="closeM('traitement')">Annuler</button><button class="btn bt" id="trait-save" onclick="saveTraitement()">✓ Ajouter</button></div>
   </div>
 </div>
 
@@ -573,6 +617,18 @@ function defState(){
       {id:5,cid:5,fid:'PALM OPTIQUE',statut:'Livré',dc:doff(-20),dlp:doff(-8),bl:'BL-0156',dll:doff(-9),fac:'FAC-2026-025',opi:'ELO P',sd:'-4.00',cd:'-1.25',ad:'80',xd:'',sg:'-3.75',cg:'-1.00',ag:'100',xg:'',vd:'Unifocal Organique 1.67',trd:'AR Blue Light',dd:'70 mm',fvd:'PALM OPTIQUE',vg:'Unifocal Organique 1.67',trg:'AR Blue Light',dg:'70 mm',fvg:'PALM OPTIQUE',mm:'OAKLEY OX8046',tm:'ACETATE',lm:'50',hm:'45',nm:'18',sz:'50.18.140',epd:'30',epg:'30',hmd:'20',hmg:'20',cs:''},
       {id:6,cid:1,fid:'ZEISS CI',statut:'Commandé',dc:doff(-5),dlp:doff(5),bl:'',dll:'',fac:'FAC-2026-048',opi:'ELO P',sd:'-1.75',cd:'-0.25',ad:'90',xd:'+2.00',sg:'-2.00',cg:'',ag:'',xg:'+2.00',vd:'ZEISS Individual 2 1.74',trd:'AR DuraVision Platinum',dd:'75/70',fvd:'ZEISS CI',vg:'ZEISS Individual 2 1.74',trg:'AR DuraVision Platinum',dg:'75/70',fvg:'ZEISS CI',mm:'SILHOUETTE 5515',tm:'METALIQUE',lm:'53',hm:'39',nm:'17',sz:'53.17.140',epd:'33',epg:'32',hmd:'21',hmg:'21',cs:'Anti-lumiere bleue renforcee'}
     ],
+    traitements:[
+      {id:101,nom:'AR Standard',cat:'Anti-reflet',four:'PALM OPTIQUE',prix:5000,garantie:'1 an',desc:'Antireflet basique résistant aux rayures. Réduit les reflets lumineux.',compat:'Unifocal, Progressif, Bifocal'},
+      {id:102,nom:'AR Premium + UV + Durcissant',cat:'Anti-reflet',four:'ESSILOR CI',prix:18000,garantie:'2 ans',desc:'Antireflet premium multicouches, protection UV 400, traitement durcissant résistant aux chocs.',compat:'Unifocal, Progressif, Bifocal'},
+      {id:103,nom:'AR Blue Light',cat:'Blue Light',four:'ZEISS CI',prix:22000,garantie:'2 ans',desc:'Filtrage lumière bleue nocive des écrans (400-455nm). Réduit fatigue oculaire et troubles du sommeil.',compat:'Unifocal, Progressif'},
+      {id:104,nom:'AR DuraVision Platinum',cat:'Anti-reflet',four:'ZEISS CI',prix:35000,garantie:'3 ans',desc:'Antireflet haut de gamme ZEISS. Resistance maximale aux rayures. Anti-eau et anti-saletes.',compat:'Unifocal, Progressif'},
+      {id:105,nom:'AR Super HiVision',cat:'Anti-reflet',four:'HOYA CI',prix:20000,garantie:'2 ans',desc:'Antireflet Hoya avec repousseur de poussière et eau. Vision cristalline.',compat:'Unifocal, Progressif, Bifocal'},
+      {id:106,nom:'AR SeeCoat Plus',cat:'Anti-reflet',four:'NIKON OPTICAL',prix:15000,garantie:'2 ans',desc:'Antireflet Nikon hydrophobe et oléophobe. Anti-pluie, anti-doigts.',compat:'Unifocal, Progressif'},
+      {id:107,nom:'Photochromique Transitions',cat:'Transitions',four:'ESSILOR CI',prix:45000,garantie:'2 ans',desc:'Verres qui s\'assombrissent à la lumière. 8e génération Transitions. Activé par UV.',compat:'Unifocal, Progressif'},
+      {id:108,nom:'PhotoFusion X ZEISS',cat:'Photochromique',four:'ZEISS CI',prix:50000,garantie:'2 ans',desc:'Photochromique ultra-rapide ZEISS. Passage clair→foncé en 15 sec.',compat:'Unifocal'},
+      {id:109,nom:'Polarisé Standard',cat:'Polarisé',four:'PALM OPTIQUE',prix:25000,garantie:'1 an',desc:'Filtre anti-éblouissement. Idéal conduite et activités extérieures.',compat:'Unifocal'},
+      {id:110,nom:'UV 400 Protection',cat:'UV',four:'INDIVISION',prix:8000,garantie:'illimitée',desc:'Protection totale contre les UV jusqu\'à 400nm. Essentiel pour la santé oculaire.',compat:'Unifocal, Progressif, Bifocal'}
+    ],
     verres:[
       {id:1,nom:'Essilor Crizal Alize UV 1.50',type:'Unifocal',indice:'1.50',traitement:'AR Premium + UV + Durcissant',fournisseur:'ESSILOR CI',diam:'65 mm',prix:35000,stock:10,notes:'Crizal premium'},
       {id:2,nom:'Essilor Crizal Forte UV 1.60',type:'Unifocal',indice:'1.60',traitement:'AR Premium + UV + Durcissant',fournisseur:'ESSILOR CI',diam:'70 mm',prix:55000,stock:8,notes:'Protection UV maximale'},
@@ -711,7 +767,7 @@ function nav(name,btn){
   const v=g('v-'+name);if(v)v.classList.add('on');
   if(btn)btn.classList.add('active');
   CUR=name;
-  const r={dashboard:renderDash,commandes:renderCmds,clients:renderClients,verres:renderVerres,fournisseurs:renderFours,rapports:renderRapports,notifs:renderNotifs,admin:renderAdmin};
+  const r={dashboard:renderDash,commandes:renderCmds,clients:renderClients,verres:renderVerres,traitements:renderTraitements,fournisseurs:renderFours,rapports:renderRapports,notifs:renderNotifs,admin:renderAdmin};
   if(r[name])r[name]();
 }
 
@@ -1140,6 +1196,84 @@ async function relancesAuto(){
   save();if(n>0){showToast(n+' relance(s) auto envoyée(s)');updateBadge();if(CUR==='notifs')renderNotifs();}
 }
 
+
+// ════════════════════════════════════════════════════
+// TRAITEMENTS VERRES
+// ════════════════════════════════════════════════════
+let tSearch='';
+let _tId=null;
+
+function renderTraitements(){
+  if(!S.traitements)S.traitements=[];
+  // Peupler le select fournisseur du filtre
+  const cat=g('t-cat')?.value||'';
+  const s=tSearch.toLowerCase();
+  const list=S.traitements.filter(t=>
+    (!s||t.nom.toLowerCase().includes(s)||(t.cat||'').toLowerCase().includes(s)||(t.four||'').toLowerCase().includes(s))
+    &&(!cat||t.cat===cat)
+  );
+  g('t-list').innerHTML=list.length===0?'<div style="padding:26px;text-align:center;color:var(--txt3);">Aucun traitement.</div>':
+    list.map(t=>'<div class="tr" style="grid-template-columns:1fr 100px 110px 1fr 70px 55px;">'
+      +'<div><div style="font-weight:500;font-size:11.5px;">'+esc(t.nom)+'</div>'+(t.garantie?'<div style="font-size:9.5px;color:var(--txt3);">Garantie : '+esc(t.garantie)+'</div>':'')+'</div>'
+      +'<div><span class="badge" style="background:#ede9fe;color:#6d28d9;border:none;font-size:9px;">'+esc(t.cat||'—')+'</span></div>'
+      +'<div style="font-size:10.5px;color:var(--teal);">'+esc(t.four||'—')+'</div>'
+      +'<div style="font-size:10px;color:var(--txt2);">'+esc((t.desc||'').slice(0,70))+(t.desc&&t.desc.length>70?'…':'')+'</div>'
+      +'<div style="font-size:10.5px;font-weight:500;">'+(t.prix?t.prix.toLocaleString('fr-CI'):' —')+'</div>'
+      +'<div style="display:flex;gap:2px;">'
+        +'<button onclick="editTraitement('+t.id+')" style="background:var(--teal);color:#fff;border:none;border-radius:3px;padding:2px 5px;font-size:9px;cursor:pointer;">✏️</button>'
+        +'<button onclick="delTraitement('+t.id+')" style="background:#fef2f2;color:#991b1b;border:.5px solid #fca5a5;border-radius:3px;padding:2px 5px;font-size:9px;cursor:pointer;">🗑</button>'
+      +'</div></div>'
+    ).join('');
+}
+
+function openNewTraitement(){
+  _tId=null;
+  g('trait-mt').textContent='✨ Nouveau traitement';
+  g('trait-mh').style.background='linear-gradient(135deg,var(--teal),#059669)';
+  g('trait-save').textContent='✓ Ajouter';
+  ['tn','tp','tg','td','tc'].forEach(id=>g(id).value='');
+  g('tcat').value='';
+  g('tf').innerHTML='<option value="">--</option>'+S.fournisseurs.map(f=>'<option>'+f.nom+'</option>').join('');
+  g('m-traitement').style.display='flex';
+}
+
+function editTraitement(id){
+  _tId=id;
+  const t=S.traitements.find(x=>x.id===id);if(!t)return;
+  g('trait-mt').textContent='Modifier traitement';
+  g('trait-mh').style.background='linear-gradient(135deg,#f59e0b,#ef4444)';
+  g('trait-save').textContent='Enregistrer';
+  g('tn').value=t.nom||'';
+  g('tcat').value=t.cat||'';
+  g('tf').innerHTML='<option value="">--</option>'+S.fournisseurs.map(f=>'<option'+(t.four===f.nom?' selected':'')+'>'+f.nom+'</option>').join('');
+  g('tp').value=t.prix||'';
+  g('tg').value=t.garantie||'';
+  g('td').value=t.desc||'';
+  g('tc').value=t.compat||'';
+  g('m-traitement').style.display='flex';
+}
+
+function saveTraitement(){
+  if(!S.traitements)S.traitements=[];
+  const nom=gv('tn'),cat=g('tcat').value;
+  if(!nom||!cat){showToast('Désignation et catégorie obligatoires','err');return;}
+  const data={nom,cat,four:g('tf').value,prix:parseInt(gv('tp'))||0,garantie:gv('tg'),desc:gv('td'),compat:gv('tc')};
+  if(_tId){
+    S.traitements=S.traitements.map(t=>t.id===_tId?{...t,...data}:t);
+    showToast('Traitement mis à jour !');
+  }else{
+    S.traitements.push({id:S.nid++,...data});
+    showToast('Traitement ajouté !');
+  }
+  _tId=null;save();closeM('traitement');renderTraitements();
+}
+
+function delTraitement(id){
+  if(!confirm('Supprimer ce traitement ?'))return;
+  S.traitements=S.traitements.filter(t=>t.id!==id);
+  save();renderTraitements();showToast('Supprimé','err');
+}
+
 // ════════════════════════════════════════════════════
 // CLIENTS
 // ════════════════════════════════════════════════════
@@ -1220,7 +1354,7 @@ function renderVerres(){
   g('v-list').innerHTML=list.length===0?'<div style="padding:26px;text-align:center;color:var(--txt3);">Aucun verre.</div>':list.map(v=>'<div class="tr" style="grid-template-columns:1fr 75px 75px 160px 60px 110px 50px;"><div><div style="font-weight:500;font-size:11.5px;">'+esc(v.nom)+'</div>'+(v.notes?'<div style="font-size:9px;color:var(--txt3);">'+esc(v.notes)+'</div>':'')+'</div><div style="text-align:center;"><span class="badge" style="background:#e0f2fe;color:#0c4a6e;border:none;font-size:9px;">'+esc(v.type)+'</span></div><div style="text-align:center;font-size:10.5px;">'+esc(v.indice||'—')+'</div><div style="font-size:10px;color:var(--txt2);">'+esc(v.traitement||'—')+'</div><div style="text-align:center;font-size:10.5px;">'+esc(v.diam||'—')+'</div><div style="font-size:10.5px;color:var(--teal);font-weight:500;">'+esc(v.fournisseur||'—')+'</div><div style="display:flex;gap:2px;">'+(canAdmin()?'<button onclick="editVerre('+v.id+')" style="background:var(--teal);color:#fff;border:none;border-radius:3px;padding:2px 5px;font-size:9px;cursor:pointer;">✏️</button><button onclick="delVerre('+v.id+')" style="background:#fef2f2;color:#991b1b;border:.5px solid #fca5a5;border-radius:3px;padding:2px 5px;font-size:9px;cursor:pointer;">🗑</button>':'')+'</div></div>').join('');
 }
 function openNewVerre(){
-  if(!canAdmin()){showToast('Permission insuffisante','err');return;}
+  if(!canEdit()){showToast('Permission insuffisante','err');return;}
   _vId=null;
   g('verre-mt').textContent='🔬 Nouveau verre';
   g('verre-mh').style.background='linear-gradient(135deg,var(--teal),#059669)';
