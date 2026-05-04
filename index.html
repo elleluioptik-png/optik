@@ -1057,14 +1057,46 @@ function buildPDF(cmd){
   doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(...D);doc.text((cl?cl.nom+' '+cl.prenom:'—'),pL+2,y+9.5);doc.text(cmd.fid||'—',pL+bW+5,y+9.5);
   doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(...G);doc.text('Tél : '+(cl?.tel||'—'),pL+2,y+13.5);doc.text('Livraison : '+fmt(cmd.dlp),pL+bW+5,y+13.5);y+=19;
   doc.setFillColor(...T);doc.rect(pL,y,cW,5.5,'F');doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...W2);doc.text('PRESCRIPTION & VERRES',pL+2,y+4);y+=5.5;
-  const cols=[{l:'',w:7},{l:'SPH',w:12},{l:'CYL',w:12},{l:'AXE',w:12},{l:'ADD',w:12},{l:'Verres',w:43},{l:'Traitement',w:43},{l:'Diam.',w:12},{l:'Fourn.',w:cW-153}];
+  const cols=[{l:'',w:7},{l:'SPH',w:11},{l:'CYL',w:11},{l:'AXE',w:11},{l:'ADD',w:11},{l:'Verres',w:50},{l:'Traitement',w:48},{l:'Diam.',w:11},{l:'Fourn.',w:cW-160}];
   let x=pL;doc.setFillColor(240,249,249);
   cols.forEach(c=>{doc.setFont('helvetica','bold');doc.setFontSize(6.5);doc.setTextColor(...T);doc.text(c.l,x+1,y+4);doc.setDrawColor(209,213,219);doc.rect(x,y,c.w,5.5,'S');x+=c.w;});y+=5.5;
   [['D',cmd.sd,cmd.cd,cmd.ad,cmd.xd,cmd.vd,cmd.trd,cmd.dd,cmd.fvd],['G',cmd.sg,cmd.cg,cmd.ag,cmd.xg,cmd.vg,cmd.trg,cmd.dg,cmd.fvg]].forEach((row,ri)=>{
-    x=pL;ri%2===0?doc.setFillColor(255,255,255):doc.setFillColor(248,250,252);doc.rect(pL,y,cW,6.5,'F');
-    doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(...T);doc.text(row[0],x+2,y+4.5);x+=cols[0].w;
-    cols.slice(1).forEach((c,ci)=>{doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(...D);const t=String(row[ci+1]||'—').substring(0,Math.floor(c.w/2));doc.text(t,x+1.5,y+4.5);doc.setDrawColor(209,213,219);doc.rect(x,y,c.w,6.5,'S');x+=c.w;});
-    doc.setDrawColor(209,213,219);doc.rect(pL,y,cols[0].w,6.5,'S');y+=6.5;
+    x=pL;
+    // Calculer la hauteur de ligne selon le texte le plus long (verres et traitement)
+    doc.setFontSize(6);
+    const verreLines=doc.splitTextToSize(String(row[5]||'—'),cols[5].w-2).length;
+    const traitLines=doc.splitTextToSize(String(row[6]||'—'),cols[6].w-2).length;
+    const maxLines=Math.max(verreLines,traitLines,1);
+    const rowH=Math.max(6.5,maxLines*4.2+2);
+    ri%2===0?doc.setFillColor(255,255,255):doc.setFillColor(248,250,252);
+    doc.rect(pL,y,cW,rowH,'F');
+    // Colonne oeil
+    doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(...T);
+    doc.text(row[0],x+2,y+rowH/2+1.5);
+    doc.setDrawColor(209,213,219);doc.rect(x,y,cols[0].w,rowH,'S');x+=cols[0].w;
+    // Colonnes SPH CYL AXE ADD (indices 1-4)
+    cols.slice(1,5).forEach((c,ci)=>{
+      doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(...D);
+      doc.text(String(row[ci+1]||'—'),x+1.5,y+rowH/2+1.5);
+      doc.setDrawColor(209,213,219);doc.rect(x,y,c.w,rowH,'S');x+=c.w;
+    });
+    // Colonne Verres (index 5) - multi-lignes
+    doc.setFont('helvetica','normal');doc.setFontSize(6);doc.setTextColor(...D);
+    const vLines=doc.splitTextToSize(String(row[5]||'—'),cols[5].w-2);
+    doc.text(vLines,x+1.5,y+4);
+    doc.setDrawColor(209,213,219);doc.rect(x,y,cols[5].w,rowH,'S');x+=cols[5].w;
+    // Colonne Traitement (index 6) - multi-lignes
+    const tLines=doc.splitTextToSize(String(row[6]||'—'),cols[6].w-2);
+    doc.text(tLines,x+1.5,y+4);
+    doc.setDrawColor(209,213,219);doc.rect(x,y,cols[6].w,rowH,'S');x+=cols[6].w;
+    // Colonnes Diam et Fourn (indices 7-8)
+    cols.slice(7).forEach((c,ci)=>{
+      doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(...D);
+      const txt=doc.splitTextToSize(String(row[ci+7]||'—'),c.w-2);
+      doc.text(txt,x+1.5,y+4);
+      doc.setDrawColor(209,213,219);doc.rect(x,y,c.w,rowH,'S');x+=c.w;
+    });
+    y+=rowH;
   });y+=5;
   doc.setFillColor(...T);doc.rect(pL,y,cW,5.5,'F');doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...W2);doc.text('MONTURE & MESURES',pL+2,y+4);y+=5.5;
   doc.setFillColor(240,244,248);doc.rect(pL,y,cW,24,'F');doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...D);
