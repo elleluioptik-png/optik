@@ -260,6 +260,7 @@ input,select,textarea,button{font-family:inherit;outline:none;}
   <div class="tb">
     <div class="tb-title">Rapports</div>
     <select class="fs" style="width:135px;" id="rp-periode" onchange="renderRapports()"><option value="today">Aujourd'hui</option><option value="week" selected>Cette semaine</option><option value="month">Ce mois</option></select>
+    <button class="btn bg bsm" onclick="imprimerRapport()">🖨️ Imprimer</button>
     <button class="btn bg bsm" onclick="exportRapportPDF()">📥 PDF</button>
     <button class="btn bt bsm" onclick="showRapportModal()">👁 Aperçu &amp; Envoyer</button>
   </div>
@@ -1504,6 +1505,50 @@ function renderRapports(){
     '</tbody></table></div>';
 }
 
+function imprimerRapport(){
+  const{cmds,livrees,rets,byStatut,byFour,tx,valStock,lbl,now}=getRpData();
+  const cfg=getCfg();
+  const pw=window.open('','_blank');
+  pw.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Rapport '+cfg.nom+'</title>'
+    +'<style>@page{size:A4;margin:1.2cm;}*{box-sizing:border-box;margin:0;padding:0;}'
+    +'body{font-family:Arial,sans-serif;font-size:11px;color:#111;}'
+    +'.hd{background:#04747c;color:#fff;padding:12px 15px;display:flex;justify-content:space-between;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    +'.kgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0;}'
+    +'.kbox{background:#f0f9f9;border-radius:6px;padding:10px;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    +'.kv{font-size:22px;font-weight:700;color:#04747c;}'
+    +'.kl{font-size:9px;color:#6b7280;margin-top:2px;}'
+    +'.sh{background:#04747c;color:#fff;padding:4px 8px;font-size:8.5px;font-weight:700;margin:10px 0 5px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    +'.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}'
+    +'.card{background:#f8fafc;border-radius:6px;padding:10px;}'
+    +'table{width:100%;border-collapse:collapse;font-size:10px;margin-top:5px;}'
+    +'th{background:#f0f9f9;color:#04747c;padding:4px 6px;border:1px solid #e2e8f0;text-align:left;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    +'td{padding:4px 6px;border:1px solid #e2e8f0;}'
+    +'tr:nth-child(even) td{background:#f8fafc;}'
+    +'.bar{height:6px;background:#04747c;border-radius:3px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    +'</style></head><body>'
+    +'<div class="hd"><div><div style="font-size:14px;font-weight:700;">RAPPORT DE GESTION</div>'
+    +'<div style="font-size:9px;opacity:.8;">'+esc(cfg.nom)+' — '+esc(cfg.adr)+'</div></div>'
+    +'<div style="text-align:right;"><div style="font-size:11px;">'+lbl+'</div>'
+    +'<div style="font-size:9px;">'+now.toLocaleDateString('fr-CI',{day:'numeric',month:'long',year:'numeric'})+'</div></div></div>'
+    +'<div class="kgrid">'
+    +[{l:'Nouvelles commandes',v:cmds.length,c:'#04747c'},{l:'Livrées',v:livrees.length,c:'#10b981'},{l:'Taux livraison',v:tx+'%',c:tx>=80?'#10b981':'#f59e0b'},{l:'Retards actifs',v:rets.length,c:rets.length>0?'#ef4444':'#10b981'},{l:'Total clients',v:S.clients.length,c:'#3b82f6'},{l:'Valeur stock (FCFA)',v:valStock.toLocaleString('fr-CI'),c:'#7c3aed'}]
+    .map(k=>'<div class="kbox"><div class="kv" style="color:'+k.c+';">'+k.v+'</div><div class="kl">'+k.l+'</div></div>').join('')
+    +'</div>'
+    +'<div class="sh">STATUTS DES COMMANDES</div>'
+    +'<div class="g2">'
+    +'<div class="card">'+Object.entries(byStatut).map(([s,n])=>'<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;"><div style="font-size:10px;color:#6b7280;width:72px;">'+s+'</div><div style="flex:1;height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden;"><div class="bar" style="width:'+Math.max(5,Math.round(n/S.commandes.length*100))+'%;background:'+({'En attente':'#f59e0b','Commandé':'#3b82f6','Reçu':'#06b6d4','Monté':'#8b5cf6','Prêt':'#10b981','Livré':'#059669'}[s]||'#9ca3af')+'"></div></div><div style="font-size:10px;font-weight:600;">'+n+'</div></div>').join('')+'</div>'
+    +'<div class="card"><div style="font-size:10.5px;font-weight:600;margin-bottom:5px;">Fournisseurs</div>'+Object.entries(byFour).map(([n,d])=>'<div style="margin-bottom:5px;padding-bottom:5px;border-bottom:.5px solid #e2e8f0;"><div style="font-weight:500;font-size:10.5px;color:#04747c;">'+esc(n)+'</div><div style="font-size:9.5px;color:#6b7280;">'+d.t+' cmds · '+d.l+' livrées'+(d.r>0?' · <span style="color:#ef4444;">'+d.r+' retard(s)</span>':'')+'</div></div>').join('')+'</div>'
+    +'</div>'
+    +'<div class="sh">DÉTAIL DES COMMANDES</div>'
+    +'<table><thead><tr><th>N° Bon</th><th>Client</th><th>Fournisseur</th><th>Statut</th><th>Date</th><th>Livraison</th></tr></thead><tbody>'
+    +S.commandes.map((c,i)=>{const cl=gc(c.cid);const ret=jrs(c.dlp)!==null&&jrs(c.dlp)<0&&c.statut!=='Livré';return '<tr><td>'+numBon(c.id)+'</td><td>'+(cl?esc(cl.nom+' '+cl.prenom):'—')+'</td><td>'+esc(c.fid||'—')+'</td><td style="color:'+({'En attente':'#f59e0b','Commandé':'#3b82f6','Reçu':'#06b6d4','Monté':'#8b5cf6','Prêt':'#10b981','Livré':'#059669'}[c.statut]||'#9ca3af')+';">'+esc(c.statut)+'</td><td>'+fmt(c.dc)+'</td><td style="color:'+(ret?'#ef4444':'inherit')+';font-weight:'+(ret?700:400)+';">'+fmt(c.dlp)+(ret?' ⚠':'')+'</td></tr>';}).join('')
+    +'</tbody></table>'
+    +'<div style="margin-top:12px;border-top:1px solid #e2e8f0;padding-top:6px;font-size:8.5px;color:#9ca3af;text-align:center;">'+esc(cfg.nom)+' — '+esc(cfg.adr)+' — '+esc(cfg.tel)+'</div>'
+    +'<script>window.onload=function(){window.print();};<\/script>'
+    +'</body></html>');
+  pw.document.close();
+}
+
 function showRapportModal(){
   const{cmds,livrees,rets,byStatut,byFour,tx,valStock,lbl,now}=getRpData();const cfg=getCfg();
   g('rapport-body').innerHTML=
@@ -1671,7 +1716,10 @@ function buildCmdForm(cmd){
   const cOpts=S.clients.map(c=>'<option value="'+c.id+'"'+(isEdit&&f.cid===c.id?' selected':'')+'>'+c.nom+' '+c.prenom+'</option>').join('');
   const foOpts=S.fournisseurs.map(fo=>'<option'+(isEdit&&f.fid===fo.nom?' selected':'')+'>'+fo.nom+'</option>').join('');
   const stOpts=STATUTS.map(s=>'<option'+(isEdit&&f.statut===s?' selected':'')+'>'+s+'</option>').join('');
-  const TRTS=['Sans traitement','AR Standard','AR Premium','AR Blue Light','AR + UV + Durcissant','AR Premium + UV + Durcissant','AR + Transitions','AR Premium + Transitions','Photochromique','Polarisé'];
+  // Combiner traitements statiques + traitements du catalogue
+  const TRTS_BASE=['Sans traitement','AR Standard','AR Premium','AR Blue Light','AR + UV + Durcissant','AR Premium + UV + Durcissant','AR + Transitions','AR Premium + Transitions','Photochromique','Polarisé'];
+  const TRTS_CAT=(S.traitements||[]).map(t=>t.nom);
+  const TRTS=[...new Set([...TRTS_BASE,...TRTS_CAT])];
   const DMS=['65 mm','70 mm','75 mm','65/60','70/65','75/70'];
   const trOpts=function(sel){return '<option value="">--</option>'+TRTS.map(function(t){return '<option'+(sel===t?' selected':'')+'>'+t+'</option>';}).join('');};
   const dOpts=function(sel){return '<option value="">--</option>'+DMS.map(function(d){return '<option'+(sel===d?' selected':'')+'>'+d+'</option>';}).join('');};
