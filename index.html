@@ -516,6 +516,9 @@ input,select,textarea,button{font-family:inherit;outline:none;}
         <div><label class="fl">Service ID</label><input class="fi" id="set-es"></div>
         <div style="grid-column:1/-1;"><label class="fl">Template ID</label><input class="fi" id="set-et"></div>
       </div>
+      <div style="background:#eff6ff;border:.5px solid #bfdbfe;border-radius:7px;padding:8px 11px;margin-bottom:9px;font-size:10.5px;color:#1e40af;">
+        🔒 Vos clés API sont stockées <strong>uniquement dans ce navigateur</strong> et ne sont jamais exposées publiquement.
+      </div>
       <div class="sh">📧 Gmail API — Envoi PDF automatique</div>
       <div style="background:#fef3c7;border:.5px solid #fcd34d;border-radius:7px;padding:8px 11px;margin-bottom:9px;font-size:10.5px;color:#92400e;line-height:1.7;">
         💡 <strong>console.cloud.google.com</strong> → APIs & Services → Identifiants → Créer ID client OAuth 2.0 (App Web) → Copier le Client ID
@@ -577,7 +580,7 @@ input,select,textarea,button{font-family:inherit;outline:none;}
 // ════════════════════════════════════════════════════
 const CFG_KEY='elo_cfg',USR_KEY='elo_usr',ST_KEY='elo_st';
 
-function defCfg(){return{nom:'ELLE & LUI OPTIK',adr:'Abidjan, Cocody Riviera Palmeraie, Rue I-123 N\u00b0PADA 507',tel:'+2250749633030',email:'elleluioptik@gmail.com',avis:'https://g.page/r/Ccmgdp3zEzK7EAE/review',ek:'STxD60mD5cBu3JWxp',es:'service_fwcrkcg',et:'template_j8rpfh1',col:'#04747c',num:1,metaToken:'',metaPhoneId:'',cmbKey:'',cmbNum:'',gmailClientId:'310693495993-1u1eaq1uqc817905t28tcussruu16bqc.apps.googleusercontent.com',fbApiKey:'AIzaSyDPUbl0YD2C0bbHlPZw9UjccN8bq6o0sQM',fbProjectId:'elle-et-lui-optik',fbDbUrl:'https://elle-et-lui-optik-default-rtdb.firebaseio.com'};}
+function defCfg(){return{nom:'ELLE & LUI OPTIK',adr:'Abidjan, Cocody Riviera Palmeraie, Rue I-123 N\u00b0PADA 507',tel:'+2250749633030',email:'elleluioptik@gmail.com',avis:'https://g.page/r/Ccmgdp3zEzK7EAE/review',ek:'',es:'',et:'',col:'#04747c',num:1,metaToken:'',metaPhoneId:'',cmbKey:'',cmbNum:'',gmailClientId:'',fbApiKey:'',fbProjectId:'',fbDbUrl:''};}
 function getCfg(){try{const s=localStorage.getItem(CFG_KEY);return s?JSON.parse(s):defCfg();}catch(e){return defCfg();}}
 function setCfg(c){localStorage.setItem(CFG_KEY,JSON.stringify(c));}
 
