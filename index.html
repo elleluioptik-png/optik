@@ -1156,6 +1156,11 @@ async function emailBon(){
     btn.disabled=false;btn.textContent='✉ Email+PDF';return;
   }
   // 2. Essayer Gmail API (envoi automatique avec pièce jointe)
+  // Si pas encore prêt mais clientId configuré, tenter d'initialiser
+  if(!gmailReady && cfg.gmailClientId){
+    initGmailAPI();
+    await new Promise(r=>setTimeout(r,1500)); // attendre chargement du script
+  }
   if(gmailReady && cfg.gmailClientId){
     try{
       btn.textContent='Connexion Gmail...';
@@ -1674,7 +1679,7 @@ function openSettings(){
 }
 function saveSettings(){
   const cfg={nom:gv('set-nom')||'Mon Cabinet',adr:gv('set-adr'),tel:gv('set-tel'),email:gv('set-email'),avis:gv('set-avis'),ek:gv('set-ek'),es:gv('set-es'),et:gv('set-et'),col:g('set-col').value,num:parseInt(gv('set-num'))||1,metaToken:gv('set-meta-token'),metaPhoneId:gv('set-meta-phoneid'),cmbKey:gv('set-cmb-key'),cmbNum:gv('set-cmb-num'),gmailClientId:gv('set-gmail-cid'),fbApiKey:gv('set-fb-apikey'),fbProjectId:gv('set-fb-projectid'),fbDbUrl:gv('set-fb-dburl'),twSid:'',twToken:'',twFrom:'',twWaFrom:''};
-  setCfg(cfg);applyTheme(cfg);initMetaWA();if(cfg.fbApiKey)connectFirebase(cfg);if(cfg.gmailClientId){gmailClientId=cfg.gmailClientId;gmailToken=null;}
+  setCfg(cfg);applyTheme(cfg);initMetaWA();if(cfg.fbApiKey)connectFirebase(cfg);if(cfg.gmailClientId){gmailClientId=cfg.gmailClientId;gmailToken=null;initGmailAPI();}
   g('set-ok').style.display='flex';showToast('Paramètres sauvegardés !');
   setTimeout(()=>{g('set-ok').style.display='none';closeM('settings');},1800);
 }
@@ -1934,11 +1939,19 @@ function initGmailAPI(){
   const cfg = getCfg();
   if(!cfg.gmailClientId) return;
   gmailClientId = cfg.gmailClientId;
+  // Si déjà chargé
+  if(typeof google !== 'undefined' && google.accounts){
+    gmailReady = true;
+    console.log('Gmail API déjà disponible');
+    return;
+  }
   // Charger Google Identity Services
+  if(document.querySelector('script[src*="accounts.google.com/gsi"]')) return; // déjà en cours
   const s = document.createElement('script');
   s.src = 'https://accounts.google.com/gsi/client';
   s.async = true;
   s.onload = () => { gmailReady = true; console.log('Gmail API prête'); };
+  s.onerror = () => console.warn('Gmail API non chargée');
   document.head.appendChild(s);
 }
 
