@@ -1067,7 +1067,7 @@ function printBon(){
     +'</tbody></table><div class="sh">Monture & Mesures</div><div class="mes"><div><b>Modèle :</b> '+esc(cmd.mm||'—')+'</div><div><b>Type :</b> '+esc(cmd.tm||'—')+' &middot; Taille : '+esc(cmd.sz||'—')+'</div><div><b>A :</b> '+(cmd.lm||'—')+'mm</div><div><b>B :</b> '+(cmd.hm||'—')+'mm &middot; Nez : '+(cmd.nm||'—')+'mm</div><div><b>1/2 EP D :</b> '+(cmd.epd||'—')+'</div><div><b>1/2 EP G :</b> '+(cmd.epg||'—')+'</div><div><b>HM D :</b> '+(cmd.hmd||'—')+'</div><div><b>HM G :</b> '+(cmd.hmg||'—')+'</div></div>'
     +(cmd.cs?'<div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:3px;padding:5px 8px;margin-top:5px;font-size:10px;"><b>Consignes :</b> '+esc(cmd.cs)+'</div>':'')
     +'<div class="ft"><div>Ce bon doit être imprimé et agrafé au dossier du client et au bon de livraison</div><div>'+esc(cfg.nom)+'</div></div>'
-    +'<script>window.onload=function(){window.print();}<\/script></body></html>');
+    +'<scr'+'ipt>window.onload=function(){window.print();}</'+'script></body></html>');
   pw.document.close();
 }
 
@@ -1583,7 +1583,7 @@ function imprimerRapport(){
     +S.commandes.map((c,i)=>{const cl=gc(c.cid);const ret=jrs(c.dlp)!==null&&jrs(c.dlp)<0&&c.statut!=='Livré';return '<tr><td>'+numBon(c.id)+'</td><td>'+(cl?esc(cl.nom+' '+cl.prenom):'—')+'</td><td>'+esc(c.fid||'—')+'</td><td style="color:'+({'En attente':'#f59e0b','Commandé':'#3b82f6','Reçu':'#06b6d4','Monté':'#8b5cf6','Prêt':'#10b981','Livré':'#059669'}[c.statut]||'#9ca3af')+';">'+esc(c.statut)+'</td><td>'+fmt(c.dc)+'</td><td style="color:'+(ret?'#ef4444':'inherit')+';font-weight:'+(ret?700:400)+';">'+fmt(c.dlp)+(ret?' ⚠':'')+'</td></tr>';}).join('')
     +'</tbody></table>'
     +'<div style="margin-top:12px;border-top:1px solid #e2e8f0;padding-top:6px;font-size:8.5px;color:#9ca3af;text-align:center;">'+esc(cfg.nom)+' — '+esc(cfg.adr)+' — '+esc(cfg.tel)+'</div>'
-    +'<script>window.onload=function(){window.print();};<\/script>'
+    +'<scr'+'ipt>window.onload=function(){window.print();};</'+'script>'
     +'</body></html>');
   pw.document.close();
 }
@@ -2322,7 +2322,7 @@ function imprimerRetards(){
     }).join('')
     +'</tbody></table>'
     +'<div style="margin-top:10px;font-size:8px;color:#9ca3af;">Imprimé le '+new Date().toLocaleDateString('fr-CI')+' — '+esc(cfg.nom)+'</div>'
-    +'<script>window.onload=function(){window.print();};<\/script>'
+    +'<scr'+'ipt>window.onload=function(){window.print();};</'+'script>'
     +'</body></html>');
   pw.document.close();
 }
