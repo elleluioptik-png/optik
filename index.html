@@ -727,7 +727,7 @@ function badge(s){const c={'En attente':'#f59e0b','Commandé':'#3b82f6','Reçu':
 const STATUTS=['En attente','Commandé','Reçu','Monté','Prêt','Livré'];
 const STCOL={'En attente':'#f59e0b','Commandé':'#3b82f6','Reçu':'#06b6d4','Monté':'#8b5cf6','Prêt':'#10b981','Livré':'#059669'};
 function nextSt(s){const i=STATUTS.indexOf(s);return i>=0&&i<STATUTS.length-1?STATUTS[i+1]:null;}
-function retards(){return S.commandes.filter(c=>{const j=jrs(c.dlp);return j!==null&&j<=-1&&c.statut!=='Livré';});}
+function retards(){return S.commandes.filter(c=>{const j=jrs(c.dlp);return j!==null&&j<=-1&&c.statut==='Commandé';});}
 function showToast(msg,type='ok'){const t=g('toast');t.style.background=type==='ok'?'var(--teal)':type==='err'?'var(--red)':'var(--amber)';t.innerHTML=msg;t.style.display='flex';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',3200);}
 function addNotif(type,ev,etat,dest,txt){S.notifs.unshift({id:Date.now(),type,ev,etat,dest,txt,date:doff(0)});save();updateBadge();}
 function updateBadge(){const n=S.notifs.length;const b=g('nbadge');b.textContent=n;b.style.display=n>0?'flex':'none';}
