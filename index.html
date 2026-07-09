@@ -144,6 +144,7 @@ input,select,textarea,button{font-family:inherit;outline:none;}
   </div>
   <button class="nb active" onclick="nav('dashboard',this)"><span class="ni">◉</span>Dashboard</button>
   <button class="nb" onclick="nav('commandes',this)"><span class="ni">📦</span>Commandes</button>
+  <button class="nb" onclick="nav('retards',this)"><span class="ni">⚠️</span>Suivi retards<span class="nbadge" id="retards-badge" style="display:none">0</span></button>
   <button class="nb" onclick="nav('clients',this)"><span class="ni">👤</span>Clients</button>
   <div class="nav-sec">Catalogue</div>
   <button class="nb" onclick="nav('verres',this)"><span class="ni">🔬</span>Catalogue verres</button>
@@ -199,6 +200,16 @@ input,select,textarea,button{font-family:inherit;outline:none;}
       <div id="cmd-list"></div>
     </div>
   </div>
+</div>
+
+<!-- SUIVI RETARDS -->
+<div class="view" id="v-retards">
+  <div class="tb">
+    <div class="tb-title" id="retards-title">Suivi des retards</div>
+    <button class="btn bg bsm" onclick="imprimerRetards()">🖨️ Imprimer</button>
+    <button class="btn bt bsm" onclick="notifierTousRetards()">📨 Notifier tous</button>
+  </div>
+  <div class="ct" id="retards-content"></div>
 </div>
 
 <!-- CLIENTS -->
@@ -691,7 +702,27 @@ function g(id){return document.getElementById(id);}
 function gv(id){const el=g(id);return el?el.value.trim():'';}
 function gc(id){return S.clients.find(c=>c.id===id)||null;}
 function gf(nom){return S.fournisseurs.find(f=>f.nom===nom)||null;}
-function numBon(id){const cfg=getCfg();const p=cfg.nom.split(' ').map(w=>w[0]).join('').slice(0,5).toUpperCase();return p+' '+new Date().getFullYear()+'/'+(String(id)).padStart(3,'0');}
+function numBon(id){
+  const cmd=S.commandes.find(c=>c.id===id);
+  if(cmd&&cmd.numBon)return cmd.numBon; // numéro permanent stocké
+  const cfg=getCfg();
+  const prefix=cfg.nom.split(' ').map(w=>w[0]).join('').slice(0,5).toUpperCase();
+  const annee=cmd?new Date(cmd.dc+'T00:00:00').getFullYear():new Date().getFullYear();
+  const seq=String((cfg.num||1)+id-1).padStart(3,'0');
+  return prefix+' '+annee+'/'+seq;
+}
+function assignNumBon(cmd){
+  // Assigner un numéro permanent lors de la création
+  if(cmd.numBon)return;
+  const cfg=getCfg();
+  const prefix=cfg.nom.split(' ').map(w=>w[0]).join('').slice(0,5).toUpperCase();
+  const annee=new Date().getFullYear();
+  // Trouver le prochain numéro séquentiel
+  const existing=S.commandes.filter(c=>c.numBon&&c.numBon.startsWith(prefix+' '+annee+'/'));
+  const nums=existing.map(c=>parseInt(c.numBon.split('/')[1]||'0')).filter(n=>!isNaN(n));
+  const next=nums.length?Math.max(...nums)+1:(cfg.num||1);
+  cmd.numBon=prefix+' '+annee+'/'+String(next).padStart(3,'0');
+}
 function badge(s){const c={'En attente':'#f59e0b','Commandé':'#3b82f6','Reçu':'#06b6d4','Monté':'#8b5cf6','Prêt':'#10b981','Livré':'#059669'}[s]||'#9ca3af';return '<span class="badge" style="background:'+c+'22;color:'+c+';border:1px solid '+c+'44;">'+esc(s)+'</span>';}
 const STATUTS=['En attente','Commandé','Reçu','Monté','Prêt','Livré'];
 const STCOL={'En attente':'#f59e0b','Commandé':'#3b82f6','Reçu':'#06b6d4','Monté':'#8b5cf6','Prêt':'#10b981','Livré':'#059669'};
@@ -771,7 +802,7 @@ function nav(name,btn){
   const v=g('v-'+name);if(v)v.classList.add('on');
   if(btn)btn.classList.add('active');
   CUR=name;
-  const r={dashboard:renderDash,commandes:renderCmds,clients:renderClients,verres:renderVerres,traitements:renderTraitements,fournisseurs:renderFours,rapports:renderRapports,notifs:renderNotifs,admin:renderAdmin};
+  const r={dashboard:renderDash,commandes:renderCmds,retards:renderRetards,clients:renderClients,verres:renderVerres,traitements:renderTraitements,fournisseurs:renderFours,rapports:renderRapports,notifs:renderNotifs,admin:renderAdmin};
   if(r[name])r[name]();
 }
 
@@ -1775,6 +1806,7 @@ function saveCmd(){
     showToast('Commande mise à jour !');
   }else{
     const nc={id:S.nid++,cid:Number(cidV),statut:'En attente',dc:doff(0),bl:'',dll:'',...data};
+    assignNumBon(nc);
     S.commandes.unshift(nc);addNotif('Système','nouvelle_cmd','OK','—','Commande #'+nc.id+' créée');
     showToast('Commande créée !');
   }
@@ -2133,6 +2165,168 @@ async function sendEmailNotif(){
   btn.disabled=false;btn.textContent='✉ Email';
 }
 
+
+// ════════════════════════════════════════════════════
+// SUIVI RETARDS
+// ════════════════════════════════════════════════════
+function updateRetardsBadge(){
+  const n=retards().length;
+  const b=g('retards-badge');
+  if(b){b.textContent=n;b.style.display=n>0?'flex':'none';}
+}
+
+function renderRetards(){
+  const rets=retards().sort((a,b)=>jrs(a.dlp)-jrs(b.dlp)); // plus en retard en premier
+  g('retards-title').textContent='Suivi des retards ('+rets.length+')';
+  updateRetardsBadge();
+  if(!rets.length){
+    g('retards-content').innerHTML='<div class="card" style="padding:40px;text-align:center;">'
+      +'<div style="font-size:32px;margin-bottom:10px;">✅</div>'
+      +'<div style="font-family:Syne,sans-serif;font-size:15px;font-weight:700;color:var(--green);">Aucun retard !</div>'
+      +'<div style="font-size:11px;color:var(--txt2);margin-top:5px;">Toutes les commandes sont dans les délais.</div>'
+      +'</div>';
+    return;
+  }
+  // Grouper par niveau de retard
+  const critique=rets.filter(c=>Math.abs(jrs(c.dlp))>=7);
+  const urgent=rets.filter(c=>Math.abs(jrs(c.dlp))>=3&&Math.abs(jrs(c.dlp))<7);
+  const normal=rets.filter(c=>Math.abs(jrs(c.dlp))<3);
+  
+  let html='';
+  
+  // Résumé
+  html+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">'
+    +'<div class="card" style="padding:14px;text-align:center;border-top:3px solid var(--red);">'
+    +'<div style="font-family:Syne,sans-serif;font-size:24px;font-weight:700;color:var(--red);">'+critique.length+'</div>'
+    +'<div style="font-size:10px;color:var(--txt2);margin-top:2px;">Critique (≥7j)</div></div>'
+    +'<div class="card" style="padding:14px;text-align:center;border-top:3px solid var(--amber);">'
+    +'<div style="font-family:Syne,sans-serif;font-size:24px;font-weight:700;color:var(--amber);">'+urgent.length+'</div>'
+    +'<div style="font-size:10px;color:var(--txt2);margin-top:2px;">Urgent (3-6j)</div></div>'
+    +'<div class="card" style="padding:14px;text-align:center;border-top:3px solid var(--blue);">'
+    +'<div style="font-family:Syne,sans-serif;font-size:24px;font-weight:700;color:var(--blue);">'+normal.length+'</div>'
+    +'<div style="font-size:10px;color:var(--txt2);margin-top:2px;">À surveiller (1-2j)</div></div>'
+    +'</div>';
+  
+  // Tableau récapitulatif
+  html+='<div class="card">'
+    +'<div style="padding:12px 14px;border-bottom:.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;">'
+    +'<div style="font-family:Syne,sans-serif;font-size:13px;font-weight:700;">Tableau récapitulatif des retards</div>'
+    +'<div style="font-size:10px;color:var(--txt2);">'+new Date().toLocaleDateString('fr-CI',{day:'numeric',month:'long',year:'numeric'})+'</div>'
+    +'</div>'
+    +'<div class="th" style="grid-template-columns:90px 1fr 90px 85px 85px 70px 1fr 90px;">'
+    +'<div>N° BON</div><div>CLIENT</div><div>STATUT</div><div>PRÉVU LE</div><div>RETARD</div><div>FOURN.</div><div>ARTICLE</div><div>ACTIONS</div>'
+    +'</div>';
+  
+  html+=rets.map(cmd=>{
+    const cl=gc(cmd.cid);
+    const j=Math.abs(jrs(cmd.dlp));
+    const niveau=j>=7?'critique':j>=3?'urgent':'normal';
+    const couleur=niveau==='critique'?'var(--red)':niveau==='urgent'?'var(--amber)':'var(--blue)';
+    const bg=niveau==='critique'?'#fff5f5':niveau==='urgent'?'#fffbf0':'#f0f7ff';
+    const num=numBon(cmd.id);
+    return '<div class="tr" style="grid-template-columns:90px 1fr 90px 85px 85px 70px 1fr 90px;background:'+bg+';">'
+      +'<div><div style="font-weight:700;color:var(--teal);font-size:10.5px;">'+esc(num)+'</div>'
+      +'<div style="font-size:9px;color:var(--txt3);">#'+cmd.id+'</div></div>'
+      +'<div><div style="font-weight:500;font-size:11.5px;">'+(cl?esc(cl.nom+' '+cl.prenom):'—')+'</div>'
+      +(cl&&cl.tel?'<div style="font-size:9.5px;color:var(--txt2);">📞 '+esc(cl.tel)+'</div>':'')
+      +(cl&&cl.email?'<div style="font-size:9.5px;color:var(--txt2);">✉ '+esc(cl.email)+'</div>':'')
+      +'</div>'
+      +badge(cmd.statut)
+      +'<div style="font-size:10.5px;color:var(--txt2);">'+fmt(cmd.dlp)+'</div>'
+      +'<div><span style="background:'+couleur+'22;color:'+couleur+';border:1px solid '+couleur+'44;border-radius:5px;padding:3px 7px;font-size:10px;font-weight:700;">'+j+' jour'+(j>1?'s':'')+' de retard</span></div>'
+      +'<div style="font-size:10px;color:var(--teal);font-weight:500;">'+esc((cmd.fid||'').split(' ')[0])+'</div>'
+      +'<div style="font-size:10px;color:var(--txt2);">'+(cmd.vd?esc(cmd.vd.slice(0,30))+'…':'—')+'</div>'
+      +'<div style="display:flex;gap:3px;flex-wrap:wrap;">'
+        +'<button class="btn bxs no-print" style="background:#e0f2fe;color:#0c4a6e;" onclick="openBon('+cmd.id+')">📄</button>'
+        +'<button class="btn bxs no-print" style="background:#ede9fe;color:#6d28d9;" onclick="openAlerte('+cmd.id+')">🔔</button>'
+        +(cl&&(cl.tel||cl.email)?'<button class="btn bt bxs no-print" onclick="notifierRetard('+cmd.id+')">📨</button>':'')
+      +'</div>'
+      +'</div>';
+  }).join('');
+  
+  html+='</div>';
+  g('retards-content').innerHTML=html;
+}
+
+// Notifier un client en retard
+function notifierRetard(cmdId){
+  const cmd=S.commandes.find(c=>c.id===cmdId);if(!cmd)return;
+  const cl=gc(cmd.cid);if(!cl)return;
+  const cfg=getCfg();
+  const j=Math.abs(jrs(cmd.dlp));
+  const num=numBon(cmd.id);
+  const msg='Cher(e) '+cl.nom+' '+cl.prenom+','
+    +'\n\nNous vous informons que votre commande de lunettes ('+num+') accuse un retard de '+j+' jour'+(j>1?'s':'')+' de la part de notre fournisseur.'
+    +'\n\nNous mettons tout en oeuvre pour résoudre cette situation dans les plus brefs délais et vous contacterons dès réception de votre commande.'
+    +'\nNous vous prions de nous excuser pour ce désagrément.'
+    +'\n\nCordialement,'
+    +'\n'+cfg.nom
+    +'\n'+cfg.adr
+    +'\nTél : '+cfg.tel;
+  envoyerNotifComplete(cl, msg, 'Retard commande '+num);
+}
+
+// Notifier tous les clients en retard
+async function notifierTousRetards(){
+  const rets=retards();
+  if(!rets.length){showToast('Aucun retard à notifier','warn');return;}
+  if(!confirm('Notifier '+rets.length+' client(s) en retard ?'))return;
+  let n=0;
+  for(const cmd of rets){
+    const cl=gc(cmd.cid);
+    if(cl&&(cl.email||cl.tel)){notifierRetard(cmd.id);n++;await new Promise(r=>setTimeout(r,1200));}
+  }
+  showToast(n+' notification(s) envoyée(s) !');
+}
+
+// Imprimer le tableau retards
+function imprimerRetards(){
+  const rets=retards().sort((a,b)=>jrs(a.dlp)-jrs(b.dlp));
+  const cfg=getCfg();
+  const pw=window.open('','_blank');
+  pw.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Retards '+cfg.nom+'</title>'
+    +'<style>@page{size:A4 landscape;margin:1cm;}*{box-sizing:border-box;margin:0;padding:0;}'
+    +'body{font-family:Arial,sans-serif;font-size:10px;}'
+    +'.hd{background:#04747c;color:#fff;padding:10px 14px;display:flex;justify-content:space-between;-webkit-print-color-adjust:exact;print-color-adjust:exact;margin-bottom:10px;}'
+    +'table{width:100%;border-collapse:collapse;}'
+    +'th{background:#04747c;color:#fff;padding:5px 6px;text-align:left;font-size:9px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    +'td{padding:5px 6px;border-bottom:.5px solid #e2e8f0;vertical-align:top;}'
+    +'.crit{background:#fff5f5;} .urg{background:#fffbf0;} .norm{background:#f0f7ff;}'
+    +'.badge{display:inline-block;padding:2px 6px;border-radius:4px;font-size:8.5px;font-weight:700;}'
+    +'.r{color:#ef4444;background:#fef2f2;} .a{color:#f59e0b;background:#fffbeb;} .b{color:#3b82f6;background:#eff6ff;}'
+    +'</style></head><body>'
+    +'<div class="hd"><div><div style="font-size:14px;font-weight:700;">SUIVI DES RETARDS</div>'
+    +'<div style="font-size:9px;opacity:.8;">'+esc(cfg.nom)+' — '+esc(cfg.adr)+'</div></div>'
+    +'<div style="text-align:right;"><div>'+rets.length+' commande(s) en retard</div>'
+    +'<div style="font-size:9px;">'+new Date().toLocaleDateString('fr-CI',{day:'numeric',month:'long',year:'numeric'})+'</div></div></div>'
+    +'<table><thead><tr>'
+    +'<th>N° BON</th><th>CLIENT</th><th>TÉLÉPHONE</th><th>EMAIL</th><th>STATUT</th>'
+    +'<th>DATE PRÉVUE</th><th>RETARD</th><th>FOURNISSEUR</th><th>ARTICLE</th><th>CONSIGNES</th>'
+    +'</tr></thead><tbody>'
+    +rets.map(cmd=>{
+      const cl=gc(cmd.cid);const j=Math.abs(jrs(cmd.dlp));
+      const cls=j>=7?'crit':j>=3?'urg':'norm';
+      const bc=j>=7?'r':j>=3?'a':'b';
+      return '<tr class="'+cls+'">'
+        +'<td><strong>'+numBon(cmd.id)+'</strong></td>'
+        +'<td><strong>'+(cl?esc(cl.nom+' '+cl.prenom):'—')+'</strong></td>'
+        +'<td>'+(cl?esc(cl.tel||'—'):'—')+'</td>'
+        +'<td style="font-size:8.5px;">'+(cl?esc(cl.email||'—'):'—')+'</td>'
+        +'<td>'+esc(cmd.statut)+'</td>'
+        +'<td>'+fmt(cmd.dlp)+'</td>'
+        +'<td><span class="badge '+bc+'">'+j+' jour'+(j>1?'s':'')+'</span></td>'
+        +'<td>'+esc(cmd.fid||'—')+'</td>'
+        +'<td style="font-size:8.5px;">'+(cmd.vd?esc(cmd.vd.slice(0,40)):' —')+'</td>'
+        +'<td style="font-size:8.5px;">'+(cmd.cs?esc(cmd.cs.slice(0,40)):' —')+'</td>'
+        +'</tr>';
+    }).join('')
+    +'</tbody></table>'
+    +'<div style="margin-top:10px;font-size:8px;color:#9ca3af;">Imprimé le '+new Date().toLocaleDateString('fr-CI')+' — '+esc(cfg.nom)+'</div>'
+    +'<script>window.onload=function(){window.print();};<\/script>'
+    +'</body></html>');
+  pw.document.close();
+}
+
 // ════════════════════════════════════════════════════
 // INIT
 // ════════════════════════════════════════════════════
@@ -2142,7 +2336,7 @@ function initApp(){
   initFirebase();
   initGmailAPI();
   if(!S.relances)S.relances={};
-  updateBadge();renderDash();
+  updateBadge();updateRetardsBadge();renderDash();
   // Chargement dynamique non-bloquant des libs externes
   function loadScript(url, cb){
     const s=document.createElement('script');s.src=url;s.async=true;
