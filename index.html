@@ -895,10 +895,13 @@ function changerStatut(cmdId,newSt){
   cmd.statut=newSt;save();renderCmds();
   const cl=gc(cmd.cid);if(!cl)return;
   const cfg=getCfg();const nom=cl.nom+' '+cl.prenom;
+  const numBonCmd=numBon(cmd.id);
+  const delai=cmd.dlp?'\nDélai de livraison prévu : '+fmt(cmd.dlp):'';
+  const ref='\nRéférence bon : '+numBonCmd;
   let msg='';
-  if(newSt==='Commandé')msg='Cher(e) '+nom+',\n\nNous vous confirmons que vos verres ont été commandés. Notre équipe suit votre dossier.\n\nAdresse : '+cfg.adr+'\nTél : '+cfg.tel+'\n'+cfg.nom+'.';
-  if(newSt==='Prêt')msg='Cher(e) '+nom+',\n\nVotre paire de lunettes est prête ! Nous vous invitons à passer à l\'officine pour le retrait et les ajustements.\n\nAdresse : '+cfg.adr+'\nTél : '+cfg.tel+'\n'+cfg.nom+'.';
-  if(newSt==='Livré')msg='Bonjour '+nom+',\n\nMerci de votre confiance. Votre avis nous est précieux : '+cfg.avis+'\n\nAdresse : '+cfg.adr+'\nTél : '+cfg.tel+'\n'+cfg.nom+'.';
+  if(newSt==='Commandé')msg='Cher(e) '+nom+',\n\nNous vous confirmons que vos verres ont été commandés auprès de notre fournisseur.'+delai+ref+'\n\nNotre équipe suit votre dossier et vous contactera dès réception.\n\nAdresse : '+cfg.adr+'\nTél : '+cfg.tel+'\n'+cfg.nom+'.';
+  if(newSt==='Prêt')msg='Cher(e) '+nom+',\n\nBonne nouvelle ! Votre paire de lunettes est prête.'+ref+'\n\nNous vous invitons à passer à l\'officine pour le retrait et les ajustements finaux.\n\nAdresse : '+cfg.adr+'\nTél : '+cfg.tel+'\n'+cfg.nom+'.';
+  if(newSt==='Livré')msg='Bonjour '+nom+',\n\nNous vous confirmons la livraison de votre paire de lunettes.'+ref+'\n\nMerci de votre confiance. Votre avis nous est précieux : '+cfg.avis+'\n\nAdresse : '+cfg.adr+'\nTél : '+cfg.tel+'\n'+cfg.nom+'.';
   if(msg)envoyerNotifComplete(cl,msg,'→ '+newSt);
   else showToast('Statut → '+newSt);
 }
@@ -913,7 +916,9 @@ function confirmRecu(){
   const cmd=S.commandes.find(c=>c.id===_recuId);if(!cmd)return;
   cmd.statut='Reçu';cmd.bl=gv('recu-bl');cmd.dll=gv('recu-date');
   const cl=gc(cmd.cid);const cfg=getCfg();const nom=cl?cl.nom+' '+cl.prenom:'Client';
-  const msg='Cher(e) '+nom+',\n\nVos verres viennent d\'arriver à notre atelier. Notre opticien procède au montage.\n\nNous vous contactons dès que votre paire est prête.\n\nAdresse : '+cfg.adr+'\nTél : '+cfg.tel+'\n'+cfg.nom+'.';
+  const numBonRecu=numBon(cmd.id);
+  const delaiRecu=cmd.dlp?'\nLivraison prévue initialement : '+fmt(cmd.dlp):'';
+  const msg='Cher(e) '+nom+',\n\nVos verres viennent d\'arriver à notre atelier.'+delaiRecu+'\nRéférence : '+numBonRecu+'\n\nNotre opticien procède au montage. Nous vous contactons dès que votre paire est prête.\n\nAdresse : '+cfg.adr+'\nTél : '+cfg.tel+'\n'+cfg.nom+'.';
   save();closeM('recu');renderCmds();
   if(cl)envoyerNotifComplete(cl,msg,'Réception — Notification');
 }
