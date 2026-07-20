@@ -208,7 +208,10 @@ input,select,textarea,button{font-family:inherit;outline:none;}
   <div class="tb">
     <div class="tb-title" id="suivibl-title">Suivi des bons de livraison</div>
     <input class="fi" style="max-width:170px;" placeholder="🔍 N° bon, client, BL..." oninput="blSearch=this.value;renderSuiviBL()">
-    <select class="fs" style="width:130px;" id="bl-statut" onchange="renderSuiviBL()">
+    <select class="fs" style="width:110px;" id="bl-mois" onchange="renderSuiviBL()">
+      <option value="">Tous les mois</option>
+    </select>
+    <select class="fs" style="width:120px;" id="bl-statut" onchange="renderSuiviBL()">
       <option value="">Tous statuts</option>
       <option value="sans_bl">Sans BL</option>
       <option value="avec_bl">Avec BL</option>
@@ -218,6 +221,9 @@ input,select,textarea,button{font-family:inherit;outline:none;}
       <option>Prêt</option>
       <option>Livré</option>
     </select>
+    <label style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--txt2);cursor:pointer;">
+      <input type="checkbox" id="bl-groupe" onchange="renderSuiviBL()"> Par mois
+    </label>
     <button class="btn bg bsm" onclick="imprimerSuiviBL()">🖨️ Imprimer</button>
   </div>
   <div class="ct">
@@ -2209,41 +2215,53 @@ let blSearch = '';
 function renderSuiviBL(){
   const s = blSearch.toLowerCase();
   const filtre = g('bl-statut')?.value || '';
-  
+  const moisFiltre = g('bl-mois')?.value || '';
+  const grouper = g('bl-groupe')?.checked || false;
+
+  // Peupler le filtre mois
+  const moisDispo = [...new Set(S.commandes.map(c=>c.dc?c.dc.slice(0,7):'').filter(Boolean))].sort().reverse();
+  const blMois = g('bl-mois');
+  if(blMois && blMois.options.length <= 1){
+    moisDispo.forEach(m=>{
+      const [an,mo]=m.split('-');
+      const label=new Date(m+'-01').toLocaleDateString('fr-CI',{month:'long',year:'numeric'});
+      const o=document.createElement('option');o.value=m;o.textContent=label;
+      blMois.appendChild(o);
+    });
+  }
+
   let list = S.commandes.filter(cmd => {
     const cl = gc(cmd.cid);
     const num = numBon(cmd.id);
-    const matchSearch = !s || 
+    const matchSearch = !s ||
       num.toLowerCase().includes(s) ||
-      (cl ? (cl.nom+' '+cl.prenom).toLowerCase().includes(s) : false) ||
+      (cl?(cl.nom+' '+cl.prenom).toLowerCase().includes(s):false) ||
       (cmd.bl||'').toLowerCase().includes(s) ||
       (cmd.fid||'').toLowerCase().includes(s);
     const matchStatut = !filtre ? true :
-      filtre === 'sans_bl' ? !cmd.bl :
-      filtre === 'avec_bl' ? !!cmd.bl :
-      cmd.statut === filtre;
-    return matchSearch && matchStatut;
-  });
-  
-  // Trier : sans BL en premier, puis par date de commande décroissante
-  list.sort((a,b) => {
-    if(!a.bl && b.bl) return -1;
-    if(a.bl && !b.bl) return 1;
-    return new Date(b.dc) - new Date(a.dc);
+      filtre==='sans_bl' ? !cmd.bl :
+      filtre==='avec_bl' ? !!cmd.bl :
+      cmd.statut===filtre;
+    const matchMois = !moisFiltre || (cmd.dc||'').startsWith(moisFiltre);
+    return matchSearch && matchStatut && matchMois;
   });
 
-  g('suivibl-title').textContent = 'Suivi des bons de livraison ('+list.length+')';
+  list.sort((a,b)=>{
+    if(!a.bl&&b.bl)return -1;
+    if(a.bl&&!b.bl)return 1;
+    return new Date(b.dc)-new Date(a.dc);
+  });
 
-  // Stats
-  const total = S.commandes.length;
-  const avecBL = S.commandes.filter(c=>c.bl).length;
-  const sansBL = S.commandes.filter(c=>!c.bl&&c.statut!=='En attente').length;
-  const recus = S.commandes.filter(c=>c.statut==='Reçu'||c.statut==='Monté'||c.statut==='Prêt'||c.statut==='Livré').length;
+  g('suivibl-title').textContent='Suivi des bons de livraison ('+list.length+')';
 
-  g('suivibl-stats').innerHTML = [
-    {l:'Total commandes',v:total,c:'var(--teal)',i:'📦'},
+  // Stats sur la liste filtrée
+  const avecBL=list.filter(c=>c.bl).length;
+  const sansBL=list.filter(c=>!c.bl&&c.statut!=='En attente').length;
+  const recus=list.filter(c=>['Reçu','Monté','Prêt','Livré'].includes(c.statut)).length;
+  g('suivibl-stats').innerHTML=[
+    {l:'Total',v:list.length,c:'var(--teal)',i:'📦'},
     {l:'BL reçus',v:avecBL,c:'var(--green)',i:'✅'},
-    {l:'En attente BL',v:sansBL,c:'var(--amber)',i:'⏳'},
+    {l:'Sans BL',v:sansBL,c:'var(--amber)',i:'⏳'},
     {l:'Réceptionnées',v:recus,c:'var(--blue)',i:'📥'}
   ].map(k=>'<div class="card" style="padding:12px;text-align:center;border-top:3px solid '+k.c+';">'
     +'<div style="font-size:18px;margin-bottom:3px;">'+k.i+'</div>'
@@ -2256,52 +2274,73 @@ function renderSuiviBL(){
     return;
   }
 
-  g('bl-list').innerHTML = list.map(cmd => {
-    const cl = gc(cmd.cid);
-    const num = numBon(cmd.id);
-    const j = jrs(cmd.dlp);
-    const ret = j !== null && j <= -1 && cmd.statut === 'Commandé';
-    const hasBL = !!cmd.bl;
-    const bg = ret ? '#fffbfb' : !hasBL && cmd.statut === 'Commandé' ? '#fffbf0' : '#fff';
-    
+  const rowHTML = cmd => {
+    const cl=gc(cmd.cid);const num=numBon(cmd.id);
+    const j=jrs(cmd.dlp);const ret=j!==null&&j<=-1&&cmd.statut==='Commandé';
+    const hasBL=!!cmd.bl;
+    const bg=ret?'#fffbfb':(!hasBL&&cmd.statut==='Commandé'?'#fffbf0':'#fff');
     return '<div class="tr" style="grid-template-columns:95px 1fr 90px 100px 90px 90px 85px 85px;background:'+bg+';">'
-      // N° Bon
       +'<div>'
         +'<div style="font-weight:700;color:var(--teal);font-size:10.5px;">'+esc(num)+'</div>'
         +(cmd.fac?'<div style="font-size:9px;color:var(--txt3);">'+esc(cmd.fac)+'</div>':'')
       +'</div>'
-      // Client
       +'<div>'
         +'<div style="font-weight:500;font-size:11.5px;">'+(cl?esc(cl.nom+' '+cl.prenom):'—')+'</div>'
         +(cl&&cl.tel?'<div style="font-size:9.5px;color:var(--txt2);">'+esc(cl.tel)+'</div>':'')
       +'</div>'
-      // Fournisseur
       +'<div style="font-size:10.5px;color:var(--teal);font-weight:500;">'+esc((cmd.fid||'—').split(' ')[0])+'</div>'
-      // Statut
       +badge(cmd.statut)
-      // Date commande
       +'<div style="font-size:10.5px;color:var(--txt2);">'+fmt(cmd.dc)+'</div>'
-      // Livraison prévue
       +'<div style="font-size:10.5px;color:'+(ret?'var(--red)':'var(--txt2)')+';font-weight:'+(ret?600:400)+';">'
-        +fmt(cmd.dlp)
-        +(ret?'<br><span style="font-size:9px;color:var(--red);">'+Math.abs(j)+'j retard</span>':'')
+        +fmt(cmd.dlp)+(ret?'<br><span style="font-size:9px;color:var(--red);">'+Math.abs(j)+'j retard</span>':'')
       +'</div>'
-      // N° BL
       +'<div>'
         +(hasBL
           ?'<div style="font-weight:600;font-size:10.5px;color:var(--green);">'+esc(cmd.bl)+'</div>'
           :(cmd.statut==='Commandé'||cmd.statut==='Reçu'
-            ?'<button onclick="saisirBL('+cmd.id+')" style="background:var(--amber);color:#fff;border:none;border-radius:4px;padding:2px 6px;font-size:9px;cursor:pointer;">+ Saisir BL</button>'
+            ?'<button onclick="saisirBL('+cmd.id+')" style="background:var(--amber);color:#fff;border:none;border-radius:4px;padding:2px 6px;font-size:9px;cursor:pointer;">+ BL</button>'
             :'<span style="color:var(--txt3);font-size:10px;">—</span>'
           )
         )
       +'</div>'
-      // Date réception
       +'<div style="font-size:10.5px;color:'+(cmd.dll?'var(--green)':'var(--txt3)')+'">'
         +(cmd.dll?fmt(cmd.dll):'—')
       +'</div>'
       +'</div>';
-  }).join('');
+  };
+
+  const header = '<div class="th" style="grid-template-columns:95px 1fr 90px 100px 90px 90px 85px 85px;">'
+    +'<div>N° BON</div><div>CLIENT</div><div>FOURN.</div><div>STATUT</div>'
+    +'<div>DATE CMD</div><div>LIVR. PRÉVUE</div><div>N° BL</div><div>DATE RÉCEPTION</div>'
+    +'</div>';
+
+  if(grouper){
+    // Regrouper par mois
+    const groupes = {};
+    list.forEach(cmd=>{
+      const mois=cmd.dc?cmd.dc.slice(0,7):'Inconnu';
+      if(!groupes[mois])groupes[mois]=[];
+      groupes[mois].push(cmd);
+    });
+    const moisTries=Object.keys(groupes).sort().reverse();
+    g('bl-list').innerHTML=moisTries.map(mois=>{
+      const label=mois!=='Inconnu'?new Date(mois+'-01').toLocaleDateString('fr-CI',{month:'long',year:'numeric'}):mois;
+      const cmds=groupes[mois];
+      const avecBLm=cmds.filter(c=>c.bl).length;
+      return '<div style="margin-bottom:14px;">'
+        +'<div style="background:linear-gradient(135deg,var(--teal),#059669);color:#fff;padding:7px 13px;border-radius:7px 7px 0 0;display:flex;justify-content:space-between;align-items:center;">'
+          +'<div style="font-family:Syne,sans-serif;font-size:12px;font-weight:700;">📅 '+label+'</div>'
+          +'<div style="font-size:10px;opacity:.85;">'+cmds.length+' commande(s) &middot; '+avecBLm+' BL reçu(s)</div>'
+        +'</div>'
+        +'<div class="card" style="border-radius:0 0 7px 7px;">'
+          +header
+          +cmds.map(rowHTML).join('')
+        +'</div>'
+        +'</div>';
+    }).join('');
+  } else {
+    g('bl-list').innerHTML='<div class="card">'+header+list.map(rowHTML).join('')+'</div>';
+  }
 }
 
 // Saisir rapidement un N° BL depuis le tableau
