@@ -251,7 +251,12 @@ input,select,textarea,button{font-family:inherit;outline:none;}
 <div class="view" id="v-clients">
   <div class="tb">
     <div class="tb-title" id="cl-title">Clients</div>
-    <input class="fi" style="max-width:185px;" placeholder="🔍 Rechercher..." oninput="clSearch=this.value;renderClients()">
+    <div style="position:relative;display:flex;align-items:center;">
+      <input class="fi" id="cl-search-inp" style="max-width:240px;padding-left:28px;padding-right:28px;" placeholder="🔍 Nom, téléphone, email..." oninput="clSearch=this.value.trim();renderClients()" onkeydown="if(event.key==='Escape'){clSearch='';this.value='';renderClients();}">
+      <span style="position:absolute;left:8px;color:var(--txt3);font-size:12px;pointer-events:none;">🔍</span>
+      <button id="cl-clear-btn" onclick="clSearch='';document.getElementById('cl-search-inp').value='';renderClients();" style="position:absolute;right:6px;background:none;border:none;color:var(--txt3);cursor:pointer;font-size:13px;display:none;" title="Effacer">✕</button>
+    </div>
+    <div id="cl-search-info" style="font-size:10.5px;color:var(--txt2);"></div>
     <button class="btn bt" onclick="openNewClient()">+ Nouveau client</button>
   </div>
   <div class="ct">
@@ -1392,22 +1397,72 @@ function delTraitement(id){
 let clSearch='';
 let _clId=null;
 function renderClients(){
-  g('cl-title').textContent='Clients ('+S.clients.length+')';
-  const s=clSearch.toLowerCase();
-  const list=S.clients.filter(c=>!s||(c.nom+' '+c.prenom).toLowerCase().includes(s)||c.tel?.includes(s)||c.email?.toLowerCase().includes(s));
-  g('cl-list').innerHTML=list.length===0?'<div style="padding:24px;text-align:center;color:var(--txt3);">Aucun client.</div>':list.map(cl=>{
-    const n=S.commandes.filter(c=>c.cid===cl.id).length;
-    return '<div class="tr" style="grid-template-columns:1fr 120px 160px 45px 70px;">'
-      +'<div style="display:flex;align-items:center;gap:7px;">'
-        +'<div style="width:26px;height:26px;border-radius:50%;background:#e0f2fe;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:700;color:#0c4a6e;">'+cl.nom[0]+(cl.prenom[0]||'')+'</div>'
-        +'<div><div style="font-weight:500;font-size:11.5px;">'+esc(cl.nom+' '+cl.prenom)+'</div>'+(cl.adr?'<div style="font-size:9.5px;color:var(--txt3);">'+esc(cl.adr)+'</div>':'')+'</div>'
+  const s = clSearch.toLowerCase();
+  const total = S.clients.length;
+  
+  // Afficher/cacher le bouton effacer
+  const clearBtn = g('cl-clear-btn');
+  if(clearBtn) clearBtn.style.display = s ? 'block' : 'none';
+
+  const list = S.clients.filter(c=>
+    !s ||
+    (c.nom||'').toLowerCase().includes(s) ||
+    (c.prenom||'').toLowerCase().includes(s) ||
+    (c.tel||'').includes(s) ||
+    (c.email||'').toLowerCase().includes(s) ||
+    (c.adr||'').toLowerCase().includes(s)
+  );
+
+  // Mettre à jour titre et info recherche
+  g('cl-title').textContent = 'Clients ('+total+')';
+  const info = g('cl-search-info');
+  if(info){
+    if(s){
+      info.textContent = list.length+' résultat'+(list.length>1?'s':'')+' pour "'+clSearch+'"';
+      info.style.color = list.length===0 ? 'var(--red)' : 'var(--teal)';
+    } else {
+      info.textContent = '';
+    }
+  }
+
+  // Fonction pour surligner le terme recherché
+  const hl = txt => {
+    if(!s || !txt) return esc(txt||'');
+    const reg = new RegExp('('+s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');
+    return esc(txt).replace(reg,'<mark style="background:#fef08a;border-radius:2px;padding:0 1px;">$1</mark>');
+  };
+
+  if(!list.length){
+    g('cl-list').innerHTML = s
+      ? '<div style="padding:30px;text-align:center;">'
+          +'<div style="font-size:28px;margin-bottom:8px;">🔍</div>'
+          +'<div style="font-weight:600;color:var(--txt);">Aucun client trouvé</div>'
+          +'<div style="font-size:11px;color:var(--txt2);margin-top:4px;">Aucun résultat pour "'+esc(clSearch)+'"</div>'
+          +'<button onclick="clSearch=\'\';document.getElementById(\'cl-search-inp\').value=\'\';renderClients();" '
+            +'style="margin-top:12px;background:var(--teal);color:#fff;border:none;border-radius:6px;padding:7px 16px;font-size:11.5px;cursor:pointer;">✕ Effacer la recherche</button>'
+        +'</div>'
+      : '<div style="padding:24px;text-align:center;color:var(--txt3);">Aucun client enregistré.</div>';
+    return;
+  }
+
+  g('cl-list').innerHTML = list.map(cl => {
+    const n = S.commandes.filter(c=>c.cid===cl.id).length;
+    const initiales = (cl.nom[0]||'')+(cl.prenom[0]||'');
+    return '<div class="tr" style="grid-template-columns:1fr 130px 170px 45px 70px;">'
+      +'<div style="display:flex;align-items:center;gap:8px;">'
+        +'<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--teal),#059669);'
+          +'display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;">'+esc(initiales)+'</div>'
+        +'<div>'
+          +'<div style="font-weight:600;font-size:12px;">'+hl(cl.nom+' '+cl.prenom)+'</div>'
+          +(cl.adr?'<div style="font-size:9.5px;color:var(--txt3);">'+hl(cl.adr)+'</div>':'')
+        +'</div>'
       +'</div>'
-      +'<div>'+esc(cl.tel||'—')+'</div>'
-      +'<div style="font-size:10.5px;color:var(--txt2);">'+esc(cl.email||'—')+'</div>'
-      +'<div><span style="background:#e0f2fe;color:#0c4a6e;padding:2px 6px;border-radius:9px;font-size:9.5px;font-weight:600;">'+n+'</span></div>'
+      +'<div style="font-size:11px;">'+(cl.tel?'<a href="tel:'+esc(cl.tel)+'" style="color:inherit;text-decoration:none;">'+hl(cl.tel)+'</a>':'—')+'</div>'
+      +'<div style="font-size:10.5px;color:var(--txt2);">'+(cl.email?'<a href="mailto:'+esc(cl.email)+'" style="color:var(--teal);text-decoration:none;">'+hl(cl.email)+'</a>':'—')+'</div>'
+      +'<div><span style="background:#e0f2fe;color:#0c4a6e;padding:2px 7px;border-radius:9px;font-size:9.5px;font-weight:600;">'+n+'</span></div>'
       +'<div style="display:flex;gap:3px;">'
-        +(canEdit()?'<button onclick="editClient('+cl.id+')" style="background:var(--teal);color:#fff;border:none;border-radius:4px;padding:2px 6px;font-size:9.5px;cursor:pointer;" title="Modifier">✏️</button>':'')
-        +(canEdit()?'<button onclick="delClient('+cl.id+')" style="background:#fef2f2;color:#991b1b;border:.5px solid #fca5a5;border-radius:4px;padding:2px 6px;font-size:9.5px;cursor:pointer;" title="Supprimer">🗑</button>':'')
+        +(canEdit()?'<button onclick="editClient('+cl.id+')" style="background:var(--teal);color:#fff;border:none;border-radius:4px;padding:3px 7px;font-size:9.5px;cursor:pointer;" title="Modifier">✏️</button>':'')
+        +(canEdit()?'<button onclick="delClient('+cl.id+')" style="background:#fef2f2;color:#991b1b;border:.5px solid #fca5a5;border-radius:4px;padding:3px 7px;font-size:9.5px;cursor:pointer;" title="Supprimer">🗑</button>':'')
       +'</div>'
       +'</div>';
   }).join('');
