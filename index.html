@@ -2358,55 +2358,115 @@ function saisirBL(cmdId){
 // Imprimer le suivi BL
 function imprimerSuiviBL(){
   const cfg = getCfg();
-  const list = [...S.commandes].sort((a,b)=>new Date(b.dc)-new Date(a.dc));
+  const moisFiltre = g('bl-mois')?.value || '';
+  const filtre = g('bl-statut')?.value || '';
+  const grouper = g('bl-groupe')?.checked || false;
+
+  // Filtrer exactement comme l'affichage
+  let list = S.commandes.filter(cmd => {
+    const matchMois = !moisFiltre || (cmd.dc||'').startsWith(moisFiltre);
+    const matchStatut = !filtre ? true :
+      filtre==='sans_bl' ? !cmd.bl :
+      filtre==='avec_bl' ? !!cmd.bl :
+      cmd.statut===filtre;
+    return matchMois && matchStatut;
+  }).sort((a,b)=>new Date(b.dc)-new Date(a.dc));
+
+  // Titre de la période imprimée
+  let periodeLabel = 'Toutes les commandes';
+  if(moisFiltre){
+    periodeLabel = new Date(moisFiltre+'-01').toLocaleDateString('fr-CI',{month:'long',year:'numeric'});
+  }
+  if(filtre && filtre!=='sans_bl' && filtre!=='avec_bl') periodeLabel += ' — '+filtre;
+  else if(filtre==='sans_bl') periodeLabel += ' — Sans BL';
+  else if(filtre==='avec_bl') periodeLabel += ' — Avec BL';
+
+  const avecBL=list.filter(c=>c.bl).length;
+  const sansBL=list.filter(c=>!c.bl&&c.statut!=='En attente').length;
+
   const pw = window.open('','_blank');
-  pw.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Suivi BL '+cfg.nom+'</title>'
+  pw.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Suivi BL — '+periodeLabel+'</title>'
     +'<style>@page{size:A4 landscape;margin:1cm;}*{box-sizing:border-box;margin:0;padding:0;}'
     +'body{font-family:Arial,sans-serif;font-size:9.5px;}'
     +'.hd{background:#04747c;color:#fff;padding:10px 14px;display:flex;justify-content:space-between;margin-bottom:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    +'.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px;}'
+    +'.stat{background:#f0f9f9;border-radius:6px;padding:8px;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    +'.sv{font-size:18px;font-weight:700;color:#04747c;}'
+    +'.sl{font-size:8px;color:#6b7280;}'
+    +'.mois-hd{background:#04747c;color:#fff;padding:5px 10px;font-weight:700;font-size:10px;margin:8px 0 0;-webkit-print-color-adjust:exact;print-color-adjust:exact;border-radius:4px 4px 0 0;display:flex;justify-content:space-between;}'
     +'table{width:100%;border-collapse:collapse;}'
-    +'th{background:#04747c;color:#fff;padding:5px 6px;text-align:left;font-size:8.5px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
-    +'td{padding:4px 6px;border-bottom:.5px solid #e2e8f0;vertical-align:middle;}'
+    +'th{background:#e0f2f9;color:#04747c;padding:4px 6px;text-align:left;font-size:8.5px;border:.5px solid #bfdbfe;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    +'td{padding:4px 6px;border:.5px solid #e2e8f0;font-size:8.5px;vertical-align:middle;}'
     +'tr:nth-child(even) td{background:#f8fafc;}'
     +'.bl-ok{color:#059669;font-weight:700;}'
     +'.bl-non{color:#f59e0b;font-style:italic;}'
     +'.ret{color:#ef4444;font-weight:700;}'
     +'</style></head><body>'
     +'<div class="hd">'
-      +'<div><div style="font-size:14px;font-weight:700;">SUIVI DES BONS DE LIVRAISON</div>'
-      +'<div style="font-size:9px;opacity:.8;">'+esc(cfg.nom)+' — '+esc(cfg.adr)+'</div></div>'
+      +'<div>'
+        +'<div style="font-size:13px;font-weight:700;">SUIVI DES BONS DE LIVRAISON</div>'
+        +'<div style="font-size:9px;opacity:.85;">'+esc(cfg.nom)+' — '+esc(cfg.adr)+'</div>'
+        +'<div style="font-size:9px;opacity:.85;margin-top:2px;">Période : <strong>'+periodeLabel+'</strong></div>'
+      +'</div>'
       +'<div style="text-align:right;">'
-        +'<div>'+list.length+' commande(s)</div>'
-        +'<div style="font-size:9px;">'+new Date().toLocaleDateString('fr-CI',{day:'numeric',month:'long',year:'numeric'})+'</div>'
+        +'<div style="font-size:11px;font-weight:600;">'+list.length+' commande(s)</div>'
+        +'<div style="font-size:8.5px;opacity:.85;">BL reçus : '+avecBL+' · Sans BL : '+sansBL+'</div>'
+        +'<div style="font-size:8.5px;opacity:.75;">Imprimé le '+new Date().toLocaleDateString('fr-CI',{day:'numeric',month:'long',year:'numeric'})+'</div>'
       +'</div>'
     +'</div>'
-    +'<table><thead><tr>'
-      +'<th>N° BON</th><th>RÉF. FACTURE</th><th>CLIENT</th><th>TÉLÉPHONE</th>'
-      +'<th>FOURNISSEUR</th><th>STATUT</th><th>DATE CMD</th>'
-      +'<th>LIVR. PRÉVUE</th><th>N° BON LIVRAISON</th><th>DATE RÉCEPTION</th><th>ARTICLE</th>'
-    +'</tr></thead><tbody>'
-    +list.map(cmd=>{
-      const cl=gc(cmd.cid);
-      const j=jrs(cmd.dlp);
-      const ret=j!==null&&j<=-1&&cmd.statut==='Commandé';
-      return '<tr>'
-        +'<td><strong>'+numBon(cmd.id)+'</strong></td>'
-        +'<td>'+esc(cmd.fac||'—')+'</td>'
-        +'<td><strong>'+(cl?esc(cl.nom+' '+cl.prenom):'—')+'</strong></td>'
-        +'<td>'+(cl?esc(cl.tel||'—'):'—')+'</td>'
-        +'<td>'+esc(cmd.fid||'—')+'</td>'
-        +'<td>'+esc(cmd.statut)+'</td>'
-        +'<td>'+fmt(cmd.dc)+'</td>'
-        +'<td class="'+(ret?'ret':'')+'">'+fmt(cmd.dlp)+(ret?' ('+Math.abs(j)+'j)':'')+'</td>'
-        +'<td class="'+(cmd.bl?'bl-ok':'bl-non')+'">'+esc(cmd.bl||'En attente')+'</td>'
-        +'<td>'+(cmd.dll?fmt(cmd.dll):'—')+'</td>'
-        +'<td style="font-size:8px;">'+(cmd.vd?esc(cmd.vd.slice(0,35)):' —')+'</td>'
-        +'</tr>';
-    }).join('')
-    +'</tbody></table>'
-    +'<div style="margin-top:8px;font-size:8px;color:#9ca3af;">Imprimé le '+new Date().toLocaleDateString('fr-CI')+' — '+esc(cfg.nom)+'</div>'
-    +'<scr'+'ipt>window.onload=function(){window.print();};</'+'script>'
-    +'</body></html>');
+    +'<div class="stats">'
+      +[{l:'Total commandes',v:list.length},{l:'BL reçus',v:avecBL},{l:'Sans BL',v:sansBL},{l:'Livrées',v:list.filter(c=>c.statut==='Livré').length}]
+      .map(k=>'<div class="stat"><div class="sv">'+k.v+'</div><div class="sl">'+k.l+'</div></div>').join('')
+    +'</div>');
+
+  const tableHeader = '<table><thead><tr>'
+    +'<th>N° BON</th><th>RÉF. FACTURE</th><th>CLIENT</th><th>TÉL.</th>'
+    +'<th>FOURNISSEUR</th><th>STATUT</th><th>DATE CMD</th>'
+    +'<th>LIVR. PRÉVUE</th><th>N° BON LIVRAISON</th><th>DATE RÉCEPTION</th><th>ARTICLE</th>'
+    +'</tr></thead><tbody>';
+
+  const tableRow = cmd => {
+    const cl=gc(cmd.cid);const j=jrs(cmd.dlp);
+    const ret=j!==null&&j<=-1&&cmd.statut==='Commandé';
+    return '<tr>'
+      +'<td><strong>'+numBon(cmd.id)+'</strong></td>'
+      +'<td>'+esc(cmd.fac||'—')+'</td>'
+      +'<td><strong>'+(cl?esc(cl.nom+' '+cl.prenom):'—')+'</strong></td>'
+      +'<td>'+(cl?esc(cl.tel||'—'):'—')+'</td>'
+      +'<td>'+esc(cmd.fid||'—')+'</td>'
+      +'<td>'+esc(cmd.statut)+'</td>'
+      +'<td>'+fmt(cmd.dc)+'</td>'
+      +'<td class="'+(ret?'ret':'')+'">'+fmt(cmd.dlp)+(ret?' ('+Math.abs(j)+'j)':'')+'</td>'
+      +'<td class="'+(cmd.bl?'bl-ok':'bl-non')+'">'+esc(cmd.bl||'En attente')+'</td>'
+      +'<td>'+(cmd.dll?fmt(cmd.dll):'—')+'</td>'
+      +'<td style="font-size:7.5px;">'+(cmd.vd?esc(cmd.vd.slice(0,35)):' —')+'</td>'
+      +'</tr>';
+  };
+
+  if(grouper && !moisFiltre){
+    // Grouper par mois pour l'impression
+    const groupes = {};
+    list.forEach(cmd=>{
+      const mois=cmd.dc?cmd.dc.slice(0,7):'Inconnu';
+      if(!groupes[mois])groupes[mois]=[];
+      groupes[mois].push(cmd);
+    });
+    Object.keys(groupes).sort().reverse().forEach(mois=>{
+      const label=mois!=='Inconnu'?new Date(mois+'-01').toLocaleDateString('fr-CI',{month:'long',year:'numeric'}):mois;
+      const cmds=groupes[mois];
+      const blM=cmds.filter(c=>c.bl).length;
+      pw.document.write(
+        '<div class="mois-hd"><span>📅 '+label+'</span><span>'+cmds.length+' commande(s) · '+blM+' BL reçu(s)</span></div>'
+        +tableHeader+cmds.map(tableRow).join('')+'</tbody></table>'
+      );
+    });
+  } else {
+    // Un seul tableau (mois sélectionné ou vue liste)
+    pw.document.write(tableHeader+list.map(tableRow).join('')+'</tbody></table>');
+  }
+
+  pw.document.write('<div style="margin-top:10px;font-size:7.5px;color:#9ca3af;text-align:center;">'+esc(cfg.nom)+' — '+esc(cfg.adr)+' — '+esc(cfg.tel)+'</div>');
+  pw.document.write('<scr'+'ipt>window.onload=function(){window.print();};</'+'script></body></html>');
   pw.document.close();
 }
 
