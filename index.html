@@ -156,6 +156,9 @@ input,select,textarea,button{font-family:inherit;outline:none;}
   <button class="nb" onclick="nav('notifs',this)"><span class="ni">🔔</span>Notifications<span class="nbadge" id="nbadge" style="display:none">0</span></button>
   <div id="nav-admin-sec" style="display:none;" class="nav-sec">Administration</div>
   <button id="nav-admin-btn" class="nb" onclick="nav('admin',this)" style="display:none;"><span class="ni">⚙️</span>Utilisateurs</button>
+  <button class="nb" onclick="openMonProfil()" style="margin:2px 4px;width:calc(100% - 8px);">
+    <span class="ni">🔑</span>Mon profil
+  </button>
   <div class="sb-user">
     <div class="uchip" onclick="logout()" title="Déconnexion">
       <div class="uav" id="uav">EL</div>
@@ -434,6 +437,33 @@ input,select,textarea,button{font-family:inherit;outline:none;}
       <button class="btn bg" onclick="closeM('notif')">Fermer</button>
       <button class="btn bsm" style="background:#25D366;color:#fff;" onclick="sendWaNotif()">💬 WhatsApp</button>
       <button class="btn bt" id="btn-send-email" onclick="sendEmailNotif()">✉ Email</button>
+    </div>
+  </div>
+</div>
+
+<!-- Mon Profil -->
+<div class="mbg" id="m-profil" style="display:none;" onclick="if(event.target===this)closeM('profil')">
+  <div class="mbox" style="max-width:400px;">
+    <div class="mh" style="background:linear-gradient(135deg,#1a2830,#04747c);">
+      <div class="mt">🔑 Mon profil</div>
+      <button class="mx" onclick="closeM('profil')">×</button>
+    </div>
+    <div class="mb">
+      <div style="background:#f0f9f9;border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:11px;color:var(--teal);">
+        Modifiez votre identifiant et/ou mot de passe. Laissez le mot de passe vide pour ne pas le changer.
+      </div>
+      <div class="g2">
+        <div style="grid-column:1/-1;"><label class="fl">Nom complet</label><input class="fi" id="pp-nom" placeholder="Votre nom"></div>
+        <div><label class="fl">Nouvel identifiant</label><input class="fi" id="pp-login" placeholder="Identifiant connexion" autocomplete="username"></div>
+        <div><label class="fl">Email</label><input class="fi" id="pp-email" placeholder="votre@email.com" type="email"></div>
+        <div><label class="fl">Nouveau mot de passe</label><input class="fi" id="pp-pass" type="password" placeholder="Laisser vide = inchangé" autocomplete="new-password"></div>
+        <div><label class="fl">Confirmer mot de passe</label><input class="fi" id="pp-pass2" type="password" placeholder="Confirmer le mot de passe" autocomplete="new-password"></div>
+      </div>
+      <div id="pp-err" style="display:none;background:#fef2f2;border-radius:6px;padding:8px 10px;font-size:11px;color:#991b1b;margin-top:8px;"></div>
+    </div>
+    <div class="mf">
+      <button class="btn bg" onclick="closeM('profil')">Annuler</button>
+      <button class="btn bt" onclick="saveMonProfil()">✓ Enregistrer</button>
     </div>
   </div>
 </div>
@@ -2695,6 +2725,72 @@ function imprimerRetards(){
     +'<scr'+'ipt>window.onload=function(){window.print();};</'+'script>'
     +'</body></html>');
   pw.document.close();
+}
+
+
+// ════════════════════════════════════════════════════
+// MON PROFIL (Super Admin)
+// ════════════════════════════════════════════════════
+function openMonProfil(){
+  if(!CU){return;}
+  g('pp-nom').value = CU.nom||'';
+  g('pp-login').value = CU.login||'';
+  g('pp-email').value = CU.email||'';
+  g('pp-pass').value = '';
+  g('pp-pass2').value = '';
+  g('pp-err').style.display = 'none';
+  g('m-profil').style.display = 'flex';
+}
+
+function saveMonProfil(){
+  const nom = g('pp-nom').value.trim();
+  const login = g('pp-login').value.trim();
+  const pass = g('pp-pass').value;
+  const pass2 = g('pp-pass2').value;
+  const email = g('pp-email').value.trim();
+  const err = g('pp-err');
+
+  // Validations
+  if(!nom || !login){
+    err.textContent = 'Le nom et l\'identifiant sont obligatoires.';
+    err.style.display = 'block'; return;
+  }
+  if(pass && pass.length < 4){
+    err.textContent = 'Le mot de passe doit contenir au moins 4 caractères.';
+    err.style.display = 'block'; return;
+  }
+  if(pass && pass !== pass2){
+    err.textContent = 'Les mots de passe ne correspondent pas.';
+    err.style.display = 'block'; return;
+  }
+  // Vérifier si l'identifiant est déjà pris par un autre utilisateur
+  const doublon = USRS.find(u => u.login === login && u.id !== CU.id);
+  if(doublon){
+    err.textContent = 'Cet identifiant est déjà utilisé par un autre compte.';
+    err.style.display = 'block'; return;
+  }
+
+  // Mettre à jour
+  const u = USRS.find(x => x.id === CU.id);
+  if(!u) return;
+  u.nom = nom;
+  u.login = login;
+  u.email = email;
+  if(pass) u.pass = pass;
+
+  // Mettre à jour CU (utilisateur courant)
+  CU.nom = nom;
+  CU.login = login;
+  CU.email = email;
+  if(pass) CU.pass = pass;
+
+  saveU();
+  closeM('profil');
+  // Mettre à jour l'affichage sidebar
+  const sb = document.querySelector('.uname');
+  if(sb) sb.textContent = nom;
+  showToast('Profil mis à jour !');
+  err.style.display = 'none';
 }
 
 // ════════════════════════════════════════════════════
