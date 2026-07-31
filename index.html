@@ -1153,13 +1153,16 @@ function bonTexte(cmd){
 }
 
 function printBon(){
+  const COL=getCfg().col||'#04747c';
+  const COL2=COL+'22';
+
   const cmd=S.commandes.find(c=>c.id===_bonId);if(!cmd)return;
   const cl=gc(cmd.cid);const num=numBon(cmd.id);const cfg=getCfg();const j=jrs(cmd.dlp);const ret=j!==null&&j<=-1&&cmd.statut!=='Livré';
   const pw=window.open('','_blank');
-  pw.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+num+'</title><style>@page{size:A4;margin:1.2cm;}*{box-sizing:border-box;margin:0;padding:0;}body{font-family:Arial,sans-serif;font-size:11px;color:#111;}.hd{background:#04747c;color:#fff;padding:12px 15px;display:flex;justify-content:space-between;-webkit-print-color-adjust:exact;print-color-adjust:exact;}.r2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0;}.bl{border:1px solid #e2e8f0;border-radius:4px;overflow:hidden;}.bh{background:#04747c;color:#fff;padding:4px 8px;font-size:8.5px;font-weight:700;text-transform:uppercase;-webkit-print-color-adjust:exact;print-color-adjust:exact;}.bb{padding:7px 8px;font-size:11px;line-height:1.7;}.sh{background:#04747c;color:#fff;padding:4px 8px;font-size:8.5px;font-weight:700;text-transform:uppercase;margin:8px 0 0;-webkit-print-color-adjust:exact;print-color-adjust:exact;}table.pt{width:100%;border-collapse:collapse;font-size:9.5px;}table.pt th{background:#f0f9f9;color:#04747c;padding:4px;border:1px solid #e2e8f0;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact;}table.pt td{padding:4px;border:1px solid #e2e8f0;text-align:center;}.oe{background:#f0f9f9;color:#04747c;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact;}.w{text-align:left;font-size:9px;}.mes{display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:7px 8px;font-size:10px;line-height:1.9;}.ft{margin-top:10px;border-top:1px solid #e2e8f0;padding-top:6px;font-size:8.5px;color:#6b7280;display:flex;justify-content:space-between;}</style></head><body>'
+  pw.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+num+'</title><style>@page{size:A4;margin:1.2cm;}*{box-sizing:border-box;margin:0;padding:0;}body{font-family:Arial,sans-serif;font-size:11px;color:#111;}.hd{background:'+COL+';color:#fff;padding:12px 15px;display:flex;justify-content:space-between;-webkit-print-color-adjust:exact;print-color-adjust:exact;}.r2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0;}.bl{border:1px solid #e2e8f0;border-radius:4px;overflow:hidden;}.bh{background:'+COL+';color:#fff;padding:4px 8px;font-size:8.5px;font-weight:700;text-transform:uppercase;-webkit-print-color-adjust:exact;print-color-adjust:exact;}.bb{padding:7px 8px;font-size:11px;line-height:1.7;}.sh{background:'+COL+';color:#fff;padding:4px 8px;font-size:8.5px;font-weight:700;text-transform:uppercase;margin:8px 0 0;-webkit-print-color-adjust:exact;print-color-adjust:exact;}table.pt{width:100%;border-collapse:collapse;font-size:9.5px;}table.pt th{background:#f0f9f9;color:'+COL+';padding:4px;border:1px solid #e2e8f0;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact;}table.pt td{padding:4px;border:1px solid #e2e8f0;text-align:center;}.oe{background:#f0f9f9;color:'+COL+';font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact;}.w{text-align:left;font-size:9px;}.mes{display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:7px 8px;font-size:10px;line-height:1.9;}.ft{margin-top:10px;border-top:1px solid #e2e8f0;padding-top:6px;font-size:8.5px;color:#6b7280;display:flex;justify-content:space-between;}</style></head><body>'
     +'<div class="hd"><div><div style="font-size:14px;font-weight:700;">BON DE COMMANDE VERRES</div><div style="font-size:9px;opacity:.8;margin-top:1px;">'+esc(cfg.nom)+' — '+esc(cfg.adr)+' — '+esc(cfg.tel)+'</div></div><div style="text-align:right;"><div style="font-size:12px;font-weight:700;">'+num+'</div><div>Date : '+fmt(cmd.dc)+'</div><div>Opticien : '+esc(cmd.opi||'—')+'</div>'+(cmd.fac?'<div>Réf : '+esc(cmd.fac)+'</div>':'')+' </div></div>'
     +(ret?'<div style="background:#fef2f2;color:#991b1b;padding:5px 8px;font-weight:600;font-size:10px;margin-top:5px;border-radius:4px;">RETARD '+Math.abs(j)+' JOUR(S) — Livraison prévue le '+fmt(cmd.dlp)+'</div>':'')
-    +'<div class="r2"><div class="bl"><div class="bh">Client</div><div class="bb"><b>'+(cl?esc(cl.nom+' '+cl.prenom):'—')+'</b><br>Tél : '+(cl?.tel||'—')+'<br>Livraison : <b style="color:'+(ret?'#dc2626':'#04747c')+';">'+fmt(cmd.dlp)+'</b></div></div>'
+    +'<div class="r2"><div class="bl"><div class="bh">Client</div><div class="bb"><b>'+(cl?esc(cl.nom+' '+cl.prenom):'—')+'</b><br>Tél : '+(cl?.tel||'—')+'<br>Livraison : <b style="color:'+(ret?'#dc2626':COL)+';">'+fmt(cmd.dlp)+'</b></div></div>'
     +'<div class="bl"><div class="bh">Fournisseur</div><div class="bb"><b>'+esc(cmd.fid||'—')+'</b><br>Statut : '+esc(cmd.statut)+(cmd.bl?'<br>BL : '+esc(cmd.bl):'')+'</div></div></div>'
     +'<div class="sh">Prescription & Verres</div><table class="pt"><thead><tr><th style="width:22px;"></th><th>SPH</th><th>CYL</th><th>AXE</th><th>ADD</th><th style="width:135px;">Verres</th><th style="width:125px;">Traitement</th><th>Diam.</th><th style="width:80px;">Fourn.</th></tr></thead><tbody>'
     +'<tr><td class="oe">D</td><td>'+esc(cmd.sd||'—')+'</td><td>'+esc(cmd.cd||'—')+'</td><td>'+esc(cmd.ad||'—')+'</td><td>'+esc(cmd.xd||'—')+'</td><td class="w">'+esc(cmd.vd||'—')+'</td><td class="w">'+esc(cmd.trd||'—')+'</td><td>'+esc(cmd.dd||'—')+'</td><td class="w">'+esc(cmd.fvd||'—')+'</td></tr>'
@@ -1696,6 +1699,9 @@ function renderRapports(){
 }
 
 function imprimerRapport(){
+  const COL=getCfg().col||'#04747c';
+  const COL2=COL+'22';
+
   const{cmds,livrees,rets,byStatut,byFour,tx,valStock,lbl,now}=getRpData();
   const cfg=getCfg();
   const pw=window.open('','_blank');
@@ -1705,16 +1711,16 @@ function imprimerRapport(){
     +'.hd{background:'+cfg.col+';color:#fff;padding:12px 15px;display:flex;justify-content:space-between;align-items:center;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
     +'.kgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0;}'
     +'.kbox{background:#f0f9f9;border-radius:6px;padding:10px;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
-    +'.kv{font-size:22px;font-weight:700;color:#04747c;}'
+    +'.kv{font-size:22px;font-weight:700;color:'+COL+';}'
     +'.kl{font-size:9px;color:#6b7280;margin-top:2px;}'
-    +'.sh{background:#04747c;color:#fff;padding:4px 8px;font-size:8.5px;font-weight:700;margin:10px 0 5px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    +'.sh{background:'+COL+';color:#fff;padding:4px 8px;font-size:8.5px;font-weight:700;margin:10px 0 5px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
     +'.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}'
     +'.card{background:#f8fafc;border-radius:6px;padding:10px;}'
     +'table{width:100%;border-collapse:collapse;font-size:10px;margin-top:5px;}'
-    +'th{background:#f0f9f9;color:#04747c;padding:4px 6px;border:1px solid #e2e8f0;text-align:left;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    +'th{background:#f0f9f9;color:'+COL+';padding:4px 6px;border:1px solid #e2e8f0;text-align:left;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
     +'td{padding:4px 6px;border:1px solid #e2e8f0;}'
     +'tr:nth-child(even) td{background:#f8fafc;}'
-    +'.bar{height:6px;background:#04747c;border-radius:3px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    +'.bar{height:6px;background:'+COL+';border-radius:3px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
     +'</style></head><body>'
     +'<div class="hd"><div><div style="font-size:14px;font-weight:700;">RAPPORT DE GESTION</div>'
     +'<div style="font-size:9px;opacity:.8;">'+esc(cfg.nom)+' — '+esc(cfg.adr)+'</div></div>'
@@ -1728,7 +1734,7 @@ function imprimerRapport(){
     +'<div class="sh">STATUTS DES COMMANDES</div>'
     +'<div class="g2">'
     +'<div class="card">'+Object.entries(byStatut).map(([s,n])=>'<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;"><div style="font-size:10px;color:#6b7280;width:72px;">'+s+'</div><div style="flex:1;height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden;"><div class="bar" style="width:'+Math.max(5,Math.round(n/S.commandes.length*100))+'%;background:'+({'En attente':'#f59e0b','Commandé':'#3b82f6','Reçu':'#06b6d4','Monté':'#8b5cf6','Prêt':'#10b981','Livré':'#059669'}[s]||'#9ca3af')+'"></div></div><div style="font-size:10px;font-weight:600;">'+n+'</div></div>').join('')+'</div>'
-    +'<div class="card"><div style="font-size:10.5px;font-weight:600;margin-bottom:5px;">Fournisseurs</div>'+Object.entries(byFour).map(([n,d])=>'<div style="margin-bottom:5px;padding-bottom:5px;border-bottom:.5px solid #e2e8f0;"><div style="font-weight:500;font-size:10.5px;color:#04747c;">'+esc(n)+'</div><div style="font-size:9.5px;color:#6b7280;">'+d.t+' cmds · '+d.l+' livrées'+(d.r>0?' · <span style="color:#ef4444;">'+d.r+' retard(s)</span>':'')+'</div></div>').join('')+'</div>'
+    +'<div class="card"><div style="font-size:10.5px;font-weight:600;margin-bottom:5px;">Fournisseurs</div>'+Object.entries(byFour).map(([n,d])=>'<div style="margin-bottom:5px;padding-bottom:5px;border-bottom:.5px solid #e2e8f0;"><div style="font-weight:500;font-size:10.5px;color:'+COL+';">'+esc(n)+'</div><div style="font-size:9.5px;color:#6b7280;">'+d.t+' cmds · '+d.l+' livrées'+(d.r>0?' · <span style="color:#ef4444;">'+d.r+' retard(s)</span>':'')+'</div></div>').join('')+'</div>'
     +'</div>'
     +'<div class="sh">DÉTAIL DES COMMANDES</div>'
     +'<table><thead><tr><th>N° Bon</th><th>Client</th><th>Fournisseur</th><th>Statut</th><th>Date</th><th>Livraison</th></tr></thead><tbody>'
@@ -2472,6 +2478,9 @@ function saisirBL(cmdId){
 
 // Imprimer le suivi BL
 function imprimerSuiviBL(){
+  const COL=getCfg().col||'#04747c';
+  const COL2=COL+'22';
+
   const cfg = getCfg();
   const moisFiltre = g('bl-mois')?.value || '';
   const filtre = g('bl-statut')?.value || '';
@@ -2503,14 +2512,14 @@ function imprimerSuiviBL(){
   pw.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Suivi BL — '+periodeLabel+'</title>'
     +'<style>@page{size:A4 landscape;margin:1cm;}*{box-sizing:border-box;margin:0;padding:0;}'
     +'body{font-family:Arial,sans-serif;font-size:9.5px;}'
-    +'.hd{background:#04747c;color:#fff;padding:10px 14px;display:flex;justify-content:space-between;margin-bottom:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    +'.hd{background:'+COL+';color:#fff;padding:10px 14px;display:flex;justify-content:space-between;margin-bottom:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
     +'.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px;}'
     +'.stat{background:#f0f9f9;border-radius:6px;padding:8px;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
-    +'.sv{font-size:18px;font-weight:700;color:#04747c;}'
+    +'.sv{font-size:18px;font-weight:700;color:'+COL+';}'
     +'.sl{font-size:8px;color:#6b7280;}'
-    +'.mois-hd{background:#04747c;color:#fff;padding:5px 10px;font-weight:700;font-size:10px;margin:8px 0 0;-webkit-print-color-adjust:exact;print-color-adjust:exact;border-radius:4px 4px 0 0;display:flex;justify-content:space-between;}'
+    +'.mois-hd{background:'+COL+';color:#fff;padding:5px 10px;font-weight:700;font-size:10px;margin:8px 0 0;-webkit-print-color-adjust:exact;print-color-adjust:exact;border-radius:4px 4px 0 0;display:flex;justify-content:space-between;}'
     +'table{width:100%;border-collapse:collapse;}'
-    +'th{background:#e0f2f9;color:#04747c;padding:4px 6px;text-align:left;font-size:8.5px;border:.5px solid #bfdbfe;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    +'th{background:#e0f2f9;color:'+COL+';padding:4px 6px;text-align:left;font-size:8.5px;border:.5px solid #bfdbfe;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
     +'td{padding:4px 6px;border:.5px solid #e2e8f0;font-size:8.5px;vertical-align:middle;}'
     +'tr:nth-child(even) td{background:#f8fafc;}'
     +'.bl-ok{color:#059669;font-weight:700;}'
@@ -2519,7 +2528,7 @@ function imprimerSuiviBL(){
     +'</style></head><body>'
     +'<div class="hd">'
       +'<div>'
-        +'<div style="font-size:13px;font-weight:700;">SUIVI DES BONS DE LIVRAISON</div>'
+        +(getCfg().logo?'<img src="'+getCfg().logo+'" style="height:40px;width:auto;object-fit:contain;">':'')+'<div style="font-size:13px;font-weight:700;">SUIVI DES BONS DE LIVRAISON</div>'
         +'<div style="font-size:9px;opacity:.85;">'+esc(cfg.nom)+' — '+esc(cfg.adr)+'</div>'
         +'<div style="font-size:9px;opacity:.85;margin-top:2px;">Période : <strong>'+periodeLabel+'</strong></div>'
       +'</div>'
@@ -2700,15 +2709,18 @@ async function notifierTousRetards(){
 
 // Imprimer le tableau retards
 function imprimerRetards(){
+  const COL=getCfg().col||'#04747c';
+  const COL2=COL+'22';
+
   const rets=retards().sort((a,b)=>jrs(a.dlp)-jrs(b.dlp));
   const cfg=getCfg();
   const pw=window.open('','_blank');
   pw.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Retards '+cfg.nom+'</title>'
     +'<style>@page{size:A4 landscape;margin:1cm;}*{box-sizing:border-box;margin:0;padding:0;}'
     +'body{font-family:Arial,sans-serif;font-size:10px;}'
-    +'.hd{background:#04747c;color:#fff;padding:10px 14px;display:flex;justify-content:space-between;-webkit-print-color-adjust:exact;print-color-adjust:exact;margin-bottom:10px;}'
+    +'.hd{background:'+COL+';color:#fff;padding:10px 14px;display:flex;justify-content:space-between;-webkit-print-color-adjust:exact;print-color-adjust:exact;margin-bottom:10px;}'
     +'table{width:100%;border-collapse:collapse;}'
-    +'th{background:#04747c;color:#fff;padding:5px 6px;text-align:left;font-size:9px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    +'th{background:'+COL+';color:#fff;padding:5px 6px;text-align:left;font-size:9px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
     +'td{padding:5px 6px;border-bottom:.5px solid #e2e8f0;vertical-align:top;}'
     +'.crit{background:#fff5f5;} .urg{background:#fffbf0;} .norm{background:#f0f7ff;}'
     +'.badge{display:inline-block;padding:2px 6px;border-radius:4px;font-size:8.5px;font-weight:700;}'
