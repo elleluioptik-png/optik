@@ -464,6 +464,25 @@ input,select,textarea,button{font-family:inherit;outline:none;}
   </div>
 </div>
 
+<!-- Bon Lentille -->
+<div class="mbg" id="m-bon-lentille" style="display:none;" onclick="if(event.target===this)closeM('bon-lentille')">
+  <div class="mbox" style="max-width:720px;">
+    <div class="mh" style="background:linear-gradient(135deg,#0e7490,#06b6d4);">
+      <div class="mt" id="bon-lent-title">Bon de commande lentilles</div>
+      <button class="mx" onclick="closeM('bon-lentille')">×</button>
+    </div>
+    <div class="mb" id="bon-lent-content" style="padding:0;max-height:70vh;overflow-y:auto;"></div>
+    <div class="mf no-print">
+      <button class="btn bg" onclick="closeM('bon-lentille')">Fermer</button>
+      <button class="btn bxs" onclick="printBonLentille()" style="background:#6b7280;color:#fff;">🖨️ Imprimer</button>
+      <button class="btn bxs" onclick="pdfBonLentille()" style="background:#ef4444;color:#fff;">📥 PDF</button>
+      <button class="btn bxs" style="background:#25d366;color:#fff;" onclick="waBonLentille()">● WhatsApp</button>
+      <button class="btn bt" onclick="emailBonLentille()">✉ Email+PDF</button>
+    </div>
+    <div id="bon-lent-res" style="display:none;margin:8px 14px 0;"></div>
+  </div>
+</div>
+
 <!-- Lentille -->
 <div class="mbg" id="m-lentille" style="display:none;" onclick="if(event.target===this)closeM('lentille')">
   <div class="mbox" style="max-width:620px;">
@@ -933,7 +952,7 @@ function showToast(msg,type='ok'){const t=g('toast');t.style.background=type==='
 function addNotif(type,ev,etat,dest,txt){S.notifs.unshift({id:Date.now(),type,ev,etat,dest,txt,date:doff(0)});save();updateBadge();}
 function updateBadge(){const n=S.notifs.length;const b=g('nbadge');b.textContent=n;b.style.display=n>0?'flex':'none';}
 function closeM(id){const m=g('m-'+id);if(m)m.style.display='none';}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')['cmd','bon','recu','alerte','notif','client','four','verre','user','settings','rapport'].forEach(closeM);});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')['cmd','bon','bon-lentille','recu','alerte','notif','client','four','verre','user','settings','rapport','lentille','profil','traitement'].forEach(closeM);});
 function canEdit(){return CU!=null;}
 function canAdmin(){return CU&&CU.role!=='user';}
 
@@ -3283,6 +3302,7 @@ function waBonLentille(){
 }
 
 function openBonLentille(id){
+  if(!S.lentilles)S.lentilles=[];
   const cmd=(S.lentilles||[]).find(c=>c.id===id);if(!cmd)return;
   _bonLentId=id;
   const cl=gc(cmd.cid);const cfg=getCfg();
