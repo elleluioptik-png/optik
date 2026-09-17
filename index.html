@@ -151,6 +151,7 @@ input,select,textarea,button{font-family:inherit;outline:none;}
   <button class="nb" onclick="nav('verres',this)"><span class="ni">🔬</span>Catalogue verres</button>
   <button class="nb" onclick="nav('traitements',this)"><span class="ni">✨</span>Traitements</button>
   <button class="nb" onclick="nav('fournisseurs',this)"><span class="ni">🚚</span>Fournisseurs</button>
+  <button class="nb" onclick="nav('lentilles',this)"><span class="ni">👁</span>Lentilles</button>
   <div class="nav-sec">Analyse</div>
   <button class="nb" onclick="nav('rapports',this)"><span class="ni">📊</span>Rapports</button>
   <button class="nb" onclick="nav('notifs',this)"><span class="ni">🔔</span>Notifications<span class="nbadge" id="nbadge" style="display:none">0</span></button>
@@ -303,6 +304,28 @@ input,select,textarea,button{font-family:inherit;outline:none;}
   </div>
 </div>
 
+<!-- LENTILLES -->
+<div class="view" id="v-lentilles">
+  <div class="tb">
+    <div class="tb-title" id="lent-title">Commandes lentilles</div>
+    <input class="fi" style="max-width:180px;" placeholder="🔍 Client, marque..." oninput="lentSearch=this.value;renderLentilles()">
+    <select class="fs" style="width:120px;" id="lent-filtre" onchange="renderLentilles()">
+      <option value="">Tous statuts</option>
+      <option>En attente</option><option>Commandé</option><option>Reçu</option><option>Prêt</option><option>Livré</option>
+    </select>
+    <button class="btn bt" onclick="openNewLentille()">+ Nouvelle commande</button>
+  </div>
+  <div class="ct">
+    <div id="lent-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:13px;"></div>
+    <div class="card">
+      <div class="th" style="grid-template-columns:90px 1fr 75px 1fr 80px 80px 90px;">
+        <div>N° BON</div><div>CLIENT</div><div>TYPE</div><div>MARQUE / REF.</div><div>STATUT</div><div>LIVRAISON</div><div>ACTIONS</div>
+      </div>
+      <div id="lent-list"></div>
+    </div>
+  </div>
+</div>
+
 <!-- FOURNISSEURS -->
 <div class="view" id="v-fournisseurs">
   <div class="tb"><div class="tb-title">Fournisseurs</div><button class="btn bt" onclick="openNewFour()">+ Nouveau</button></div>
@@ -437,6 +460,99 @@ input,select,textarea,button{font-family:inherit;outline:none;}
       <button class="btn bg" onclick="closeM('notif')">Fermer</button>
       <button class="btn bsm" style="background:#25D366;color:#fff;" onclick="sendWaNotif()">💬 WhatsApp</button>
       <button class="btn bt" id="btn-send-email" onclick="sendEmailNotif()">✉ Email</button>
+    </div>
+  </div>
+</div>
+
+<!-- Lentille -->
+<div class="mbg" id="m-lentille" style="display:none;" onclick="if(event.target===this)closeM('lentille')">
+  <div class="mbox" style="max-width:620px;">
+    <div class="mh" id="lent-mh" style="background:linear-gradient(135deg,#0e7490,#06b6d4);">
+      <div class="mt" id="lent-mt">👁 Nouvelle commande lentilles</div>
+      <button class="mx" onclick="closeM('lentille')">×</button>
+    </div>
+    <div class="mb">
+      <div class="g2" style="margin-bottom:10px;">
+        <div><label class="fl">Client *</label><select class="fs" id="lent-cid"></select></div>
+        <div><label class="fl">Fournisseur</label><select class="fs" id="lent-fid"></select></div>
+        <div><label class="fl">Livraison prévue</label><input class="fi" id="lent-dlp" type="date"></div>
+        <div><label class="fl">Réf. Facture</label><input class="fi" id="lent-fac" placeholder="FAC-2026-xxx"></div>
+      </div>
+      <div class="sh" style="margin-bottom:8px;">Type de lentilles</div>
+      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+        <label style="flex:1;min-width:120px;cursor:pointer;"><input type="radio" name="lent-type" value="souple" onchange="lentTypeChange()" checked style="display:none;">
+          <div class="lent-type-card" style="background:#f0fdf4;border:2px solid #10b981;border-radius:7px;padding:9px;text-align:center;">
+            <div style="font-size:20px;">💧</div><div style="font-size:11px;font-weight:600;">Souples</div>
+            <div style="font-size:9px;color:var(--txt2);">Journalières · Hebdo · Mensuelles</div>
+          </div>
+        </label>
+        <label style="flex:1;min-width:120px;cursor:pointer;"><input type="radio" name="lent-type" value="rigide" onchange="lentTypeChange()" style="display:none;">
+          <div class="lent-type-card" style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:7px;padding:9px;text-align:center;">
+            <div style="font-size:20px;">🔵</div><div style="font-size:11px;font-weight:600;">Rigides</div>
+            <div style="font-size:9px;color:var(--txt2);">PMMA · RGP · Sclérales</div>
+          </div>
+        </label>
+        <label style="flex:1;min-width:120px;cursor:pointer;"><input type="radio" name="lent-type" value="therapeutique" onchange="lentTypeChange()" style="display:none;">
+          <div class="lent-type-card" style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:7px;padding:9px;text-align:center;">
+            <div style="font-size:20px;">⚕️</div><div style="font-size:11px;font-weight:600;">Thérapeutiques</div>
+            <div style="font-size:9px;color:var(--txt2);">Orto-K · Sclérales thérap.</div>
+          </div>
+        </label>
+      </div>
+      <div class="sh" style="margin-bottom:8px;">Caractéristiques</div>
+      <div class="g2" style="margin-bottom:10px;">
+        <div><label class="fl">Marque *</label><input class="fi" id="lent-marque" placeholder="Ex: ACUVUE, AIR OPTIX..."></div>
+        <div><label class="fl">Référence / Modèle</label><input class="fi" id="lent-ref" placeholder="Ex: Oasys 1-Day..."></div>
+        <div id="lent-renouv-row"><label class="fl">Renouvellement</label>
+          <select class="fs" id="lent-renouv">
+            <option>Journalières</option><option>Hebdomadaires</option><option>Mensuelles</option><option>Trimestrielles</option><option>Annuelles</option>
+          </select>
+        </div>
+        <div><label class="fl">Quantité (boîtes)</label><input class="fi" id="lent-qte" type="number" value="1" min="1"></div>
+        <div><label class="fl">Teinte / Couleur</label><input class="fi" id="lent-teinte" placeholder="Transparente, Bleue..."></div>
+        <div><label class="fl">Prix unitaire (FCFA)</label><input class="fi" id="lent-prix" type="number" placeholder="0"></div>
+      </div>
+      <div class="sh" style="margin-bottom:8px;">Prescription</div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:11px;min-width:480px;">
+          <thead><tr style="background:#f0f9f9;">
+            <th style="padding:5px 7px;border:1px solid #e2e8f0;"></th>
+            <th style="padding:5px 7px;border:1px solid #e2e8f0;">Sphère</th>
+            <th style="padding:5px 7px;border:1px solid #e2e8f0;">Cylindre</th>
+            <th style="padding:5px 7px;border:1px solid #e2e8f0;">Axe</th>
+            <th style="padding:5px 7px;border:1px solid #e2e8f0;">Addition</th>
+            <th style="padding:5px 7px;border:1px solid #e2e8f0;">Rayon (BC)</th>
+            <th style="padding:5px 7px;border:1px solid #e2e8f0;">Diamètre</th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td style="padding:4px 6px;border:1px solid #e2e8f0;font-weight:700;color:#065f46;background:#f0fdf4;text-align:center;">OD</td>
+              <td style="padding:2px;border:1px solid #e2e8f0;"><input class="fi" id="lsd" placeholder="+/-" style="padding:4px;text-align:center;"></td>
+              <td style="padding:2px;border:1px solid #e2e8f0;"><input class="fi" id="lcd" placeholder="+/-" style="padding:4px;text-align:center;"></td>
+              <td style="padding:2px;border:1px solid #e2e8f0;"><input class="fi" id="lad" placeholder="0°" style="padding:4px;text-align:center;"></td>
+              <td style="padding:2px;border:1px solid #e2e8f0;"><input class="fi" id="lxd" placeholder="add" style="padding:4px;text-align:center;"></td>
+              <td style="padding:2px;border:1px solid #e2e8f0;"><input class="fi" id="lrd" placeholder="8.6" style="padding:4px;text-align:center;"></td>
+              <td style="padding:2px;border:1px solid #e2e8f0;"><input class="fi" id="ldd" placeholder="14.2" style="padding:4px;text-align:center;"></td>
+            </tr>
+            <tr>
+              <td style="padding:4px 6px;border:1px solid #e2e8f0;font-weight:700;color:#1e40af;background:#eff6ff;text-align:center;">OG</td>
+              <td style="padding:2px;border:1px solid #e2e8f0;"><input class="fi" id="lsg" placeholder="+/-" style="padding:4px;text-align:center;"></td>
+              <td style="padding:2px;border:1px solid #e2e8f0;"><input class="fi" id="lcg" placeholder="+/-" style="padding:4px;text-align:center;"></td>
+              <td style="padding:2px;border:1px solid #e2e8f0;"><input class="fi" id="lag" placeholder="0°" style="padding:4px;text-align:center;"></td>
+              <td style="padding:2px;border:1px solid #e2e8f0;"><input class="fi" id="lxg" placeholder="add" style="padding:4px;text-align:center;"></td>
+              <td style="padding:2px;border:1px solid #e2e8f0;"><input class="fi" id="lrg" placeholder="8.6" style="padding:4px;text-align:center;"></td>
+              <td style="padding:2px;border:1px solid #e2e8f0;"><input class="fi" id="ldg" placeholder="14.2" style="padding:4px;text-align:center;"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:10px;"><label class="fl">Observations</label>
+        <textarea class="fta" id="lent-obs" rows="2" placeholder="Ex: Port continu, sensibilité particulière, historique..."></textarea>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn bg" onclick="closeM('lentille')">Annuler</button>
+      <button class="btn bt" id="lent-save" onclick="saveLentille()">✓ Créer la commande</button>
     </div>
   </div>
 </div>
@@ -691,6 +807,7 @@ const saveU=()=>fbSaveU();
 function defState(){
   return{
     nid:20,
+    lentilles:[],
     relances:{},
     notifs:[],
     clients:[
@@ -886,7 +1003,7 @@ function nav(name,btn){
   const v=g('v-'+name);if(v)v.classList.add('on');
   if(btn)btn.classList.add('active');
   CUR=name;
-  const r={dashboard:renderDash,commandes:renderCmds,retards:renderRetards,suivibl:renderSuiviBL,clients:renderClients,verres:renderVerres,traitements:renderTraitements,fournisseurs:renderFours,rapports:renderRapports,notifs:renderNotifs,admin:renderAdmin};
+  const r={dashboard:renderDash,commandes:renderCmds,lentilles:renderLentilles,retards:renderRetards,suivibl:renderSuiviBL,clients:renderClients,verres:renderVerres,traitements:renderTraitements,fournisseurs:renderFours,rapports:renderRapports,notifs:renderNotifs,admin:renderAdmin};
   if(r[name])r[name]();
 }
 
@@ -2841,6 +2958,232 @@ function saveMonProfil(){
   if(sb) sb.textContent = nom;
   showToast('Profil mis à jour !');
   err.style.display = 'none';
+}
+
+
+// ════════════════════════════════════════════════════
+// MODULE LENTILLES DE CONTACT
+// ════════════════════════════════════════════════════
+let lentSearch = '';
+let _lentId = null;
+
+function lentTypeChange(){
+  const type = document.querySelector('input[name="lent-type"]:checked')?.value||'souple';
+  // Mettre à jour le style des cartes
+  document.querySelectorAll('.lent-type-card').forEach(card=>{
+    const radio = card.previousElementSibling || card.parentElement.querySelector('input');
+    const isSelected = card.parentElement.querySelector('input')?.checked;
+    if(isSelected){
+      card.style.borderColor = '#10b981';
+      card.style.background = '#f0fdf4';
+    } else {
+      card.style.borderColor = '#e2e8f0';
+      card.style.background = '#f8fafc';
+    }
+  });
+  // Masquer renouvellement pour rigides et thérapeutiques
+  const rr = g('lent-renouv-row');
+  if(rr) rr.style.display = (type==='souple')?'':'none';
+}
+
+function openNewLentille(){
+  _lentId = null;
+  g('lent-mt').textContent = '👁 Nouvelle commande lentilles';
+  g('lent-mh').style.background = 'linear-gradient(135deg,#0e7490,#06b6d4)';
+  g('lent-save').textContent = '✓ Créer la commande';
+  // Reset form
+  ['lent-marque','lent-ref','lent-fac','lent-obs','lent-teinte',
+   'lsd','lcd','lad','lxd','lrd','ldd','lsg','lcg','lag','lxg','lrg','ldg'].forEach(id=>{const el=g(id);if(el)el.value='';});
+  g('lent-qte').value='1'; g('lent-prix').value='';
+  // Reset type
+  const rad=document.querySelector('input[name="lent-type"][value="souple"]');
+  if(rad){rad.checked=true;lentTypeChange();}
+  // Peupler clients
+  g('lent-cid').innerHTML='<option value="">-- Sélectionner --</option>'+S.clients.map(c=>'<option value="'+c.id+'">'+esc(c.nom+' '+c.prenom)+'</option>').join('');
+  // Peupler fournisseurs
+  g('lent-fid').innerHTML='<option value="">-- Sélectionner --</option>'+S.fournisseurs.map(f=>'<option value="'+f.nom+'">'+esc(f.nom)+'</option>').join('');
+  // Date par défaut +7j
+  g('lent-dlp').value=doff(7);
+  g('m-lentille').style.display='flex';
+}
+
+function editLentille(id){
+  const cmd = (S.lentilles||[]).find(c=>c.id===id); if(!cmd) return;
+  _lentId = id;
+  g('lent-mt').textContent = 'Modifier commande lentilles';
+  g('lent-mh').style.background = 'linear-gradient(135deg,#f59e0b,#ef4444)';
+  g('lent-save').textContent = 'Enregistrer';
+  // Peupler clients et fournisseurs
+  g('lent-cid').innerHTML='<option value="">-- Sélectionner --</option>'+S.clients.map(c=>'<option value="'+c.id+'"'+(cmd.cid===c.id?' selected':'')+'>'+esc(c.nom+' '+c.prenom)+'</option>').join('');
+  g('lent-fid').innerHTML='<option value="">-- Sélectionner --</option>'+S.fournisseurs.map(f=>'<option value="'+f.nom+'"'+(cmd.fid===f.nom?' selected':'')+'>'+esc(f.nom)+'</option>').join('');
+  // Type
+  const rad=document.querySelector('input[name="lent-type"][value="'+(cmd.typeLent||'souple')+'"]');
+  if(rad){rad.checked=true;lentTypeChange();}
+  // Champs
+  g('lent-marque').value=cmd.marque||''; g('lent-ref').value=cmd.ref||'';
+  g('lent-dlp').value=cmd.dlp||''; g('lent-fac').value=cmd.fac||'';
+  g('lent-qte').value=cmd.qte||1; g('lent-prix').value=cmd.prix||'';
+  g('lent-teinte').value=cmd.teinte||''; g('lent-obs').value=cmd.obs||'';
+  if(g('lent-renouv'))g('lent-renouv').value=cmd.renouv||'Mensuelles';
+  // Prescription
+  const p=cmd.presc||{};
+  ['sd','cd','ad','xd','rd','dd','sg','cg','ag','xg','rg','dg'].forEach(k=>{const el=g('l'+k);if(el)el.value=p[k]||'';});
+  g('m-lentille').style.display='flex';
+}
+
+function saveLentille(){
+  if(!S.lentilles) S.lentilles=[];
+  const cidV = g('lent-cid').value;
+  const marque = g('lent-marque').value.trim();
+  if(!cidV){showToast('Sélectionnez un client','err');return;}
+  if(!marque){showToast('Saisissez la marque','err');return;}
+  const type = document.querySelector('input[name="lent-type"]:checked')?.value||'souple';
+  const presc={};
+  ['sd','cd','ad','xd','rd','dd','sg','cg','ag','xg','rg','dg'].forEach(k=>{const el=g('l'+k);if(el&&el.value)presc[k]=el.value;});
+  const data={
+    cid:Number(cidV), fid:g('lent-fid').value, typeLent:type,
+    marque, ref:g('lent-ref').value, renouv:g('lent-renouv')?.value||'',
+    qte:parseInt(g('lent-qte').value)||1, prix:parseInt(g('lent-prix').value)||0,
+    teinte:g('lent-teinte').value, obs:g('lent-obs').value,
+    dlp:g('lent-dlp').value, fac:g('lent-fac').value, presc,
+    statut:'En attente', dc:doff(0)
+  };
+  if(_lentId){
+    S.lentilles=S.lentilles.map(c=>c.id===_lentId?{...c,...data}:c);
+    showToast('Commande lentilles mise à jour !');
+  } else {
+    const nc={id:S.nid++,...data};
+    assignNumBon(nc);
+    S.lentilles.unshift(nc);
+    showToast('Commande lentilles créée !');
+  }
+  _lentId=null; save(); closeM('lentille'); renderLentilles();
+}
+
+function changerStatutLentille(id, newSt){
+  const cmd=(S.lentilles||[]).find(c=>c.id===id);if(!cmd)return;
+  cmd.statut=newSt;
+  if(newSt==='Livré')cmd.dll=doff(0);
+  save(); renderLentilles(); showToast('Statut → '+newSt);
+  // Notification client
+  const cl=gc(cmd.cid);const cfg=getCfg();
+  if(!cl)return;
+  const nom=cl.nom+' '+cl.prenom;
+  const num=numBon(cmd.id)||('#'+cmd.id);
+  let msg='';
+  if(newSt==='Commandé')msg='Cher(e) '+nom+',\n\nNous vous confirmons que vos lentilles ont été commandées.\nMarque : '+cmd.marque+(cmd.ref?' / '+cmd.ref:'')+' ('+cmd.typeLent+')'+(cmd.dlp?'\nLivraison prévue : '+fmt(cmd.dlp):'')+' \nRéf : '+num+'\n\nCordialement,\n'+cfg.nom+'\nTél : '+cfg.tel;
+  if(newSt==='Prêt')msg='Cher(e) '+nom+',\n\nVos lentilles sont prêtes ! Venez les retirer à l\'officine.\nRéf : '+num+'\n\nCordialement,\n'+cfg.nom+'\nTél : '+cfg.tel;
+  if(newSt==='Livré')msg='Bonjour '+nom+',\n\nNous vous confirmons la livraison de vos lentilles ('+num+').\nMerci de votre confiance !\n\n'+cfg.nom;
+  if(msg && cl.tel){
+    const wa='https://wa.me/'+cl.tel.replace(/[^0-9]/g,'')+'?text='+encodeURIComponent(msg);
+    window.open(wa,'_blank');
+  }
+  if(msg && ejsOk && cl.email){
+    ejsSend(cl.email,'Commande lentilles '+num+' — '+cfg.nom,cmd.marque||'',msg).catch(()=>{});
+  }
+}
+
+function delLentille(id){
+  if(!canAdmin()){showToast('Permission insuffisante','err');return;}
+  if(!confirm('Supprimer cette commande lentilles ?'))return;
+  S.lentilles=(S.lentilles||[]).filter(c=>c.id!==id);
+  save();renderLentilles();showToast('Supprimée','err');
+}
+
+function renderLentilles(){
+  if(!S.lentilles)S.lentilles=[];
+  const s=lentSearch.toLowerCase();
+  const f=g('lent-filtre')?.value||'';
+  const list=S.lentilles.filter(cmd=>{
+    const cl=gc(cmd.cid);
+    const ms=!s||(cl?(cl.nom+' '+cl.prenom).toLowerCase().includes(s):false)||(cmd.marque||'').toLowerCase().includes(s)||(cmd.ref||'').toLowerCase().includes(s);
+    return ms&&(!f||cmd.statut===f);
+  });
+  g('lent-title').textContent='Commandes lentilles ('+S.lentilles.length+')';
+  // Stats
+  const total=S.lentilles.length;
+  const actives=S.lentilles.filter(c=>c.statut!=='Livré').length;
+  const prets=S.lentilles.filter(c=>c.statut==='Prêt').length;
+  const livres=S.lentilles.filter(c=>c.statut==='Livré').length;
+  g('lent-stats').innerHTML=[
+    {l:'Total',v:total,c:'var(--teal)',i:'👁'},
+    {l:'En cours',v:actives,c:'var(--blue)',i:'📦'},
+    {l:'Prêtes',v:prets,c:'var(--green)',i:'✅'},
+    {l:'Livrées',v:livres,c:'var(--teal)',i:'🎉'}
+  ].map(k=>'<div class="card" style="padding:12px;text-align:center;border-top:3px solid '+k.c+';">'
+    +'<div style="font-size:18px;margin-bottom:3px;">'+k.i+'</div>'
+    +'<div style="font-family:Syne,sans-serif;font-size:22px;font-weight:700;color:'+k.c+';">'+k.v+'</div>'
+    +'<div style="font-size:9.5px;color:var(--txt2);">'+k.l+'</div>'
+    +'</div>').join('');
+  if(!list.length){
+    g('lent-list').innerHTML='<div style="padding:30px;text-align:center;color:var(--txt3);">'+(s||f?'Aucun résultat.':'Aucune commande lentilles.')+'</div>';
+    return;
+  }
+  const typcol={souple:'#0e7490',rigide:'#1e40af',therapeutique:'#6d28d9'};
+  const typlab={souple:'💧 Souple',rigide:'🔵 Rigide',therapeutique:'⚕️ Thérap.'};
+  const statNext={'En attente':'Commandé','Commandé':'Reçu','Reçu':'Prêt','Prêt':'Livré'};
+  g('lent-list').innerHTML=list.map(cmd=>{
+    const cl=gc(cmd.cid);
+    const num=numBon(cmd.id)||'#'+cmd.id;
+    const next=statNext[cmd.statut];
+    const j=jrs(cmd.dlp); const ret=j!==null&&j<=-1&&cmd.statut==='Commandé';
+    return '<div class="tr" style="grid-template-columns:90px 1fr 75px 1fr 80px 80px 90px;">' 
+      +'<div><div style="font-weight:700;color:var(--teal);font-size:10.5px;">'+esc(num)+'</div>'
+      +(cmd.fac?'<div style="font-size:9px;color:var(--txt3);">'+esc(cmd.fac)+'</div>':'')+'</div>'
+      +'<div><div style="font-weight:500;font-size:11.5px;">'+( cl?esc(cl.nom+' '+cl.prenom):'—')+'</div>'
+      +(cl&&cl.tel?'<div style="font-size:9.5px;color:var(--txt2);">'+esc(cl.tel)+'</div>':'')+'</div>'
+      +'<div><span style="background:'+typcol[cmd.typeLent||'souple']+'22;color:'+typcol[cmd.typeLent||'souple']+';border-radius:5px;padding:2px 6px;font-size:9px;font-weight:600;">'+typlab[cmd.typeLent||'souple']+'</span></div>'
+      +'<div><div style="font-size:11px;font-weight:500;">'+esc(cmd.marque||'—')+'</div>'
+      +(cmd.ref?'<div style="font-size:9.5px;color:var(--txt2);">'+esc(cmd.ref)+'</div>':'')+'</div>'
+      +badge(cmd.statut)
+      +'<div style="font-size:10.5px;color:'+( ret?'var(--red)':' var(--txt2)')+';">'+fmt(cmd.dlp)+(ret?'<br><span style="font-size:9px;color:var(--red);">'+Math.abs(j)+'j retard</span>':'')+'</div>'
+      +'<div style="display:flex;gap:2px;flex-wrap:wrap;">'
+        +'<button onclick="openBonLentille('+cmd.id+')" style="background:#e0f2fe;color:#0c4a6e;border:none;border-radius:3px;padding:2px 5px;font-size:9px;cursor:pointer;" title="Bon">📄</button>'
+        +'<button onclick="editLentille('+cmd.id+')" style="background:#fef3c7;color:#92400e;border:none;border-radius:3px;padding:2px 5px;font-size:9px;cursor:pointer;" title="Modifier">✏️</button>'
+        +(next?'<button onclick="changerStatutLentille('+cmd.id+',\''+next+'\')" style="background:var(--teal);color:#fff;border:none;border-radius:3px;padding:2px 5px;font-size:9px;cursor:pointer;">→ '+next+'</button>':'')+'</div>'
+      +'</div>';
+  }).join('');
+}
+
+// Bon de commande lentilles
+function openBonLentille(id){
+  const cmd=(S.lentilles||[]).find(c=>c.id===id);if(!cmd)return;
+  const cl=gc(cmd.cid);const cfg=getCfg();
+  const num=numBon(cmd.id)||'#'+cmd.id;
+  const COL=cfg.col||'#04747c';
+  const p=cmd.presc||{};
+  const pw=window.open('','_blank');
+  pw.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+num+'</title>'
+    +'<style>@page{size:A4;margin:1.2cm;}*{box-sizing:border-box;margin:0;padding:0;}'
+    +'body{font-family:Arial,sans-serif;font-size:11px;color:#111;}'
+    +'.hd{background:'+COL+';color:#fff;padding:12px 15px;display:flex;justify-content:space-between;align-items:center;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    +'table{width:100%;border-collapse:collapse;margin:10px 0;font-size:10px;}'
+    +'th{background:#f0f9f9;color:'+COL+';padding:5px;border:1px solid #e2e8f0;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    +'td{padding:5px;border:1px solid #e2e8f0;text-align:center;}'
+    +'.oeil{background:#f0f9f9;color:'+COL+';font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    +'</style></head><body>'
+    +'<div class="hd"><div><div style="font-size:14px;font-weight:700;">BON DE COMMANDE LENTILLES</div>'
+    +'<div style="font-size:9px;opacity:.8;">'+esc(cfg.nom)+' — '+esc(cfg.adr)+'</div></div>'
+    +(cfg.logo?'<img src="'+cfg.logo+'" style="height:48px;width:auto;object-fit:contain;border-radius:4px;background:rgba(255,255,255,.15);padding:2px;">':'')+
+    '<div style="text-align:right;font-size:10px;"><div style="font-size:12px;font-weight:700;">'+esc(num)+'</div>'
+    +'<div>Date : '+fmt(cmd.dc)+'</div><div>Livraison : '+fmt(cmd.dlp)+'</div></div></div>'
+    +'<div style="display:flex;justify-content:space-between;margin:10px 0;font-size:10px;">'
+    +'<div><strong>'+( cl?esc(cl.nom+' '+cl.prenom):'—')+'</strong><br>'+( cl?esc(cl.tel||''): '')+'</div>'
+    +'<div style="text-align:right;"><strong>Fournisseur : '+esc(cmd.fid||'—')+'</strong>'
+    +(cmd.fac?'<br>Réf : '+esc(cmd.fac):'')+'</div></div>'
+    +'<div style="background:#f0f9f9;border-radius:6px;padding:8px 12px;margin:8px 0;font-size:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
+    +'<strong>Type :</strong> '+({souple:'Souple',rigide:'Rigide',therapeutique:'Thérapeutique'}[cmd.typeLent]||cmd.typeLent)
+    +(cmd.marque?'  ·  <strong>Marque :</strong> '+esc(cmd.marque):'')+( cmd.ref?'  /  '+esc(cmd.ref):'')+'<br>'
+    +(cmd.renouv?'<strong>Renouvellement :</strong> '+esc(cmd.renouv)+'  ·  ':'')+'<strong>Qté :</strong> '+cmd.qte+' boîte(s)'
+    +(cmd.prix?' ·  <strong>Prix unit. :</strong> '+cmd.prix.toLocaleString('fr-CI')+' FCFA':'')+( cmd.teinte?'<br><strong>Teinte :</strong> '+esc(cmd.teinte):'')+'</div>'
+    +'<table><thead><tr><th></th><th>Sphère</th><th>Cylindre</th><th>Axe</th><th>Addition</th><th>Rayon (BC)</th><th>Diamètre</th></tr></thead><tbody>'
+    +'<tr><td class="oeil">OD</td><td>'+( p.sd||'—')+'</td><td>'+( p.cd||'—')+'</td><td>'+( p.ad||'—')+'</td><td>'+( p.xd||'—')+'</td><td>'+( p.rd||'—')+'</td><td>'+( p.dd||'—')+'</td></tr>'
+    +'<tr><td class="oeil">OG</td><td>'+( p.sg||'—')+'</td><td>'+( p.cg||'—')+'</td><td>'+( p.ag||'—')+'</td><td>'+( p.xg||'—')+'</td><td>'+( p.rg||'—')+'</td><td>'+( p.dg||'—')+'</td></tr>'
+    +'</tbody></table>'
+    +(cmd.obs?'<div style="margin-top:8px;padding:7px;background:#fffbeb;border-radius:5px;font-size:10px;"><strong>Observations :</strong> '+esc(cmd.obs)+'</div>':'')+
+    '<div style="margin-top:14px;border-top:1px solid #e2e8f0;padding-top:8px;font-size:9px;color:#9ca3af;text-align:center;">'+esc(cfg.nom)+' — '+esc(cfg.tel)+'</div>'
+    +'<scr'+'ipt>window.onload=function(){window.print();};</'+'script></body></html>');
+  pw.document.close();
 }
 
 // ════════════════════════════════════════════════════
