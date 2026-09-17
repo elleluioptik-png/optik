@@ -3148,42 +3148,61 @@ function renderLentilles(){
 // Bon de commande lentilles
 function openBonLentille(id){
   const cmd=(S.lentilles||[]).find(c=>c.id===id);if(!cmd)return;
+  _bonLentId=id;
   const cl=gc(cmd.cid);const cfg=getCfg();
   const num=numBon(cmd.id)||'#'+cmd.id;
   const COL=cfg.col||'#04747c';
   const p=cmd.presc||{};
-  const pw=window.open('','_blank');
-  pw.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+num+'</title>'
-    +'<style>@page{size:A4;margin:1.2cm;}*{box-sizing:border-box;margin:0;padding:0;}'
-    +'body{font-family:Arial,sans-serif;font-size:11px;color:#111;}'
-    +'.hd{background:'+COL+';color:#fff;padding:12px 15px;display:flex;justify-content:space-between;align-items:center;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
-    +'table{width:100%;border-collapse:collapse;margin:10px 0;font-size:10px;}'
-    +'th{background:#f0f9f9;color:'+COL+';padding:5px;border:1px solid #e2e8f0;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
-    +'td{padding:5px;border:1px solid #e2e8f0;text-align:center;}'
-    +'.oeil{background:#f0f9f9;color:'+COL+';font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
-    +'</style></head><body>'
-    +'<div class="hd"><div><div style="font-size:14px;font-weight:700;">BON DE COMMANDE LENTILLES</div>'
-    +'<div style="font-size:9px;opacity:.8;">'+esc(cfg.nom)+' — '+esc(cfg.adr)+'</div></div>'
-    +(cfg.logo?'<img src="'+cfg.logo+'" style="height:48px;width:auto;object-fit:contain;border-radius:4px;background:rgba(255,255,255,.15);padding:2px;">':'')+
-    '<div style="text-align:right;font-size:10px;"><div style="font-size:12px;font-weight:700;">'+esc(num)+'</div>'
-    +'<div>Date : '+fmt(cmd.dc)+'</div><div>Livraison : '+fmt(cmd.dlp)+'</div></div></div>'
-    +'<div style="display:flex;justify-content:space-between;margin:10px 0;font-size:10px;">'
-    +'<div><strong>'+( cl?esc(cl.nom+' '+cl.prenom):'—')+'</strong><br>'+( cl?esc(cl.tel||''): '')+'</div>'
-    +'<div style="text-align:right;"><strong>Fournisseur : '+esc(cmd.fid||'—')+'</strong>'
-    +(cmd.fac?'<br>Réf : '+esc(cmd.fac):'')+'</div></div>'
-    +'<div style="background:#f0f9f9;border-radius:6px;padding:8px 12px;margin:8px 0;font-size:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
-    +'<strong>Type :</strong> '+({souple:'Souple',rigide:'Rigide',therapeutique:'Thérapeutique'}[cmd.typeLent]||cmd.typeLent)
-    +(cmd.marque?'  ·  <strong>Marque :</strong> '+esc(cmd.marque):'')+( cmd.ref?'  /  '+esc(cmd.ref):'')+'<br>'
-    +(cmd.renouv?'<strong>Renouvellement :</strong> '+esc(cmd.renouv)+'  ·  ':'')+'<strong>Qté :</strong> '+cmd.qte+' boîte(s)'
-    +(cmd.prix?' ·  <strong>Prix unit. :</strong> '+cmd.prix.toLocaleString('fr-CI')+' FCFA':'')+( cmd.teinte?'<br><strong>Teinte :</strong> '+esc(cmd.teinte):'')+'</div>'
-    +'<table><thead><tr><th></th><th>Sphère</th><th>Cylindre</th><th>Axe</th><th>Addition</th><th>Rayon (BC)</th><th>Diamètre</th></tr></thead><tbody>'
-    +'<tr><td class="oeil">OD</td><td>'+( p.sd||'—')+'</td><td>'+( p.cd||'—')+'</td><td>'+( p.ad||'—')+'</td><td>'+( p.xd||'—')+'</td><td>'+( p.rd||'—')+'</td><td>'+( p.dd||'—')+'</td></tr>'
-    +'<tr><td class="oeil">OG</td><td>'+( p.sg||'—')+'</td><td>'+( p.cg||'—')+'</td><td>'+( p.ag||'—')+'</td><td>'+( p.xg||'—')+'</td><td>'+( p.rg||'—')+'</td><td>'+( p.dg||'—')+'</td></tr>'
-    +'</tbody></table>'
-    +(cmd.obs?'<div style="margin-top:8px;padding:7px;background:#fffbeb;border-radius:5px;font-size:10px;"><strong>Observations :</strong> '+esc(cmd.obs)+'</div>':'')+
-    '<div style="margin-top:14px;border-top:1px solid #e2e8f0;padding-top:8px;font-size:9px;color:#9ca3af;text-align:center;">'+esc(cfg.nom)+' — '+esc(cfg.tel)+'</div>'
-    +'<scr'+'ipt>window.onload=function(){window.print();};</'+'script></body></html>');
-  pw.document.close();
+  const typlab={souple:'Souple 💧',rigide:'Rigide 🔵',therapeutique:'Thérapeutique ⚕️'};
+  const bonHTML='<div style="padding:14px;">'
+    +'<div style="background:'+COL+';color:#fff;padding:12px 15px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
+      +'<div><div style="font-size:14px;font-weight:700;">BON DE COMMANDE LENTILLES</div>'
+      +'<div style="font-size:9px;opacity:.8;margin-top:2px;">'+esc(cfg.nom)+' — '+esc(cfg.adr)+'</div></div>'
+      +(cfg.logo?'<img src="'+cfg.logo+'" style="height:44px;width:auto;object-fit:contain;border-radius:4px;background:rgba(255,255,255,.15);padding:2px;">':'')
+      +'<div style="text-align:right;font-size:10px;"><div style="font-size:12px;font-weight:700;">'+esc(num)+'</div>'
+      +'<div>Date : '+fmt(cmd.dc)+'</div><div>Livraison : '+fmt(cmd.dlp)+'</div></div></div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;font-size:10.5px;">'
+      +'<div style="background:#f8fafc;border-radius:7px;padding:9px;border:.5px solid #e2e8f0;">'
+        +'<div style="font-size:9px;font-weight:700;color:'+COL+';margin-bottom:4px;">CLIENT</div>'
+        +'<div style="font-weight:600;">'+(cl?esc(cl.nom+' '+cl.prenom):'—')+'</div>'
+        +(cl&&cl.tel?'<div>📞 '+esc(cl.tel)+'</div>':'')+'</div>'
+      +'<div style="background:#f8fafc;border-radius:7px;padding:9px;border:.5px solid #e2e8f0;">'
+        +'<div style="font-size:9px;font-weight:700;color:'+COL+';margin-bottom:4px;">FOURNISSEUR</div>'
+        +'<div style="font-weight:600;">'+esc(cmd.fid||'—')+'</div>'
+        +(cmd.fac?'<div>Réf : '+esc(cmd.fac)+'</div>':'')+'</div></div>'
+    +'<div style="background:#f0f9f9;border-radius:7px;padding:9px;margin-bottom:12px;font-size:10.5px;border:.5px solid '+COL+'44;">'
+      +'<div style="font-size:9px;font-weight:700;color:'+COL+';margin-bottom:5px;">CARACTÉRISTIQUES</div>'
+      +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">'
+        +'<div><span style="color:#6b7280;font-size:9px;">Type</span><br><strong>'+esc(typlab[cmd.typeLent||'souple'])+'</strong></div>'
+        +'<div><span style="color:#6b7280;font-size:9px;">Marque</span><br><strong>'+esc(cmd.marque||'—')+'</strong></div>'
+        +(cmd.ref?'<div><span style="color:#6b7280;font-size:9px;">Référence</span><br><strong>'+esc(cmd.ref)+'</strong></div>':'<div></div>')
+        +(cmd.renouv?'<div><span style="color:#6b7280;font-size:9px;">Renouvellement</span><br>'+esc(cmd.renouv)+'</div>':'<div></div>')
+        +'<div><span style="color:#6b7280;font-size:9px;">Quantité</span><br><strong>'+(cmd.qte||1)+' boîte(s)</strong></div>'
+        +(cmd.teinte?'<div><span style="color:#6b7280;font-size:9px;">Teinte</span><br>'+esc(cmd.teinte)+'</div>':'<div></div>')+'</div></div>'
+    +'<div style="margin-bottom:12px;"><div style="font-size:9px;font-weight:700;color:'+COL+';margin-bottom:5px;">PRESCRIPTION</div>'
+      +'<table style="width:100%;border-collapse:collapse;font-size:10px;">'
+        +'<thead><tr style="background:'+COL+';color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
+          +'<th style="padding:5px;border:1px solid #e2e8f0;"></th>'
+          +'<th style="padding:5px;border:1px solid #e2e8f0;">Sphère</th><th style="padding:5px;border:1px solid #e2e8f0;">Cylindre</th>'
+          +'<th style="padding:5px;border:1px solid #e2e8f0;">Axe</th><th style="padding:5px;border:1px solid #e2e8f0;">Addition</th>'
+          +'<th style="padding:5px;border:1px solid #e2e8f0;">Rayon (BC)</th><th style="padding:5px;border:1px solid #e2e8f0;">Diamètre</th>'
+        +'</tr></thead><tbody>'
+          +'<tr style="background:#f0fdf4;"><td style="padding:5px;border:1px solid #e2e8f0;font-weight:700;color:#065f46;text-align:center;">OD</td>'
+          +'<td style="padding:5px;border:1px solid #e2e8f0;text-align:center;">'+(p.sd||'—')+'</td><td style="padding:5px;border:1px solid #e2e8f0;text-align:center;">'+(p.cd||'—')+'</td>'
+          +'<td style="padding:5px;border:1px solid #e2e8f0;text-align:center;">'+(p.ad||'—')+'</td><td style="padding:5px;border:1px solid #e2e8f0;text-align:center;">'+(p.xd||'—')+'</td>'
+          +'<td style="padding:5px;border:1px solid #e2e8f0;text-align:center;">'+(p.rd||'—')+'</td><td style="padding:5px;border:1px solid #e2e8f0;text-align:center;">'+(p.dd||'—')+'</td></tr>'
+          +'<tr style="background:#eff6ff;"><td style="padding:5px;border:1px solid #e2e8f0;font-weight:700;color:#1e40af;text-align:center;">OG</td>'
+          +'<td style="padding:5px;border:1px solid #e2e8f0;text-align:center;">'+(p.sg||'—')+'</td><td style="padding:5px;border:1px solid #e2e8f0;text-align:center;">'+(p.cg||'—')+'</td>'
+          +'<td style="padding:5px;border:1px solid #e2e8f0;text-align:center;">'+(p.ag||'—')+'</td><td style="padding:5px;border:1px solid #e2e8f0;text-align:center;">'+(p.xg||'—')+'</td>'
+          +'<td style="padding:5px;border:1px solid #e2e8f0;text-align:center;">'+(p.rg||'—')+'</td><td style="padding:5px;border:1px solid #e2e8f0;text-align:center;">'+(p.dg||'—')+'</td></tr>'
+        +'</tbody></table></div>'
+    +(cmd.obs?'<div style="background:#fffbeb;border-radius:6px;padding:8px;font-size:10px;margin-bottom:10px;"><strong>Observations : </strong>'+esc(cmd.obs)+'</div>':'')
+    +'<div style="font-size:9px;color:#9ca3af;text-align:center;border-top:.5px solid #e2e8f0;padding-top:8px;">'+esc(cfg.nom)+' — '+esc(cfg.adr)+' — '+esc(cfg.tel)+'</div>'
+    +'</div>';
+  g('bon-lent-title').textContent='Bon N° '+num;
+  g('bon-lent-content').innerHTML=bonHTML;
+  g('bon-lent-res').style.display='none';
+  g('m-bon-lentille').style.display='flex';
 }
 
 // ════════════════════════════════════════════════════
