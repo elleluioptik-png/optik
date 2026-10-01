@@ -155,6 +155,7 @@ input,select,textarea,button{font-family:inherit;outline:none;}
   <div class="nav-sec">Analyse</div>
   <button class="nb" onclick="nav('rapports',this)"><span class="ni">📊</span>Rapports</button>
   <button class="nb" onclick="nav('notifs',this)"><span class="ni">🔔</span>Notifications<span class="nbadge" id="nbadge" style="display:none">0</span></button>
+  <button class="nb" onclick="nav('rappels',this)"><span class="ni">📣</span>Suivi rappels</button>
   <div id="nav-admin-sec" style="display:none;" class="nav-sec">Administration</div>
   <button id="nav-admin-btn" class="nb" onclick="nav('admin',this)" style="display:none;"><span class="ni">⚙️</span>Utilisateurs</button>
   <button class="nb" onclick="openMonProfil()" style="margin:2px 4px;width:calc(100% - 8px);">
@@ -343,6 +344,35 @@ input,select,textarea,button{font-family:inherit;outline:none;}
     <button class="btn bt bsm" onclick="showRapportModal()">👁 Aperçu &amp; Envoyer</button>
   </div>
   <div class="ct" id="rp-content"></div>
+</div>
+
+<!-- SUIVI RAPPELS -->
+<div class="view" id="v-rappels">
+  <div class="tb">
+    <div class="tb-title" id="rappels-title">Suivi des rappels J-3</div>
+    <input class="fi" style="max-width:170px;" placeholder="🔍 Client, bon..." oninput="rappelSearch=this.value;renderRappels()">
+    <select class="fs" style="width:120px;" id="rappel-canal" onchange="renderRappels()">
+      <option value="">Tous canaux</option>
+      <option value="WhatsApp">WhatsApp</option>
+      <option value="Gmail">Gmail</option>
+      <option value="EmailJS">EmailJS</option>
+    </select>
+    <select class="fs" style="width:110px;" id="rappel-mois" onchange="renderRappels()">
+      <option value="">Tous les mois</option>
+    </select>
+    <button class="btn bsm" onclick="alerteJ2Clients(true)" style="background:#f59e0b;color:#fff;">📣 Envoyer J-3</button>
+    <button class="btn bsm" onclick="imprimerRappels()" style="background:#6b7280;color:#fff;">🖨️ Imprimer</button>
+    <button class="btn bsm" onclick="clearJournalRappels()" style="background:#fef2f2;color:#991b1b;border:.5px solid #fca5a5;">🗑 Vider</button>
+  </div>
+  <div class="ct">
+    <div id="rappels-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:13px;"></div>
+    <div class="card">
+      <div class="th" style="grid-template-columns:85px 1fr 100px 85px 85px 110px 50px;">
+        <div>DATE</div><div>CLIENT</div><div>N° BON</div><div>LIVRAISON</div><div>STATUT</div><div>CANAL</div><div></div>
+      </div>
+      <div id="rappels-list"></div>
+    </div>
+  </div>
 </div>
 
 <!-- NOTIFICATIONS -->
@@ -1033,7 +1063,7 @@ function nav(name,btn){
   const v=g('v-'+name);if(v)v.classList.add('on');
   if(btn)btn.classList.add('active');
   CUR=name;
-  const r={dashboard:renderDash,commandes:renderCmds,lentilles:renderLentilles,retards:renderRetards,suivibl:renderSuiviBL,clients:renderClients,verres:renderVerres,traitements:renderTraitements,fournisseurs:renderFours,rapports:renderRapports,notifs:renderNotifs,admin:renderAdmin};
+  const r={dashboard:renderDash,commandes:renderCmds,rappels:renderRappels,lentilles:renderLentilles,retards:renderRetards,suivibl:renderSuiviBL,clients:renderClients,verres:renderVerres,traitements:renderTraitements,fournisseurs:renderFours,rapports:renderRapports,notifs:renderNotifs,admin:renderAdmin};
   if(r[name])r[name]();
 }
 
@@ -3625,6 +3655,149 @@ function clearJournalRappels(){
   if(!confirm('Vider tout le journal des rappels J-3 ?')) return;
   S.journalRappels = [];
   save(); renderNotifs(); showToast('Journal vidé');
+}
+
+
+// ════════════════════════════════════════════════════
+// MODULE SUIVI RAPPELS J-3
+// ════════════════════════════════════════════════════
+let rappelSearch = '';
+
+function renderRappels(){
+  if(!S.journalRappels) S.journalRappels=[];
+  const s = rappelSearch.toLowerCase();
+  const canal = g('rappel-canal')?.value || '';
+  const moisFiltre = g('rappel-mois')?.value || '';
+
+  // Peupler filtre mois
+  const moisDispo = [...new Set(S.journalRappels.map(r=>r.date?r.date.slice(0,7):'').filter(Boolean))].sort().reverse();
+  const selMois = g('rappel-mois');
+  if(selMois && selMois.options.length <= 1){
+    moisDispo.forEach(m=>{
+      const label = new Date(m+'-01').toLocaleDateString('fr-CI',{month:'long',year:'numeric'});
+      const o = document.createElement('option'); o.value=m; o.textContent=label;
+      selMois.appendChild(o);
+    });
+  }
+
+  const list = S.journalRappels.filter(r=>{
+    const matchS = !s || (r.client||'').toLowerCase().includes(s) || (r.numBon||'').toLowerCase().includes(s) || (r.email||'').toLowerCase().includes(s) || (r.tel||'').includes(s);
+    const matchC = !canal || (r.canal||'').includes(canal);
+    const matchM = !moisFiltre || (r.date||'').startsWith(moisFiltre);
+    return matchS && matchC && matchM;
+  });
+
+  g('rappels-title').textContent = 'Suivi rappels J-3 ('+S.journalRappels.length+')';
+
+  // Stats
+  const total = S.journalRappels.length;
+  const wa = S.journalRappels.filter(r=>(r.canal||'').includes('WhatsApp')).length;
+  const email = S.journalRappels.filter(r=>(r.canal||'').includes('Gmail')||(r.canal||'').includes('EmailJS')).length;
+  const cemois = S.journalRappels.filter(r=>(r.date||'').startsWith(doff(0).slice(0,7))).length;
+
+  g('rappels-stats').innerHTML = [
+    {l:'Total rappels',v:total,c:'var(--teal)',i:'📣'},
+    {l:'WhatsApp',v:wa,c:'#25d366',i:'💬'},
+    {l:'Email',v:email,c:'var(--blue)',i:'✉️'},
+    {l:'Ce mois',v:cemois,c:'var(--amber)',i:'📅'}
+  ].map(k=>'<div class="card" style="padding:12px;text-align:center;border-top:3px solid '+k.c+';">'
+    +'<div style="font-size:18px;margin-bottom:3px;">'+k.i+'</div>'
+    +'<div style="font-family:Syne,sans-serif;font-size:22px;font-weight:700;color:'+k.c+';">'+k.v+'</div>'
+    +'<div style="font-size:9.5px;color:var(--txt2);">'+k.l+'</div>'
+    +'</div>').join('');
+
+  if(!list.length){
+    g('rappels-list').innerHTML = '<div style="padding:30px;text-align:center;color:var(--txt3);">'
+      +(S.journalRappels.length===0
+        ?'<div style="font-size:28px;margin-bottom:8px;">📣</div><div>Aucun rappel envoyé pour le moment.</div>'
+        :'Aucun résultat pour ce filtre.')
+      +'</div>';
+    return;
+  }
+
+  const canalColors = {
+    'WhatsApp':'#25d366','Gmail':'#3b82f6','EmailJS':'#8b5cf6',
+    'WhatsApp+Gmail':'#0e7490','WhatsApp+EmailJS':'#7c3aed'
+  };
+  const canalIcons = {
+    'WhatsApp':'💬','Gmail':'✉️ Gmail','EmailJS':'✉️ EmailJS',
+    'WhatsApp+Gmail':'💬+✉️','WhatsApp+EmailJS':'💬+✉️'
+  };
+
+  g('rappels-list').innerHTML = list.map(r=>{
+    const c = canalColors[r.canal] || 'var(--teal)';
+    const ic = canalIcons[r.canal] || r.canal || '—';
+    return '<div class="tr" style="grid-template-columns:85px 1fr 100px 85px 85px 110px 50px;">'
+      +'<div style="font-size:10.5px;color:var(--txt2);">'+fmt(r.date)+'</div>'
+      +'<div>'
+        +'<div style="font-weight:500;font-size:11.5px;">'+esc(r.client||'—')+'</div>'
+        +(r.email?'<div style="font-size:9.5px;color:var(--blue);">✉ '+esc(r.email)+'</div>':'')
+        +(r.tel?'<div style="font-size:9.5px;color:#25d366;">💬 '+esc(r.tel)+'</div>':'')
+      +'</div>'
+      +'<div style="font-weight:600;font-size:10.5px;color:var(--teal);">'+esc(r.numBon||'—')+'</div>'
+      +'<div style="font-size:10.5px;color:var(--amber);font-weight:500;">'+fmt(r.dlp)+'</div>'
+      +'<div>'+badge(r.statut||'—')+'</div>'
+      +'<div>'
+        +'<span style="background:'+c+'22;color:'+c+';border-radius:5px;padding:2px 7px;font-size:9.5px;font-weight:600;white-space:nowrap;">'+esc(ic)+'</span>'
+      +'</div>'
+      +'<div>'
+        +'<button onclick="delRappel('+r.id+')" style="background:none;border:none;color:var(--txt3);cursor:pointer;font-size:13px;" title="Supprimer">🗑</button>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function imprimerRappels(){
+  if(!S.journalRappels || S.journalRappels.length===0){showToast('Aucun rappel à imprimer','warn');return;}
+  const cfg = getCfg();
+  const COL = cfg.col||'#04747c';
+  const moisFiltre = g('rappel-mois')?.value||'';
+  const canal = g('rappel-canal')?.value||'';
+  const list = S.journalRappels.filter(r=>{
+    const matchC = !canal||(r.canal||'').includes(canal);
+    const matchM = !moisFiltre||(r.date||'').startsWith(moisFiltre);
+    return matchC && matchM;
+  });
+  const periode = moisFiltre ? new Date(moisFiltre+'-01').toLocaleDateString('fr-CI',{month:'long',year:'numeric'}) : 'Toute la période';
+  const pw = window.open('','_blank');
+  pw.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Suivi Rappels J-3</title>'
+    +'<style>@page{size:A4 landscape;margin:1cm;}*{box-sizing:border-box;margin:0;padding:0;}'
+    +'body{font-family:Arial,sans-serif;font-size:9.5px;}'
+    +'.hd{background:'+COL+';color:#fff;padding:10px 14px;display:flex;justify-content:space-between;margin-bottom:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    +'table{width:100%;border-collapse:collapse;}'
+    +'th{background:'+COL+';color:#fff;padding:5px 6px;text-align:left;font-size:8px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    +'td{padding:4px 6px;border-bottom:.5px solid #e2e8f0;font-size:8.5px;}'
+    +'tr:nth-child(even) td{background:#f8fafc;}'
+    +'</style></head><body>'
+    +'<div class="hd">'
+      +'<div>'
+        +'<div style="font-size:13px;font-weight:700;">SUIVI DES RAPPELS J-3</div>'
+        +'<div style="font-size:8px;opacity:.8;">'+esc(cfg.nom)+' — Période : '+esc(periode)+'</div>'
+      +'</div>'
+      +'<div style="text-align:right;">'
+        +'<div style="font-size:11px;font-weight:600;">'+list.length+' rappel(s)</div>'
+        +'<div style="font-size:8px;opacity:.8;">Imprimé le '+new Date().toLocaleDateString('fr-CI',{day:'numeric',month:'long',year:'numeric'})+'</div>'
+      +'</div>'
+    +'</div>'
+    +'<table><thead><tr>'
+      +'<th>DATE RAPPEL</th><th>CLIENT</th><th>TÉLÉPHONE</th><th>EMAIL</th>'
+      +'<th>N° BON</th><th>LIVRAISON PRÉVUE</th><th>STATUT CMD</th><th>CANAL</th>'
+    +'</tr></thead><tbody>'
+    +list.map(r=>'<tr>'
+      +'<td>'+fmt(r.date)+'</td>'
+      +'<td><strong>'+esc(r.client||'—')+'</strong></td>'
+      +'<td>'+esc(r.tel||'—')+'</td>'
+      +'<td>'+esc(r.email||'—')+'</td>'
+      +'<td><strong style="color:'+COL+';">'+esc(r.numBon||'—')+'</strong></td>'
+      +'<td>'+fmt(r.dlp)+'</td>'
+      +'<td>'+esc(r.statut||'—')+'</td>'
+      +'<td><strong>'+esc(r.canal||'—')+'</strong></td>'
+      +'</tr>').join('')
+    +'</tbody></table>'
+    +'<div style="margin-top:8px;font-size:7.5px;color:#9ca3af;">'+esc(cfg.nom)+' — '+esc(cfg.adr)+' — '+esc(cfg.tel)+'</div>'
+    +'<scr'+'ipt>window.onload=function(){window.print();};</'+'script>'
+    +'</body></html>');
+  pw.document.close();
 }
 
 // ════════════════════════════════════════════════════
