@@ -174,7 +174,7 @@ input,select,textarea,button{font-family:inherit;outline:none;}
 
 <!-- DASHBOARD -->
 <div class="view on" id="v-dashboard">
-  <div class="tb"><div class="tb-title">Tableau de bord</div><span id="dash-date" style="font-size:10.5px;color:var(--txt2);"></span></div>
+  <div class="tb"><div class="tb-title">Tableau de bord</div><button class="btn bsm" onclick="alerteJ2Clients(true)" style="background:#f59e0b;color:#fff;border-radius:5px;padding:5px 10px;font-size:11px;cursor:pointer;" title="Envoyer rappels J-2 aux clients">📣 Rappels J-2</button><span id="dash-date" style="font-size:10.5px;color:var(--txt2);"></span></div>
   <div class="ct">
     <div id="dash-alerts"></div>
     <div class="sgrid" id="dash-stats"></div>
@@ -245,6 +245,7 @@ input,select,textarea,button{font-family:inherit;outline:none;}
 <div class="view" id="v-retards">
   <div class="tb">
     <div class="tb-title" id="retards-title">Suivi des retards</div>
+    <button class="btn bsm" onclick="alerteJ2Clients(true)" style="background:#f59e0b;color:#fff;border-radius:5px;padding:5px 10px;font-size:11px;cursor:pointer;">📣 Rappels J-2</button>
     <button class="btn bg bsm" onclick="imprimerRetards()">🖨️ Imprimer</button>
     <button class="btn bt bsm" onclick="notifierTousRetards()">📨 Notifier tous</button>
   </div>
@@ -3469,6 +3470,94 @@ function openBonLentille(id){
   g('m-bon-lentille').style.display='flex';
 }
 
+
+// ════════════════════════════════════════════════════
+// ALERTE J-2 CLIENTS
+// ════════════════════════════════════════════════════
+async function alerteJ2Clients(manuel=false){
+  if(!S.relances) S.relances={};
+  const cfg = getCfg();
+  const today = doff(0);
+  let envoyes = 0;
+
+  // Trouver les commandes à J-2 (statut Commandé uniquement - pas encore prêtes)
+  const cmdJ2 = S.commandes.filter(cmd => {
+    if(['Prêt','Livré','Monté'].includes(cmd.statut)) return false;
+    const j = jrs(cmd.dlp);
+    return j !== null && j === -3; // Exactement J-3
+  });
+
+  if(cmdJ2.length === 0){
+    if(manuel) showToast('Aucune commande à J-2 aujourd\'hui.','warn');
+    return;
+  }
+
+  for(const cmd of cmdJ2){
+    const cl = gc(cmd.cid);
+    if(!cl) continue;
+    const num = numBon(cmd.id)||'#'+cmd.id;
+    const clKey = 'j3_'+cmd.id+'_'+today;
+
+    // Ne pas envoyer deux fois le même jour
+    if(S.relances[clKey]) continue;
+
+    const nom = cl.nom+' '+cl.prenom;
+    const msg = 'Cher(e) '+nom+','
+      +'\n\nNous tenons à vous informer que la livraison de votre commande approche.'
+      +'\n\nRéférence : '+num
+      +'\nDate de livraison prévue : '+fmt(cmd.dlp)
+      +'\n\nSi un délai supplémentaire devait survenir, nous vous en informerons immédiatement.'
+      +'\nNous restons à votre disposition pour toute question.'
+      +'\n\nCordialement,\n'+cfg.nom+'\nTél : '+cfg.tel;
+
+    let ok = false;
+
+    // 1. Gmail API
+    if(gmailReady && cfg.gmailClientId && cl.email){
+      try{
+        await gmailSendWithPDF(cl.email,'Rappel J-3 livraison '+num+' — '+cfg.nom,'','',msg);
+        ok = true;
+      }catch(e){console.warn('Gmail J2:',e);}
+    }
+
+    // 2. EmailJS fallback
+    if(!ok && ejsOk && cl.email){
+      try{
+        await ejsSend(cl.email,'Rappel livraison '+num+' — '+cfg.nom,nom,msg);
+        ok = true;
+      }catch(e){console.warn('EJS J2:',e);}
+    }
+
+    // 3. WhatsApp si pas d'email
+    if(!ok && cl.tel){
+      const wa = 'https://wa.me/'+cl.tel.replace(/[^0-9]/g,'')+'?text='+encodeURIComponent(msg);
+      window.open(wa,'_blank');
+      ok = true;
+    }
+
+    if(ok){
+      S.relances[clKey] = {date:today, type:'j2_client', num};
+      envoyes++;
+      addNotif('J-3','j3_'+cmd.id,'Rappel J-3 envoyé à '+nom,cl.email||cl.tel||'',num);
+    }
+  }
+
+  if(envoyes > 0){
+    save();
+    showToast(envoyes+' rappel(s) J-2 envoyé(s) aux clients ✓');
+  } else if(manuel){
+    showToast('Rappels J-2 déjà envoyés aujourd\'hui.','warn');
+  }
+}
+
+// Vérification automatique au chargement et toutes les heures
+function checkAlerteJ2(){
+  const cfg = getCfg();
+  if(ejsOk || (gmailReady && cfg.gmailClientId)){
+    alerteJ2Clients(false);
+  }
+}
+
 // ════════════════════════════════════════════════════
 // INIT
 // ════════════════════════════════════════════════════
@@ -3488,7 +3577,8 @@ function initApp(){
   loadScript('https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js', function(){
     try{const cfg=getCfg();emailjs.init({publicKey:cfg.ek});ejsOk=true;console.log('EmailJS OK');}catch(e){}
     setTimeout(function(){if(ejsOk)relancesAuto();},2000);
-    setInterval(function(){if(ejsOk)relancesAuto();},3600000);
+    setInterval(function(){if(ejsOk)relancesAuto();checkAlerteJ2();},3600000);
+  checkAlerteJ2();
   });
   loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', function(){
     console.log('jsPDF OK');
