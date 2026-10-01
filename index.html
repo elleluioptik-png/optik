@@ -347,6 +347,15 @@ input,select,textarea,button{font-family:inherit;outline:none;}
 
 <!-- NOTIFICATIONS -->
 <div class="view" id="v-notifs">
+  <div class="tb">
+    <div class="tb-title">Notifications & Rappels</div>
+    <select class="fs" style="width:140px;" id="notif-filtre" onchange="renderNotifs()">
+      <option value="all">Tout afficher</option>
+      <option value="j3">Rappels J-3 seulement</option>
+      <option value="notifs">Notifications seulement</option>
+    </select>
+    <button class="btn bg bsm" onclick="clearJournalRappels()" style="background:#fef2f2;color:#991b1b;border:.5px solid #fca5a5;">🗑 Vider journal</button>
+  </div>
   <div class="tb"><div class="tb-title" id="notif-title">Notifications</div><button class="btn bg bsm" onclick="clearNotifs()">Tout effacer</button></div>
   <div class="ct">
     <div class="card">
@@ -829,6 +838,7 @@ function defState(){
     nid:20,
     lentilles:[],
     relances:{},
+    journalRappels:[],
     notifs:[],
     clients:[
       {id:1,nom:'KOUASSI',prenom:'Ama Adjoua',tel:'0709123456',email:'ama@gmail.com',adr:'Cocody'},
@@ -1934,6 +1944,50 @@ function exportRapportPDF(){
 // NOTIFICATIONS
 // ════════════════════════════════════════════════════
 function renderNotifs(){
+  if(!S.journalRappels) S.journalRappels=[];
+  const filtre = g('notif-filtre')?.value || 'all';
+  
+  // Section journal rappels J-3
+  const canalIcon = {gmail:'✉️ Gmail', ejs:'✉️ EmailJS', whatsapp:'💬 WhatsApp'};
+  const journalHTML = S.journalRappels.length === 0 ? '' :
+    '<div style="margin-bottom:14px;">'
+    +'<div style="font-family:Syne,sans-serif;font-size:12px;font-weight:700;color:var(--amber);margin-bottom:8px;">📣 Journal des rappels J-3 ('+S.journalRappels.length+')</div>'
+    +'<div class="card" style="overflow:hidden;">'
+    +'<div class="th" style="grid-template-columns:80px 1fr 1fr 80px 80px 80px 70px;">'
+    +'<div>DATE</div><div>CLIENT</div><div>N° BON</div><div>LIVRAISON</div><div>CANAL</div><div>STATUT</div><div>ACTION</div>'
+    +'</div>'
+    +S.journalRappels.map(r=>
+      '<div class="tr" style="grid-template-columns:80px 1fr 1fr 80px 80px 80px 70px;">'
+      +'<div style="font-size:10px;color:var(--txt2);">'+fmt(r.date)+'</div>'
+      +'<div>'
+        +'<div style="font-weight:500;font-size:11px;">'+esc(r.client)+'</div>'
+        +(r.email?'<div style="font-size:9px;color:var(--txt2);">'+esc(r.email)+'</div>':'')
+        +(r.tel?'<div style="font-size:9px;color:var(--txt2);">'+esc(r.tel)+'</div>':'')
+      +'</div>'
+      +'<div style="font-weight:600;font-size:10.5px;color:var(--teal);">'+esc(r.numBon||'—')+'</div>'
+      +'<div style="font-size:10px;color:var(--amber);font-weight:500;">'+fmt(r.dlp)+'</div>'
+      +'<div><span style="background:'+(r.canal==='Gmail'||r.canal==='EmailJS'?'#dbeafe':'#d1fae5')+';color:'+(r.canal==='Gmail'||r.canal==='EmailJS'?'#1e40af':'#065f46')+';border-radius:5px;padding:2px 6px;font-size:9px;">'+esc(canalIcon[r.canal?.toLowerCase()]||r.canal||'—')+'</span></div>'
+      +'<div style="font-size:10px;">'+esc(r.statut||'—')+'</div>'
+      +'<div><button onclick="delRappel('+r.id+')" style="background:none;border:none;color:var(--txt3);cursor:pointer;font-size:12px;" title="Supprimer">🗑</button></div>'
+      +'</div>'
+    ).join('')
+    +'</div></div>';
+
+  // Afficher selon le filtre
+  const showJ3 = filtre === 'all' || filtre === 'j3';
+  const showNotifs = filtre === 'all' || filtre === 'notifs';
+  
+  // Injecter le journal avant les notifs normales
+  const notifContainer = g('notif-list');
+  if(notifContainer && showJ3) {
+    notifContainer.insertAdjacentHTML('beforebegin', '<div id="journal-j3">'+journalHTML+'</div>');
+    const old = document.getElementById('journal-j3-prev');
+    if(old) old.remove();
+    document.getElementById('journal-j3').id='journal-j3-prev';
+  }
+  // Masquer notifs normales si filtre j3
+  if(notifContainer) notifContainer.style.display = showNotifs?'':'none';
+
   g('notif-title').textContent='Notifications ('+S.notifs.length+')';
   g('notif-list').innerHTML=S.notifs.length===0?'<div style="padding:34px;text-align:center;color:var(--txt3);">Aucune notification.</div>':S.notifs.map(n=>{
     const ico={SMS:'📱',Email:'📧',WhatsApp:'💬','Relance auto':'🤖',Alerte:'🔔',Système:'⚙️'}[n.type]||'📨';
@@ -3511,28 +3565,31 @@ async function alerteJ2Clients(manuel=false){
       +'\n\nCordialement,\n'+cfg.nom+'\nTél : '+cfg.tel;
 
     let ok = false;
+    const canaux = [];
 
-    // 1. Gmail API
-    if(gmailReady && cfg.gmailClientId && cl.email){
-      try{
-        await gmailSendWithPDF(cl.email,'Rappel J-3 livraison '+num+' — '+cfg.nom,'','',msg);
-        ok = true;
-      }catch(e){console.warn('Gmail J2:',e);}
-    }
-
-    // 2. EmailJS fallback
-    if(!ok && ejsOk && cl.email){
-      try{
-        await ejsSend(cl.email,'Rappel livraison '+num+' — '+cfg.nom,nom,msg);
-        ok = true;
-      }catch(e){console.warn('EJS J2:',e);}
-    }
-
-    // 3. WhatsApp si pas d'email
-    if(!ok && cl.tel){
+    // 1. WhatsApp (toujours si téléphone disponible)
+    if(cl.tel){
       const wa = 'https://wa.me/'+cl.tel.replace(/[^0-9]/g,'')+'?text='+encodeURIComponent(msg);
       window.open(wa,'_blank');
+      canaux.push('WhatsApp');
       ok = true;
+    }
+
+    // 2. Email : Gmail API prioritaire, sinon EmailJS
+    if(cl.email){
+      if(gmailReady && cfg.gmailClientId){
+        try{
+          await gmailSendWithPDF(cl.email,'Rappel J-3 livraison '+num+' — '+cfg.nom,'','',msg);
+          canaux.push('Gmail'); ok = true;
+        }catch(e){
+          if(ejsOk){try{await ejsSend(cl.email,'Rappel J-3 livraison '+num+' — '+cfg.nom,nom,msg);canaux.push('EmailJS');ok=true;}catch(e2){}}
+        }
+      } else if(ejsOk){
+        try{
+          await ejsSend(cl.email,'Rappel J-3 livraison '+num+' — '+cfg.nom,nom,msg);
+          canaux.push('EmailJS'); ok = true;
+        }catch(e){console.warn('EJS J3:',e);}
+      }
     }
 
     if(ok){
@@ -3556,6 +3613,18 @@ function checkAlerteJ2(){
   if(ejsOk || (gmailReady && cfg.gmailClientId)){
     alerteJ2Clients(false);
   }
+}
+
+
+function delRappel(id){
+  if(!S.journalRappels) return;
+  S.journalRappels = S.journalRappels.filter(r => r.id !== id);
+  save(); renderNotifs();
+}
+function clearJournalRappels(){
+  if(!confirm('Vider tout le journal des rappels J-3 ?')) return;
+  S.journalRappels = [];
+  save(); renderNotifs(); showToast('Journal vidé');
 }
 
 // ════════════════════════════════════════════════════
