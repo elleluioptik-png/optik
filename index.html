@@ -2065,9 +2065,9 @@ function buildCmdForm(cmd){
   const rowG='<tr><td class="oeil">G</td><td><input class="fi" id="f-sg" style="width:62px;padding:3px 5px;text-align:center;font-size:10.5px;" value="'+(f.sg||'')+'"></td><td><input class="fi" id="f-cg" style="width:62px;padding:3px 5px;text-align:center;font-size:10.5px;" value="'+(f.cg||'')+'"></td><td><input class="fi" id="f-ag" style="width:62px;padding:3px 5px;text-align:center;font-size:10.5px;" value="'+(f.ag||'')+'"></td><td><input class="fi" id="f-xg" style="width:62px;padding:3px 5px;text-align:center;font-size:10.5px;" value="'+(f.xg||'')+'"></td><td><select class="fs" id="f-vg" style="padding:3px 5px;font-size:9.5px;">'+vOpts(f.vg||'')+'</select></td><td><select class="fs" id="f-trg" style="padding:3px 5px;font-size:9.5px;">'+trOpts(f.trg||'')+'</select></td><td><select class="fs" id="f-dg" style="padding:3px 5px;font-size:9.5px;">'+dOpts(f.dg||'')+'</select></td></tr>';
   return '<div class="sh" style="margin-top:0;">Informations générales</div><div class="g2">'
     +'<div><label class="fl">Client *</label><select class="fs" id="f-cid"><option value="">Sélectionner...</option>'+cOpts+'</select></div>'
-    +'<div><label class="fl">Fournisseur</label><select class="fs" id="f-fid"><option value="">Sélectionner...</option>'+foOpts+'</select></div>'
+    +'<div><label class="fl">Fournisseur</label><select class="fs" id="f-fid" onchange="updateDlpAuto()"><option value="">Sélectionner...</option>'+foOpts+'</select></div>'
     +'<div><label class="fl">Date livraison *</label><input class="fi" type="date" id="f-dlp" value="'+(f.dlp||'')+'"></div>'
-    +'<div><label class="fl">Réf. facture</label><input class="fi" id="f-fac" value="'+(f.fac||'')+'"></div>'
+    +'<div><label class="fl">Réf. fa<select class="fs" id="f-type-stock" onchange="updateDlpAuto()" style="width:108px;margin-left:4px;"><option value="commande">📦 Commande</option><option value="stock">🏪 Stock</option></select>cture</label><input class="fi" id="f-fac" value="'+(f.fac||'')+'"></div>'
     +'<div><label class="fl">Opticien</label><input class="fi" id="f-opi" value="'+(f.opi||'ELO P')+'"></div>'
     +(isEdit?'<div><label class="fl">Statut</label><select class="fs" id="f-stat">'+stOpts+'</select></div>':'<div></div>')
     +'</div>'
@@ -2979,6 +2979,34 @@ function saveMonProfil(){
   err.style.display = 'none';
 }
 
+
+
+// ════════════════════════════════════════════════════
+// DÉLAIS AUTOMATIQUES PAR FOURNISSEUR
+// ════════════════════════════════════════════════════
+const DELAIS_FOUR = {
+  'ZEISS CI':        {commande: 20, stock: 20},  // 20j tous types
+  'AFRICA EYEWEAR':  {commande: 27, stock: 3},   // 27j commande, 3j stock
+  'ESSILOR CI':      {commande: 17, stock: 3},
+  'NIKON OPTICAL':   {commande: 17, stock: 3},
+  'HOYA CI':         {commande: 17, stock: 3},
+  'PALM OPTIQUE':    {commande: 17, stock: 3},
+  'INDIVISION':      {commande: 17, stock: 3},
+};
+const DELAI_DEFAUT = {commande: 17, stock: 3};
+
+function getDelaisFour(nomFour){
+  if(!nomFour) return DELAI_DEFAUT;
+  // Cherche par correspondance partielle
+  const k = Object.keys(DELAIS_FOUR).find(k => nomFour.toUpperCase().includes(k.toUpperCase()) || k.toUpperCase().includes(nomFour.toUpperCase()));
+  return k ? DELAIS_FOUR[k] : DELAI_DEFAUT;
+}
+
+function calcDlp(nomFour, typeStock){
+  // typeStock: true = stock, false = commande
+  const d = getDelaisFour(nomFour);
+  return doff(typeStock ? d.stock : d.commande);
+}
 
 // ════════════════════════════════════════════════════
 // MODULE LENTILLES DE CONTACT
