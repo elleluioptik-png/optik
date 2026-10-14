@@ -1533,7 +1533,7 @@ async function relancesAuto(){
   const today=doff(0);if(!S.relances)S.relances={};
   let n=0;const cfg=getCfg();
   for(const cmd of S.commandes){
-    if(cmd.statut==='Livré')continue;
+    if(['Reçu','Monté','Prêt','Livré'].includes(cmd.statut))continue;
     const j=jrs(cmd.dlp);const fo=gf(cmd.fid);const cl=gc(cmd.cid);
     if(!fo?.email)continue;
     const num=numBon(cmd.id);const nomCl=cl?cl.nom+' '+cl.prenom:'—';
